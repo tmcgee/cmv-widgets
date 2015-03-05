@@ -1,6 +1,7 @@
 #Disclaimer Widget for CMV
 A simple yet configurable disclaimer widget for CMV
 
+---
 ## Configurable Options
 
 | Parameter | Type | Description |
@@ -13,6 +14,7 @@ A simple yet configurable disclaimer widget for CMV
 | `i18n` | Object | Default is {}. You can override the Internationalization with your own strings for the text on the buttons. See example below |
 
 
+---
 ## Example Configuration:
 #### Using content from an HTML page:
 ``` javascript
@@ -20,7 +22,7 @@ disclaimer: {
     include: true,
     id: 'disclaimer',
     type: 'floating',
-    path: 'config/widgets/Disclaimer',
+    path: 'widgets/Disclaimer',
     title: 'Disclaimer',
     options: {
 
@@ -33,9 +35,12 @@ disclaimer: {
     }
 }
 ```
-![Screenshot](../images/disclaimer1.jpg)
+
+## Screenshot:
+![Screenshot](//tmcgee.github.io/cmv-widgets/images/disclaimer1.jpg)
 
 
+---
 ## Example Configuration:
 #### Using content supplied in the widget configuration:
 ``` javascript
@@ -43,7 +48,7 @@ disclaimer: {
     include: true,
     id: 'disclaimer',
     type: 'floating',
-    path: 'config/widgets/Disclaimer',
+    path: 'widgets/Disclaimer',
     title: 'Beware!!!',
     options: {
 
@@ -69,4 +74,5 @@ disclaimer: {
 }
 ```
 
-![Screenshot](../images/disclaimer2.jpg)
+## Screenshot:
+![Screenshot](//tmcgee.github.io/cmv-widgets/images/disclaimer2.jpg)

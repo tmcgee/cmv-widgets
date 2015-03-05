@@ -13,17 +13,33 @@ attributesTable: {
     id: 'attributesContainer',
     type: 'domNode',
     srcNodeRef: 'attributesContainer',
-    path: 'gis/dijit/AttributesTable/AttributesTable',
+    path: 'widgets/AttributesTable',
     options: {
         map: true,
         mapClickMode: true,
 
         // use a tab container for multiple tables or
         // show only a single table
-        useTabs: true,
+        useTabs: false,
 
         // used to open the sidebar after a query has completed
-        sidebarID: 'sidebarBottom'
+        sidebarID: 'sidebarBottom',
+
+        // optional tables to load when the widget is first instantiated
+        tables: [
+            {
+                title: 'Census',
+                topicID: 'censusQuery',
+                queryOptions: {
+                    queryParameters: {
+                        url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
+                        maxAllowableOffset: 100,
+                        where: 'STATE_FIPS = \'06\' OR STATE_FIPS = \'08\''
+                    },
+                    idProperty: 'ObjectID'
+                }
+            }
+        ]
     }
 },
 ```
@@ -36,8 +52,8 @@ bottom: {
     placeAt: 'outer',
     splitter: true,
     collapsible: true,
-    open: false,
     region: 'bottom',
+    style: 'height:200px;',
     content: '<div id="attributesContainer"></div>'
 }
 ```
