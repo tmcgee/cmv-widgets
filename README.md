@@ -25,7 +25,7 @@ Coming Soon
 
 ---
 ### Export
-Export features from the Attribute Table widget or other widgets that have a [dgrid](http://dgrid.io).
+Export features from the [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables] widget or other widgets that have a [dgrid](http://dgrid.io).
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Export/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=table)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/export1.jpg)
@@ -36,7 +36,7 @@ Coming Soon
 
 ---
 ###Search
-Used in conjunction with the Attribute Table widget to provide a user interface for querying feature layers, tables and related records.
+Used in conjunction with the [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, tables and related records.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Search/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=search)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/search1.jpg)

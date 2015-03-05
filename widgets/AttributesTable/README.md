@@ -63,7 +63,7 @@ The `content` property is used to provide a source node reference in the widget 
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/attributesTables1.jpg)
 
 ##Communicating with other widgets
-The Attributes Table can be stand-alone if you want to display the results of a query at the start of your application for example. It can also work well with other widgets. The [Search Widget](https//github.com/tmcgee/cmv-widgets/) is intended to be used as a querying interface for an attributes table. Two other widgets are planned that can communicate with an attributes table:
+The Attributes Table can be stand-alone if you want to display the results of a query at the start of your application for example. It can also work well with other widgets. The [Search Widget](https://github.com/tmcgee/cmv-widgets#search) is intended to be used as a querying interface for an attributes table. The [Export Widget](https://github.com/tmcgee/cmv-widgets#export) is intended to be used to export the records from an attributes table. Two other widgets are planned that would communicate with an attributes table:
 
 1. Plug-in for layerControl widget
 2. Query Builder widget

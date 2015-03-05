@@ -1,5 +1,5 @@
 #Export Widget for CMV
-Export features from the [Attribute Table](https//github.com/tmcgee/cmv-widgets/) widget or other widgets that have a [dgrid](http://dgrid.io).
+Export features from the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget or other widgets that have a [dgrid](http://dgrid.io).
 
 ---
 ## Configurable Options:
