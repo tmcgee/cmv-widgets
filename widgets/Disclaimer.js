@@ -19,7 +19,7 @@ define([
         templateString: DisclaimerTemplate,
         defaultI18n: i18n,
         i18n: {},
-        baseClass: 'disclaimerDijit',
+        baseClass: 'cmvDisclaimerWidget',
 		draggable: false,
 
         openOnStartup: true,
@@ -72,6 +72,6 @@ define([
               }
             }
             return dest;
-        },
+        }
 	});
 });

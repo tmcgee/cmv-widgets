@@ -1,10 +1,10 @@
-.disclaimerDijit {
+.cmvDisclaimerWidget {
 }
-.disclaimerDijit .disclaimerMessageContainer {
+.cmvDisclaimerWidget .disclaimerMessageContainer {
 	padding: 0px;
 }
 
-.disclaimerDijit .disclaimerButtonContainer {
+.cmvDisclaimerWidget .disclaimerButtonContainer {
     position: absolute;
     bottom: 0px;
     left: 0px;
@@ -12,19 +12,19 @@
     padding: 5px 30px;
 }
 
-.disclaimerDijit .acceptDisclaimerIcon {
+.cmvDisclaimerWidget .acceptDisclaimerIcon {
     color: #009900;
 }
 
-.disclaimerDijit .acceptDisclaimerButton {
+.cmvDisclaimerWidget .acceptDisclaimerButton {
     float: left;
 }
 
-.disclaimerDijit .declineDisclaimerIcon {
+.cmvDisclaimerWidget .declineDisclaimerIcon {
     color: #CC0000;
 }
 
-.disclaimerDijit .declineDisclaimerButton {
+.cmvDisclaimerWidget .declineDisclaimerButton {
     float: right;
 }
 

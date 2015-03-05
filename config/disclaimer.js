@@ -2,12 +2,8 @@ define([
 ], function () {
 
 	return {
-		// used for debugging your app
 		isDebug: false,
 
-		//default mapClick mode, mapClickMode lets widgets know what mode the map is in to avoid multipult map click actions from taking place (ie identify while drawing).
-		defaultMapClickMode: 'identify',
-		// map options, passed to map constructor. see: https://developers.arcgis.com/javascript/jsapi/map-amd.html#map1
 		mapOptions: {
             basemap: 'streets',
             center: [-96.59179687497497, 39.09596293629694],
@@ -21,21 +17,16 @@ define([
             pageTitle: 'CMV Disclaimer Widget'
         },
 
-		collapseButtonsPane: 'center', //center or outer
-
         panes: {
             left: {
                 collapsible: false,
                 style: 'display:none'
             }
         },
+        collapseButtonsPane: 'center', //center or outer
 
-		// operationalLayers: Array of Layers to load on top of the basemap: valid 'type' options: 'dynamic', 'tiled', 'feature'.
-		// The 'options' object is passed as the layers options for constructor. Title will be used in the legend only. id's must be unique and have no spaces.
-		// 3 'mode' options: MODE_SNAPSHOT = 0, MODE_ONDEMAND = 1, MODE_SELECTION = 2
 		operationalLayers: [],
 
-		// set include:true to load. For titlePane type set position the the desired order in the sidebar
 		widgets: {
             disclaimer: {
                 include: true,
