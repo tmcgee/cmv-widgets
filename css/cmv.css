@@ -1,0 +1,96 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-weight: 300;
+    background-color: #333;
+    color: #fff;
+}
+a {
+    font-weight: 400;
+    color: #00CCFF;
+}
+
+a:hover {
+    color: #fff;
+}
+
+.splash p {
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    line-height: 1.6em;
+    font-size: 18px;
+    text-shadow: 2px 2px #000;
+}
+
+.splash h1 {
+    font-weight: bold;
+    font-size: 32px;
+    text-shadow: 2px 2px #000;
+}
+
+.splash h2 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 0.5em;
+    text-shadow: 2px 2px #000;
+}
+
+.splash {
+    height: 100%;
+    padding-top: 4em;
+    background-image: url('http://cmv.io/images/bg.jpg');
+    background-position: center;
+    background-size: cover;
+    text-align: center;
+    overflow-y: auto;
+}
+
+.navbar-default {
+    position: absolute;
+    background-color: rgba(0,0,0,0.8);
+    margin-right: 18px;
+    color: #fff;
+}
+
+.navbar-default .navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    background-image: url('http://cmv.io/images/rocket-logo.png');
+    background-repeat:  no-repeat;
+    background-size: 60px;
+    background-position: 0px 8px;
+    padding-left: 70px;
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav > li {
+    font-weight: 400;
+}
+
+.btn {
+    font-size: 22px;
+    text-shadow: none;
+}
+
+.example {
+    width: 100%;
+    background-color: #FFF;
+    border: 1px solid #999;
+    padding: 8px;
+    margin-bottom: 32px;
+    box-shadow: 4px 4px #000;
+}
+.example img {
+    width: 100%;
+    border: 1px solid #999;
+}
+
+@media screen and (max-width: 767px) {
+    .navbar-default .navbar-brand {
+        font-size: 20px;
+    }
+}

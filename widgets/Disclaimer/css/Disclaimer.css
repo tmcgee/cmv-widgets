@@ -1,0 +1,38 @@
+.disclaimerDijit {
+}
+.disclaimerDijit .disclaimerMessageContainer {
+	padding: 0px;
+}
+
+.disclaimerDijit .disclaimerButtonContainer {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 5px 30px;
+}
+
+.disclaimerDijit .acceptDisclaimerIcon {
+    color: #009900;
+}
+
+.disclaimerDijit .acceptDisclaimerButton {
+    float: left;
+}
+
+.disclaimerDijit .declineDisclaimerIcon {
+    color: #CC0000;
+}
+
+.disclaimerDijit .declineDisclaimerButton {
+    float: right;
+}
+
+#disclaimer_parent .dijitDialogCloseIcon {
+    display: none;
+}
+
+#disclaimer_parent_underlay {
+    display: block;
+}
+

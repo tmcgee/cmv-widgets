@@ -1,0 +1,18 @@
+.floatingWidget .cmvExportWidget {
+    width: 275px;
+    height: 140px;
+}
+
+.cmvExportWidget .exportContainer {
+    padding: 20px;
+}
+
+.cmvExportWidget  .divExportButton {
+    width: 100%;
+    margin-top: 15px;
+    text-align: center;
+}
+
+#export_parent_underlay {
+    display:block !important;
+}

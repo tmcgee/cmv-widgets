@@ -1,0 +1,1 @@
+{"version":3,"file":"resource.js","sources":["resource.js"],"names":["define","root","title"],"mappings":";;;;;AAAAA,QACIC,MACIC,MAAO","sourcesContent":["define ({\n    root: {\n        title: 'Basemaps'\n    }\n});"]}
