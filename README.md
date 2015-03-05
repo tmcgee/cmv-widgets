@@ -14,6 +14,8 @@ A simple yet configurable disclaimer widget.
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=disclaimer)
 ![Screenshot](./images/disclaimer1.jpg)
 
+![Screenshot](./images/disclaimer2.jpg)
+
 ### Editor
 Coming Soon
 
