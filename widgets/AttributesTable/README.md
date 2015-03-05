@@ -59,6 +59,8 @@ bottom: {
 ```
 The `content` property is used to provide a source node reference in the widget configuration when you use type: `type: 'domNode`. You can also use `type: 'titlePane` or `type: contentPane` depending on your needs.
 
+## Screenshot:
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/attributesTables1.jpg)
 
 ##Communicating with other widgets
 The Attributes Table can be stand-alone if you want to display the results of a query at the start of your application for example. It can also work well with other widgets. The [Search Widget](https//github.com/tmcgee/cmv-widgets/) is intended to be used as a querying interface for an attributes table. Two other widgets are planned that can communicate with an attributes table:

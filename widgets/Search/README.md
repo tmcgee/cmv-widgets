@@ -18,7 +18,7 @@ search: {
 ```
 
 ## Screenshot:
-![Screenshot](//tmcgee.github.io/cmv-widgets/images/search1.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/search1.jpg)
 
 ---
 ## Example Search Widget Configuration:
@@ -301,4 +301,4 @@ define([
 ```
 
 ## Screenshot:
-![Screenshot](//tmcgee.github.io/cmv-widgets/images/search2.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/search2.jpg)

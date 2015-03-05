@@ -37,7 +37,7 @@ disclaimer: {
 ```
 
 ## Screenshot:
-![Screenshot](//tmcgee.github.io/cmv-widgets/images/disclaimer1.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/disclaimer1.jpg)
 
 
 ---
@@ -75,4 +75,4 @@ disclaimer: {
 ```
 
 ## Screenshot:
-![Screenshot](//tmcgee.github.io/cmv-widgets/images/disclaimer2.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/disclaimer2.jpg)

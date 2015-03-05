@@ -21,7 +21,7 @@ exportDialog: {
 ```
 
 ## Screenshot:
-![Screenshot](//tmcgee.github.io/cmv-widgets/images/export1.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/export1.jpg)
 
 ---
 ##Communicating with other widgets
