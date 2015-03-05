@@ -1,6 +1,6 @@
 # CMV-Widgets
 
-Widgets created for [cmv/cmv-app](https://github.com/cmv/cmv-app).
+Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim McGee](https://github.com/tmcgee) of [MoosePoint Technology](http://moosepoint.com/)
 
 [See them live!](http://tmcgee.github.io/cmv-widgets/)
 
