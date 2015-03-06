@@ -79,9 +79,10 @@ define([
         // allows for multiple instances of the widget, all subscribing to different topics
         topicID: 'attributesTable',
 
-        growl: {
-            // track the growl
-            id: null,
+        // track the growl
+        growlID: null,
+
+        growlOptions: {
             // should the loading growl be displayed?
             loading: true,
             // should the Results growl be displayed
@@ -251,10 +252,10 @@ define([
         },
 
         clearGrowl: function () {
-            var growl = registry.byId(this.growl.id);
+            var growl = registry.byId(this.growlID);
             if (growl && growl.close) {
                 growl.close();
-                registry.remove(this.growl.id);
+                registry.remove(this.growlID);
             }
         },
 
@@ -267,6 +268,7 @@ define([
 
         selectTab: function () {
             this.showAllGraphics();
+            this.checkSizing();
         },
 
         unselectTab: function () {
@@ -277,7 +279,7 @@ define([
             do some rather uncomfortable gymnastics to
             position the toolbar and grid components properly
         */
-        resize: function () {
+        checkSizing: function () {
             var top = 0, cStyle;
             var tbNode = this.attributesTableToolbarDijit.domNode;
             var gridNode = this.attributesTableGridDijit.domNode;
@@ -293,7 +295,6 @@ define([
             }
             domStyle.set(gridNode, 'top', top + 'px');
 
-            /*
             var bodyNode = this.grid.bodyNode;
             var hdrNode = this.grid.headerNode;
             var ftrNode = this.grid.footerNode;
@@ -303,7 +304,6 @@ define([
             var ftrBox = domGeometry.getMarginBox(ftrNode, cStyle);
             domStyle.set(bodyNode, 'margin-top', (hdrBox.h + 1) + 'px');
             domStyle.set(bodyNode, 'margin-bottom', (ftrBox.h + 1) + 'px');
-            */
         },
 
         // open the sidebar pane containing this widget (if any)

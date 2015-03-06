@@ -237,13 +237,13 @@ define([
         },
 
         resizeChild: function (child, top, height, width) {
-            node = child.domNode;
+            var node = child.domNode;
             domStyle.set(node, 'top', (top - 1) + 'px');
             domStyle.set(node, 'height', (height - top) + 'px');
             domStyle.set(node, 'width', width + 'px');
 
-            if (child.resize) {
-                child.resize();
+            if (child.checkSizing) {
+                child.checkSizing();
             }
 
             // this gets the columns to resize properly

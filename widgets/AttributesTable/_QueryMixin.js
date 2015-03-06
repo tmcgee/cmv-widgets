@@ -166,10 +166,10 @@ define([
                 q.relationshipId = qp.relationshipID;
             }
 
-            if (this.growl.loading && !this.isLinkedQuery) {
-                this.growl.id = this.topicID + 'Growl-StartSearch';
+            if (this.growlOptions.loading && !this.isLinkedQuery) {
+                this.growlID = this.topicID + 'Growl-StartSearch';
                 var msg = lang.mixin(this.i18n.messages.searching, {
-                    id: this.growl.id,
+                    id: this.growlID,
                     timeout: (esriConfig.defaults.io.timeout + 5000),
                     showProgressBar: true
                 });
@@ -280,7 +280,7 @@ define([
                 this.populateGrid(results);
             }
 
-            if (this.growl.results && !this.isLinkedQuery) {
+            if (this.growlOptions.results && !this.isLinkedQuery) {
                 this.openPane();
 
                 topic.publish('growler/growl', {
