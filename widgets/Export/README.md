@@ -1,6 +1,10 @@
 #Export Widget for CMV
 Export features from the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget or other widgets that have a [dgrid](http://dgrid.io).
 
+File formats supported: Excel and CSV.
+
+NOTE: Downloading the export file when using Internet Explorer 9 or older is not supported.
+
 ---
 ## Configurable Options:
 | Parameter | Type | Description |
