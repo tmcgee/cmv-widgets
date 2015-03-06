@@ -1,15 +1,4 @@
-define([
-    'esri/urlUtils',
-], function (urlUtils) {
-
-    function formatDateTime (value) {
-        var date = new Date(value);
-        return locale.format(date, {
-            formatLength: 'short'
-        });
-    }
-
-    require(['xstyle/css!./config/table.css']);
+define([], function () {
 
 	return {
 		isDebug: false,

@@ -4,6 +4,7 @@ define([
     'dojo/has',
     'dojo/_base/array',
     'dojo/date/locale',
+    'dojo/number',
 
     'dojo/store/Memory',
     'dgrid/Grid', // http://dojofoundation.org/packages/dgrid/
@@ -19,6 +20,7 @@ define([
     has,
     array,
     locale,
+    number,
 
     Memory,
     Grid,
@@ -268,6 +270,14 @@ define([
                     formatLength: 'short'
                 });
             }
+            function formatNumber (value) {
+                return number.format(value);
+            }
+            function formatSingleDouble (value) {
+                return number.format(value, {
+                    places: 3
+                });
+            }
 
             var excludedFields = ['objectid', 'esri_oid', 'shape', 'shape.len', 'shape.area', 'shape.starea()', 'shape.stlength()', 'st_area(shape)', 'st_length(shape)'];
             var columns = [], col, nameLC = null;
@@ -279,15 +289,22 @@ define([
                             id: field.name,
                             field: field.name,
                             label: field.alias,
+                            style: 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;',
                             width: 100
                         };
                         switch (field.type) {
                             case 'esriFieldTypeString':
-                                col.width = 200;
+                                col.width = 150;
                                 break;
-                            case "esriFieldTypeSmallInteger", "esriFieldTypeInteger", "esriFieldTypeSingle":
+                            case 'esriFieldTypeSmallInteger':
+                            case 'esriFieldTypeInteger':
+                                col.formatter = formatNumber;
+                                col.style += 'text-align:right;';
                                 break;
-                            case "esriFieldTypeDouble":
+                            case 'esriFieldTypeSingle':
+                            case 'esriFieldTypeDouble':
+                                col.formatter = formatSingleDouble;
+                                col.style += 'text-align:right;';
                                 break;
                             case 'esriFieldTypeDate':
                                 col.width = 150;
