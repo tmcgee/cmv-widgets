@@ -1,5 +1,5 @@
 #Zoom To Feature Widget for CMV
-A simple widget to provide a dropdown list of features to zoom the ma to. Similar to bookmarks but driven by actual data in a Map Service.
+A simple widget to provide a drop-down list of features to zoom the map to. Similar to bookmarks but driven by actual data in a Map Service.
 
 ---
 ## Configurable Options
