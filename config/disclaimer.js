@@ -49,7 +49,7 @@ define([
                     //content: '<div align="center" style="background-color:black;color:white;font-size:18px;padding:20px;">Abandon all hope, ye who enter here...<br/><img src="http://fc06.deviantart.net/fs5/i/2004/313/2/5/Captain_Jolly_Roger_by_ramiusraven.jpg" style="width:160px;margin:25px;" /></div>'
 
                     // or you can provide the url for another page with the content
-                    href: './config/disclaimer.html',
+                    href: 'config/disclaimer.html'
 
                     // the url to go to, if the user declines
                     //declineHref: 'http://esri.com/'
