@@ -10,7 +10,6 @@ define([
 	'dojo/store/Memory',
 	'esri/tasks/QueryTask',
 	'esri/tasks/query',
-	'esri/geometry/Extent',
     'esri/layers/GraphicsLayer',
     'esri/graphic',
     'esri/renderers/SimpleRenderer',
@@ -23,7 +22,7 @@ define([
 	'dijit/form/Form',
 	'dijit/form/FilteringSelect',
 	'xstyle/css!./ZoomToFeature/css/ZoomToFeature.css'
-], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, lang, array, on, keys, Memory, QueryTask, Query, Extent, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, graphicsUtils, template, i18n) {
+], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, lang, array, on, keys, Memory, QueryTask, Query, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, graphicsUtils, template, i18n) {
 	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 		widgetsInTemplate: true,
 		templateString: template,
@@ -235,7 +234,7 @@ define([
             var feature = this.features[this.featureIdx];
             if (feature) {
                 this.highlightFeature(feature);
-                extent = this.getGraphicsExtent([feature]);
+                var extent = this.getGraphicsExtent([feature]);
                 if (extent) {
                     this.zoomToExtent(extent);
                 }
@@ -256,6 +255,7 @@ define([
         },
 
         highlightFeature: function (feature) {
+            var graphic;
             switch (feature.geometry.type) {
                 case 'point':
                     // only add points to the map that have an X/Y
