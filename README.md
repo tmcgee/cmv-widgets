@@ -45,7 +45,7 @@ Used in conjunction with the [Attributes Tables](https://github.com/tmcgee/cmv-w
 
 ---
 ### Zoom to Feature
-A simple widget to provide a dropdown list of features to zoom the ma to. Similar to bookmarks but driven by actual data in a Map Service.
+A simple widget to provide a drop-down list of features to zoom to on the map. Similar to bookmarks but driven by actual data in a Map Service.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/ZoomToFeature/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=zoomToFeature)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/zoomToFeature1.jpg)
