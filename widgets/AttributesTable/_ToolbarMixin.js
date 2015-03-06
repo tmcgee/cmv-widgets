@@ -21,8 +21,9 @@ define([
 
             zoom: {
                 show: true,
-                source: true,
+                features: true,
                 selected: true,
+                source: true,
                 buffer: true
 
             },
