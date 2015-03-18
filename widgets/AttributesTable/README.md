@@ -93,12 +93,14 @@ define({
             // other instances of attributes table
             topicID: 'query',
 
-            // parameters for the query
-            queryParameters: {
-                // the layer ID and sublayer ID from a layer in your map.
-                // alternatively you can provide a url to the MapService.
-                layerID: 'parcels',
-                sublayerID: 0
+            queryOptions: {
+                // parameters for the query
+                queryParameters: {
+                    url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
+                    maxAllowableOffset: 100,
+                    where: 'STATE_FIPS = \'06\' OR STATE_FIPS = \'08\''
+                },
+                idProperty: 'ObjectID'
             }
         }
     }
@@ -129,82 +131,85 @@ growl: {
 ---
 ##Query Options
 ``` javascript
-queryParameters: {
+queryOptions:
+    // parameters for the query
+    queryParameters: {
+        /*
+            What type of query:
+
+            * spatial - search spatial features (FeatureService or layer in MapService)
+
+            * relationship - search records related to spatial features
+
+            * table - search a non-spatial table. This displays records in the grid but not on the map.
+
+            (An additional type `database` will be supported in the future)
+        */
+        type: 'spatial',
+
+        /*
+            Default Spatial Reference
+        */
+        outputSpatialReference: 4326,
+
+        /*
+            AGS REST URL to Query
+            default is null
+        */
+        url: null,
+
+        /*
+            If no url provided and the layerID/sublayerID is passed,
+            the url of the layer will be retrieved from the map.
+        */
+        layerID: null,
+        sublayerID: null,
+
+        /*
+            Attribute fields to include in the FeatureSet.
+            default ['*] - returns all fields
+        */
+        outFields: ['*'],
+
+        /*
+            A where clause for the query. default returns all records
+        */
+        where: '1=1',
+
+        /*
+            The geometry to apply to the spatial filter.
+        */
+        geometry: null,
+
+        spatialRelationship: Query.SPATIAL_REL_INTERSECTS
+
+    },
+
     /*
-        What type of query:
-
-        * spatial - search spatial features (FeatureService or layer in MapService)
-
-        * relationship - search records related to spatial features
-
-        * table - search a non-spatial table. This displays records in the grid but not on the map.
-
-        (An additional type `database` will be supported in the future)
+        Provide the url if there is a spatial query linked from a table or database query
     */
-    type: 'spatial',
+    linkedQuery: {
+        url: null,
+        idProperty: null,
+        ids: [] // if linkedQuery, then store the linkedIDs for use in linked query
+    },
 
     /*
-        Default Spatial Reference
+        Allow a buffer to be performed before a spatial query and then use the buffer geometry in the query
+        if showOnly = true, the buffer is displayed  but the query is not run
     */
-    outputSpatialReference: 4326,
+    bufferParameters: {
+        distance: null,
+        unit: null,
+        showOnly: false
+    },
 
     /*
-        AGS REST URL to Query
-        default is null
+        default Unique ID
     */
-    url: null,
-
-    /*
-        If no url provided and the layerID/sublayerID is passed,
-        the url of the layer will be retrieved from the map.
-    */
-    layerID: null,
-    sublayerID: null,
-
-    /*
-        Attribute fields to include in the FeatureSet.
-        default ['*] - returns all fields
-    */
-    outFields: ['*'],
-
-    /*
-        A where clause for the query. default returns all records
-    */
-    where: '1=1',
-
-    /*
-        The geometry to apply to the spatial filter.
-    */
-    geometry: null,
-
-    spatialRelationship: Query.SPATIAL_REL_INTERSECTS
+    idProperty: 'FID'
 
 },
-
-/*
-    Provide the url if there is a spatial query linked from a table or database query
-*/
-
-linkedQuery: {
-    url: null,
-    idProperty: null,
-    ids: [] // if linkedQuery, then store the linkedIDs for use in linked query
-},
-
-/*
-    Allow a buffer to be performed before a spatial query and then use the buffer geometry in the query
-    if showOnly = true, the buffer is displayed  but the query is not run
-*/
-bufferParameters: {
-    distance: null,
-    unit: null,
-    showOnly: false
-},
-
-/*
-    default Unique ID
-*/
-idProperty: 'FID',
 ```
 
 
