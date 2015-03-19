@@ -1,10 +1,8 @@
 define([
-    'esri/urlUtils',
-	'esri/geometry/Extent',
 	'esri/config',
 	'esri/tasks/GeometryService',
 	'esri/layers/ImageParameters'
-], function (urlUtils, Extent, esriConfig, GeometryService, ImageParameters) {
+], function (esriConfig, GeometryService, ImageParameters) {
 
 	esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
 
