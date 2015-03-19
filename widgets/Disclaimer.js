@@ -10,9 +10,20 @@ define([
 
 	'dijit/layout/ContentPane',
     'dijit/form/Form',
-    'dijit/form/CheckBox',
+    'dijit/form/Button',
+
     'xstyle/css!./Disclaimer/css/Disclaimer.css'
-], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _FloatingWidgetMixin, DisclaimerTemplate, i18n) {
+
+], function (
+    declare,
+    _WidgetBase,
+    _TemplatedMixin,
+    _WidgetsInTemplateMixin,
+    _FloatingWidgetMixin,
+
+    DisclaimerTemplate,
+    i18n
+) {
 
 	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _FloatingWidgetMixin], {
 		widgetsInTemplate: true,
@@ -31,8 +42,8 @@ define([
         postMixInProperties: function () {
             this.inherited(arguments);
             this.i18n = this.mixinDeep(this.defaultI18n, this.i18n);
-
         },
+
 		postCreate: function () {
 			this.inherited(arguments);
 
@@ -43,7 +54,6 @@ define([
 
             // prevent the dialog from closing with the escape key
             this.parentWidget._onKey = function() {};
-
 		},
 
         acceptDisclaimer: function () {
