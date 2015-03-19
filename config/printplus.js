@@ -13,9 +13,9 @@ define([
 		isDebug: true,
 
         mapOptions: {
-            basemap: 'streets',
-            center: [-96.59179687497497, 39.09596293629694],
-            zoom: 4,
+            basemap: 'topo',
+            center: [-120.0417, 39.0917],
+            zoom: 10,
             sliderStyle: 'small'
         },
 
@@ -27,33 +27,7 @@ define([
 
 		collapseButtonsPane: 'center', //center or outer
 
-		operationalLayers: [
-			{
-				type: 'dynamic',
-				url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
-				title: 'Louisville Public Safety',
-				options: {
-					id: 'louisvillePubSafety',
-					opacity: 1.0,
-					visible: true,
-					imageParameters: imageParameters
-				},
-				identifyLayerInfos: {
-					layerIds: [2, 4, 5, 8, 12, 21]
-				}
-			},
-			{
-	            type: 'dynamic',
-	            url: 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer',
-	            title: 'Damage Assessment',
-	            options: {
-	                id: 'DamageAssessment',
-	                opacity: 1.0,
-	                visible: true,
-	                imageParameters: imageParameters
-	            }
-            }
-		],
+		operationalLayers: [],
 
 		widgets: {
 			growler: {
