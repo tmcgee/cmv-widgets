@@ -36,7 +36,7 @@ Coming Soon
 
 ---
 ### Print Plus
-This is an updated version of the PrintPlus widget originally created by [@LarryStout](https://github.com/LarryStout) in early 2014. Larry's original source code can be found in [here](https://github.com/tmcgee/cmv-hamilton-county) with a few of his other widgets.
+An updated version of the PrintPlus widget originally created by [@LarryStout](https://github.com/LarryStout) in early 2014. Larry's original source code can be found in [here](https://github.com/tmcgee/cmv-hamilton-county) with a few of his other widgets.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/PrintPlus/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=printplus)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/printplus1.jpg)
