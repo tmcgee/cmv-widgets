@@ -1,5 +1,7 @@
 # CMV-Widgets
 
+[![Join the chat at https://gitter.im/tmcgee/cmv-widgets](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tmcgee/cmv-widgets?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim McGee](https://github.com/tmcgee) of [MoosePoint Technology](http://moosepoint.com/)
 
 [See them live!](http://tmcgee.github.io/cmv-widgets/)
