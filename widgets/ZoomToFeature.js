@@ -152,7 +152,7 @@ define([
                 this.polylineGraphics.setRenderer(polylineRenderer);
             }
 
-            if (symbols.polygon && this.polylineGraphics) {
+            if (symbols.polygon && this.polygonGraphics) {
                 polygonSymbol = new SimpleFillSymbol(symbols.polygon);
                 polygonRenderer = new SimpleRenderer(polygonSymbol);
                 polygonRenderer.label = 'Search Results (Polygons)';
@@ -206,9 +206,10 @@ define([
 	        var values = [], k = 0, field = this.field;
 	        array.forEach (this.features, function(feature) {
 	            values.push({
-	            	id: k++,
+	            	id: k,
 	            	name: feature.attributes[field]
 	            });
+	            k++;
 	        });
 
 			this.featureStore = new Memory({
@@ -228,7 +229,7 @@ define([
         search: function () {
             this.clearFeatures();
 
-            if (!this.featureIdx) {
+            if (this.featureIdx === null) {
                 return;
             }
             var feature = this.features[this.featureIdx];
