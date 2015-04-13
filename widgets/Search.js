@@ -366,7 +366,6 @@ define([
                     if (search) {
                         // initialize all the search field inputs
                         var fields = search.searchFields;
-                        var len = fields.length;
                         for (var k = 0; k < 10; k++) {
                             var display = 'block', disabled = false;
                             var formLabel = this['labelSearchTerm' + k];
@@ -554,7 +553,7 @@ define([
             });
         },
 
-        enableIdentifyButton: function (args) {
+        enableIdentifyButton: function () {
             this.searchIdentifyButtonDijit.set('disabled', false);
         },
 
