@@ -272,9 +272,9 @@ gridOptions: {
 ``` javascript
 featureOptions: {
     /*
-        show the source feature used in the search
+        Show the resulting features on the map
     */
-    source: true,
+    features: true,
 
     /*
         Allow records to be selected in the grid
@@ -290,6 +290,11 @@ featureOptions: {
         Allow the user to highlight features that have been selected in the grid
     */
     highlight: true,
+
+    /*
+        Show the source feature used in the search
+    */
+    source: true,
 
     /*
         Allow the creation and display of a buffer
