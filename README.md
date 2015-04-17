@@ -6,6 +6,9 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 
 [See them live!](http://tmcgee.github.io/cmv-widgets/)
 
+### Example Configurations
+Each widget in this repo has at least one configuration example in the [config folder](https://github.com/tmcgee/cmv-widgets/tree/master/config). This folder also contains additional examples for including ESRI widgets, other widgets and functionality.
+
 ### Attributes Table(s)
 A highly configurable widget to display the results of one or more QueryTasks.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/AttributesTable/README.md)
