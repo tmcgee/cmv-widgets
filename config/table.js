@@ -72,8 +72,7 @@ define([], function () {
                                     url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
                                     maxAllowableOffset: 100,
                                     where: 'STATE_FIPS = \'06\' OR STATE_FIPS = \'08\''
-                                },
-                                idProperty: 'ObjectID'
+                                }
                             }
                         }
                     ]
