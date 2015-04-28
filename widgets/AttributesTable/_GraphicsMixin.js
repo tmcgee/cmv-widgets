@@ -8,8 +8,7 @@ define([
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleFillSymbol',
     'esri/dijit/PopupTemplate',
-    'esri/graphicsUtils',
-    'esri/geometry/Extent'
+    'esri/graphicsUtils'
 
 ], function (
     declare,
@@ -21,8 +20,7 @@ define([
     SimpleLineSymbol,
     SimpleFillSymbol,
     PopupTemplate,
-    graphicsUtils,
-    Extent
+    graphicsUtils
 ) {
 
     return declare(null, {
@@ -235,6 +233,18 @@ define([
         *******************************/
 
         addGraphicsLayer: function () {
+            this.sourceGraphics = new GraphicsLayer({
+                id: this.topicID + '_SourceGraphics',
+                title: 'Attribute Source Graphics'
+            });
+            this.map.addLayer(this.sourceGraphics);
+
+            this.bufferGraphics = new GraphicsLayer({
+                id: this.topicID + '_BufferGraphics',
+                title: 'Attribute Buffer Graphics'
+            });
+            this.map.addLayer(this.bufferGraphics);
+
             this.featureGraphics = new GraphicsLayer({
                 id: this.topicID + '_FeatureGraphics',
                 title: 'Attribute Feature Graphics'
@@ -246,24 +256,11 @@ define([
             }
             this.map.addLayer(this.featureGraphics);
 
-
-            this.sourceGraphics = new GraphicsLayer({
-                id: this.topicID + '_SourceGraphics',
-                title: 'Attribute Source Graphics'
-            });
-            this.map.addLayer(this.sourceGraphics);
-
             this.selectedGraphics = new GraphicsLayer({
                 id: this.topicID + '_SelectedGraphics',
                 title: 'Attribute Selected Graphics'
             });
             this.map.addLayer(this.selectedGraphics);
-
-            this.bufferGraphics = new GraphicsLayer({
-                id: this.topicID + '_BufferGraphics',
-                title: 'Attribute Buffer Graphics'
-            });
-            this.map.addLayer(this.bufferGraphics);
 
         },
 
@@ -381,6 +378,8 @@ define([
                                 var zm = mnu.selected;
                                 mnu.selected = false;
                                 this.grid.select(row);
+                                this.grid.focus(row.element);
+                                row.element.focus();
                                 mnu.selected = zm;
                                 this.setToolbarButtons();
                             }
