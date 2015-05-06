@@ -78,6 +78,7 @@ define([
             bufferParameters: {
                 distance: null,
                 unit: null,
+                geodesic: true,
                 showOnly: false
             },
 
@@ -233,6 +234,7 @@ define([
             buffParams.geometries = [this.queryParameters.geometry];
             buffParams.distances = [this.bufferParameters.distance];
             buffParams.unit = this.bufferParameters.unit || units.FEET;
+            buffParams.geodesic = this.bufferParameters.geodesic || true;
             buffParams.bufferSpatialReference = this.map.spatialReference;
             buffParams.outSpatialReference = this.map.spatialReference;
 
