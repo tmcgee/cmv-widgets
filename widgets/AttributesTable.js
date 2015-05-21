@@ -135,8 +135,10 @@ define([
             if (!options.id) {
                 options.id = 'attrTab-' + options.topicID;
             }
+            if (typeof options.closable == 'undefined'){
+                options.closable = true;
+            }
             options.map = this.map;
-            options.closable = true;
             options.sidebarID = this.sidebarID;
 
             if (this.useTabs) {
