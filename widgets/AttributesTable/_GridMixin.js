@@ -251,6 +251,10 @@ define([
 
             // set the sort
             var sort = this.gridOptions.sort || [];
+            // sort === 'inherit'? use query result order
+            if (typeof sort === 'string' && sort.toLowerCase() === 'inherit'){
+                return;
+            }
             // no sort? use the first column
             if (sort.length < 1 && columns && columns.length > 0) {
                 sort = [
