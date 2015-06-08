@@ -93,6 +93,11 @@ define({
             // other instances of attributes table
             topicID: 'query',
 
+            // allow tabs to be closed
+            // confirm tab closure
+            closable: true,
+            confirmClose: true,
+
             queryOptions: {
                 // parameters for the query
                 queryParameters: {
@@ -225,7 +230,7 @@ gridOptions: {
     columns: [],
 
     /*
-        no sort
+        no sort, use sort: 'inherit' to use the order of the query results.
     */
     sort: [],
 
