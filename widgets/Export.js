@@ -193,10 +193,21 @@ define([
             var wbout = window.XLSX.write(wb, {
                 bookType: 'xlsx',
                 bookSST: true,
-                type: 'base64'
+                type: 'binary'
             });
 
-            this.downloadFile(wbout, 'application/vnd.ms-excel;base64;', 'results.xlsx', false);
+            this.downloadFile(this.s2ab(wbout), 'application/vnd.ms-excel;', 'results.xlsx', true);
+        },
+
+        s2ab: function (s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            /*jslint bitwise: true */
+            for (var i=0; i!=s.length; ++i) {
+                view[i] = s.charCodeAt(i) & 0xFF;
+            }
+            /*jslint bitwise: false */
+            return buf;
         },
 
         exportToCSV: function () {
@@ -436,27 +447,21 @@ define([
                 }
                 link.setAttribute('href', url);
                 link.setAttribute('download', fileName);
+                link.style = 'visibility:hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return;
 
              //feature detection using IE10+ routine
-            } else if (navigator.msSaveBlob) {
-                if (!useBlob) {
-                    url = window.URL.createObjectURL(blob);
-                } else {
-                    url = blob;
-                }
-                link.addEventListener('click', function () {
-                    navigator.msSaveBlob(url, fileName);
-                }, false);
+            } else if (navigator.msSaveOrOpenBlob) {
+                return navigator.msSaveOrOpenBlob(blob, fileName);
             } else {
                 window.open(dataURI);
                 window.focus();
                 return;
             }
 
-            link.style = 'visibility:hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
     });
 });
