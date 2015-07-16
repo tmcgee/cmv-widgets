@@ -135,8 +135,13 @@ define([
             if (!options.id) {
                 options.id = 'attrTab-' + options.topicID;
             }
+            if (typeof options.closable == 'undefined'){
+                options.closable = true;
+            }
+            if (typeof options.confirmClose == 'undefined'){
+                options.confirmClose = true;
+            }
             options.map = this.map;
-            options.closable = true;
             options.sidebarID = this.sidebarID;
 
             if (this.useTabs) {
@@ -154,7 +159,7 @@ define([
                     tab.startup();
                     tabs.addChild(tab);
                     tab.onClose = lang.hitch(tab, function () {
-                        var close = confirm('Do you really want to close this tab?');
+                        var close = this.confirmClose ? confirm('Do you really want to close this tab?') : true;
                         if (close && this.clearAll) {
                             this.clearAll();
                         }
