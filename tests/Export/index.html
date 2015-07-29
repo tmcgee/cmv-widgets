@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">    
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.13compact/esri/css/esri.css">
+        <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="/cmv/css/theme/dbootstrap/dbootstrap.css">
+        <link rel="stylesheet" type="text/css" href="/cmv/css/main.css">
+        <body class="dbootstrap">
+        <div class="appHeader">
+            <div class="headerLogo">
+                <img alt="logo" src="./../../cmv/images/rocket-logo.png" height="54" />
+            </div>
+            <div class="headerTitle">
+                <span id="headerTitleSpan"></span>
+                <div id="subHeaderTitleSpan" class="subHeaderTitle"></div>
+            </div>
+            <div class="search">
+            </div>
+            <div class="headerLinks">
+                <div id="buttonsDiv"></div>      
+            </div>
+        </div>
+        <script type="text/javascript">
+            var path = location.pathname.replace(/[^\/]+$/, '');
+            var dojoConfig = {
+                async: true,
+                packages: [{
+                    name: 'viewer',
+                    location: path + './../../cmv/js/viewer'
+                },{
+                    name: 'gis',
+                    location: path + './../../cmv/js/gis'
+                },{
+                    name: 'config',
+                    location: path + './../../config'
+                },{
+                    name: 'widgets',
+                    location: path + './../../widgets'
+                }]
+            };
+        </script>
+        <!--[if lt IE 9]>
+            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.3/es5-shim.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="//js.arcgis.com/3.13compact/"></script>
+        <script type="text/javascript">
+            require(['dojo/on', 'dojo/dom', 'dojo/dom-construct', 'esri/tasks/FeatureSet', 'esri/tasks/query', 'esri/tasks/QueryTask', 'esri/graphic', 'dijit/form/Button', 'dojo/topic', 'viewer/Controller'], function(on, dom, domConstruct, FeatureSet, Query, QueryTask, Graphic, Button, topic, Controller){
+                Controller.startup({
+                    isDebug: true,
+
+                    mapOptions: {
+                        basemap: 'topo',
+                        center: [-120.0417, 39.0917],
+                        zoom: 10,
+                        sliderStyle: 'small'
+                    },
+
+                    titles: {
+                        header: 'CMV Export Tests',
+                        subHeader: 'This is an example of the Export Widget',
+                        pageTitle: 'CMV Export Widget'
+                    },
+
+                    panes: {
+                        left: {
+                            collapsible: false,
+                            style: 'display:none'
+                        },
+                        bottom: {
+                            id: 'sidebarBottom',
+                            placeAt: 'outer',
+                            splitter: true,
+                            collapsible: true,
+                            region: 'bottom',
+                            style: 'height:200px;',
+                            content: '<div id="attributesContainer"></div>'
+                        }
+                    },
+                    
+                    collapseButtonsPane: 'center', //center or outer
+
+                    operationalLayers: [],
+
+                    widgets: {
+                        growler: {
+                            include: true,
+                            id: 'growler',
+                            type: 'domNode',
+                            path: 'gis/dijit/Growler',
+                            srcNodeRef: 'growlerDijit',
+                            options: {}
+                        },
+                        attributesTable: {
+                            include: true,
+                            id: 'attributesContainer',
+                            type: 'domNode',
+                            srcNodeRef: 'attributesContainer',
+                            path: 'widgets/AttributesTable',
+                            options: {
+                                map: true,
+                                mapClickMode: true,
+
+                                // use a tab container for multiple tables or
+                                // show only a single table
+                                useTabs: false,
+
+                                // used to open the sidebar after a query has completed
+                                sidebarID: 'sidebarBottom',
+
+                                tables: [
+                                    {
+                                        title: 'Census',
+                                        topicID: 'censusQuery',
+                                        queryOptions: {
+                                            queryParameters: {
+                                                url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
+                                                maxAllowableOffset: 100,
+                                                where: 'STATE_FIPS = \'06\' OR STATE_FIPS = \'08\''
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        exportDialog: {
+                            include: true,
+                            id: 'export',
+                            type: 'floating',
+                            path: 'widgets/Export',
+                            title:'Export Widget Test',
+                            options: {}
+                        }
+                    }
+                }); // end Controller
+                
+                var buttonsDiv = dom.byId('buttonsDiv');
+                
+                new Button({
+                    label: 'Show Parameter Missing',
+                    onClick: function() {
+                        topic.publish('exportWidget/openDialog', {
+
+                        });
+                    }
+                }, domConstruct.create('div', {}, buttonsDiv));
+
+                new Button({
+                    label: 'Show Parameter False',
+                    onClick: function() {
+                        topic.publish('exportWidget/openDialog', {
+                            show: false
+                        });
+                    }
+                }, domConstruct.create('div', {}, buttonsDiv));
+
+                new Button({
+                    label: 'Pass No Data',
+                    onClick: function() {
+                        topic.publish('exportWidget/openDialog', {
+                            show: true
+                        });
+                    }
+                }, domConstruct.create('div', {}, buttonsDiv));
+
+                new Button({
+                    label: 'Export QueryTask',
+                    onClick: function() {
+
+                        var query = new Query();
+                        var queryTask = new QueryTask('http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4');
+                        query.where = 'STATE_FIPS = \'06\' OR STATE_FIPS = \'08\'';
+                        query.returnGeometry = false;
+                        query.outFields = ["*"];
+                        query.maxAllowableOffset = 100;
+                        queryTask.execute(query, function(theFeatureSet) {
+                            topic.publish('exportWidget/openDialog', {
+                                show: true,
+                                featureSet: theFeatureSet
+                            });
+                        });
+                    }
+                }, domConstruct.create('div', {}, buttonsDiv));
+
+                new Button({
+                    label: 'Export Manual FeatureSet',
+                    onClick: function() {
+                        var attr = {
+                            'col1': 'val1',
+                            'col2': 'val2',
+                            'col3': 'val3'
+                        };
+                        var graphic = new Graphic(null, null, attr, null);
+                        var features= [];
+                        features.push(graphic);
+                        var featureSet = new FeatureSet();
+                        featureSet.features = features;
+                        featureSet.fieldAliases = {
+                            'col1': 'Column 1',
+                            'col2': 'Column 2',
+                            'col3': 'Column 3'
+                        };
+                        topic.publish('exportWidget/openDialog', {
+                            show: true,
+                            featureSet: featureSet
+                        });
+                    }
+                }, domConstruct.create('div', {}, buttonsDiv));
+
+            }); //end require
+            </script>
+    </body>
+</html>
