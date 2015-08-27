@@ -73,6 +73,16 @@ define([
         attributeLayer: 0,
         drawToolbar: null,
 
+        // to override the default tab when the widget starts
+        defaultTab: 0,
+
+        /*
+            To hide specific tabs.
+            This is an zero-based array so [1] would hide the second tab.
+            It is an array to anticipate more than 2 tabs in a future release.
+        /*
+        hiddenTabs: [],
+
         drawingOptions: {
             rectangle: true,
             circle: true,
@@ -144,6 +154,21 @@ define([
             aspect.after(this, 'resize', lang.hitch(this, function () {
                 this.tabContainer.resize();
             }));
+
+            this.tabChildren = this.tabContainer.getChildren();
+            if (this.defaultTab !== null) {
+                var defTab = this.tabChildren[this.defaultTab];
+                if (defTab) {
+                    this.tabContainer.selectChild(defTab);
+                }
+            }
+
+            var k = 0, len = this.hiddenTabs.length;
+            for (k = 0; k < len; k++) {
+                var tab = this.tabChildren[this.hiddenTabs[k]];
+                domStyle.set(tab.domNode, 'display', 'none');
+                domStyle.set(tab.controlButton.domNode, 'display', 'none');
+            }
         },
 
         addTopics: function () {
