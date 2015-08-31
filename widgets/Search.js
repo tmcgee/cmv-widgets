@@ -80,7 +80,7 @@ define([
             To hide specific tabs.
             This is an zero-based array so [1] would hide the second tab.
             It is an array to anticipate more than 2 tabs in a future release.
-        /*
+        */
         hiddenTabs: [],
 
         drawingOptions: {
