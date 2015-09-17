@@ -589,6 +589,9 @@ The Attribute Table subscribes to the following topics. The topicID should be un
 // execute a query
 topicID + '/executeQuery'
 
+// refresh the grid by running the previous query again
+topicID + '/refreshQuery'
+
 // populate the grid
 topicID + '/populateGrid'
 

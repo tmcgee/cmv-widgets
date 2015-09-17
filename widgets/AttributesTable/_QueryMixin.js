@@ -241,6 +241,10 @@ define([
             esriConfig.defaults.geometryService.buffer(buffParams, lang.hitch(this, 'processBufferQueryResults'));
         },
 
+        refreshQuery: function () {
+            this.executeQuery(this.queryOptions);
+        },
+
         processQueryError: function (error) {
             this.clearGrowl();
             this.executingQuery = false;

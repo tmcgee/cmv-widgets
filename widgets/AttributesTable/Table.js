@@ -140,6 +140,9 @@ define([
             // execute a query
             this.own(topic.subscribe(this.topicID + '/executeQuery', lang.hitch(this, 'executeQuery')));
 
+            // refresh the grid by running the previous query again
+            this.own(topic.subscribe(this.topicID + '/refreshQuery', lang.hitch(this, 'refreshQuery')));
+
             // get the results of the query
             this.own(topic.subscribe(this.topicID + '/getQueryResults', lang.hitch(this, 'getQueryResults')));
 
