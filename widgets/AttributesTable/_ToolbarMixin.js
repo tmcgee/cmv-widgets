@@ -2,11 +2,13 @@ define([
     'dojo/_base/declare',
     'dojo/_base/lang',
     'dojo/topic',
+    'dojo/sniff',
     'dojo/dom-style'
 ], function (
     declare,
     lang,
     topic,
+    has,
     domStyle
 ) {
 
@@ -37,7 +39,7 @@ define([
             },
 
             'export': {
-                show: true
+                show: !has('ie') || has('ie') > 9
             }
         },
 
