@@ -1,6 +1,7 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
+    'dojo/sniff',
 
     'esri/layers/GraphicsLayer',
     'esri/graphic',
@@ -13,6 +14,7 @@ define([
 ], function (
     declare,
     lang,
+    has,
 
     GraphicsLayer,
     Graphic,
@@ -251,8 +253,18 @@ define([
             });
             if (this.featureOptions && this.featureOptions.selected !== false) {
                 this.featureGraphics.on('click', lang.hitch(this, 'selectFeatureFromMap'));
-                this.featureGraphics.on('mouse-over', lang.hitch(this, 'highlightGraphic'));
-                this.featureGraphics.on('mouse-out', lang.hitch(this, 'unhighlightGraphic'));
+
+                /** HACK **
+                    The 'mouse-out' event for a GraphicsLayer is not triggered for Microsoft IE or Microsoft Edge. This appears to be due to a bug with the ESRI JavaScript API. As a result, we can't highlight a feature when the mouse is over that feature in those browser.
+                */
+                if (!has('ie') && !has('trident') && !(/Edge\/12./i.test(navigator.userAgent))) {
+                    this.featureGraphics.on('mouse-over', lang.hitch(this, function (evt) {
+                        this.highlightGraphic(evt, false);
+                    }));
+                    this.featureGraphics.on('mouse-out', lang.hitch(this, function (evt) {
+                            this.highlightGraphic(evt, true);
+                    }));
+                }
             }
             this.map.addLayer(this.featureGraphics);
 
@@ -517,10 +529,6 @@ define([
                 }
             }
             this.setToolbarButtons();
-        },
-
-        unhighlightGraphic: function (evt) {
-            this.highlightGraphic(evt, true);
         },
 
         /*******************************
