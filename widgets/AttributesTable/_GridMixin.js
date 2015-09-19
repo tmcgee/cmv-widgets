@@ -1,7 +1,7 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
-    'dojo/has',
+    'dojo/sniff',
     'dojo/_base/array',
     'dojo/date/locale',
     'dojo/number',
@@ -98,10 +98,12 @@ define([
                     gridOptions.allowFeatureSelectionAll = true;
                 }
 
-                if (options.pagination !== false) {
-                    req.push(Pagination);
-                    lang.mixin(gridOptions, options.paginationOptions);
+                // hack to show all records when there is no pagination
+                if (options.pagination !== true) {
+                    options.paginationOptions.rowsPerPage = 999999;
                 }
+                req.push(Pagination);
+                lang.mixin(gridOptions, options.paginationOptions);
 
                 // grid extensions
                 if (options.columnHide !== false) {
@@ -117,6 +119,11 @@ define([
                 var AttributeGrid = declare(req);
                 this.grid = new AttributeGrid(gridOptions, this.attributesTableGridDijit.domNode);
                 this.grid.startup();
+
+                // don't show the footer when there is no pagination
+                if (options.pagination !== true) {
+                    this.grid.set('showFooter', false);
+                }
 
                 if (this.featureOptions.selected) {
                     this.grid.on('dgrid-select', lang.hitch(this, 'selectFeaturesFromGrid'));
@@ -168,7 +175,10 @@ define([
                 }));
             }
 
-            this.grid.refresh();
+            // refresh only needs with IE?
+            if (has('ie')) {
+                this.grid.refresh();
+            }
             this.setToolbarButtons();
 
         },
