@@ -298,8 +298,7 @@ define([
             if (symbol) {
                 graphic = new Graphic(feature.geometry, symbol, feature.attributes);
                 if (this.infoTemplate) {
-                    var infoTemplate = new PopupTemplate(this.infoTemplate);
-                    graphic.setInfoTemplate(infoTemplate);
+                    graphic.setInfoTemplate(this.infoTemplate);
                 }
                 this.featureGraphics.add(graphic);
             }
@@ -351,8 +350,7 @@ define([
             if (symbol) {
                 graphic = new Graphic(feature.geometry, symbol, feature.attributes);
                 if (this.infoTemplate) {
-                    var infoTemplate = new PopupTemplate(this.infoTemplate);
-                    graphic.setInfoTemplate(infoTemplate);
+                    graphic.setInfoTemplate(this.infoTemplate);
                 }
                 this.selectedGraphics.add(graphic);
             }
