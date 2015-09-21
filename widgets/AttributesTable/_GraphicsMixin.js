@@ -8,7 +8,6 @@ define([
     'esri/symbols/SimpleMarkerSymbol',
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleFillSymbol',
-    'esri/dijit/PopupTemplate',
     'esri/graphicsUtils'
 
 ], function (
@@ -21,7 +20,6 @@ define([
     SimpleMarkerSymbol,
     SimpleLineSymbol,
     SimpleFillSymbol,
-    PopupTemplate,
     graphicsUtils
 ) {
 
