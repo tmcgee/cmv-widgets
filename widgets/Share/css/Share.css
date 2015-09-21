@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+.cmvShareWidget {
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.floatingWidget .cmvShareWidget {
+    width: 250px;
+    margin: 10px;
+}
+
+.cmvShareWidget label {
+    font-weight: bold;
+    display: block;
+}
+
+.cmvShareWidget .icon-clear {
+    clear: both;
+}
+
+.cmvShareWidget .icon-container {
+    margin: 10px;
+}
+
+.cmvShareWidget .use-extent-container,
+.cmvShareWidget .map-url-container,
+.cmvShareWidget .embed-map-container,
+.cmvShareWidget .embed-map-size-container {
+    margin-bottom: 10px;
+}
+
+.cmvShareWidget .map-size-label,
+.cmvShareWidget .extent-checkbox {
+    float: left;
+    margin-right: 5px;
+}
+
+.cmvShareWidget .esriRTL .map-size-label,
+.cmvShareWidget .esrlRTL .extent-checkbox {
+    float: right;
+    margin-left: 5px;
+}
+
+.cmvShareWidget .map-url {
+    width: 100%;
+}
+
+.cmvShareWidget .embed-map-size-dropdown {
+    float: left;
+}
+
+.cmvShareWidget .esriRTL .embed-map-size-dropdown {
+    float: right;
+}
+
+.cmvShareWidget .textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.floatingWidget .cmvShareWidget .map-url,
+.floatingWidget .cmvShareWidget .textarea {
+    width: 95%;
+}
+
+.cmvShareWidget .icon {
+    font-size: 24px;
+    float: left;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    display: block;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.cmvShareWidget .icon:hover {
+    color: rgba(0, 0, 0, 1);
+}
+
+.cmvShareWidget .icon:visited {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.cmvShareWidget .esriRTL .icon {
+    float: right;
+    margin: 0 0 0 10px;
+}
+
+/*Icon Fonts*/
+@font-face {
+    font-family: 'tool-icons';
+    src: url('./fonts/tool-icons.eot');
+    src: url('./fonts/tool-icons.eot?#iefix') format('embedded-opentype'), url('./fonts/tool-icons.woff') format('woff'), url('../fonts/tool-icons.ttf') format('truetype'), url('./fonts/tool-icons.svg#tool-icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    font-family: "tool-icons";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: 0.2em;
+    text-align: center;
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: 0.2em;
+}
+
+.cmvShareWidget .icon-twitter:before {
+    content: '\e802';
+}
+
+.cmvShareWidget .icon-facebook:before {
+    content: '\e803';
+}
+
+.cmvShareWidget .icon-gplus:before {
+    content: '\e804';
+}
+
+.cmvShareWidget .icon-mail:before {
+    content: '\e805';
+}
+
+.cmvShareWidget .icon-link:before {
+    content: '\e806';
+}

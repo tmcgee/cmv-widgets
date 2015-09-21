@@ -1,0 +1,29 @@
+<div>
+    <div class="icon-container">
+        <div tabindex="0" class="icon-facebook icon" data-dojo-attach-point="facebookButton" title="${i18n.facebookTooltip}"></div>
+        <div tabindex="0" class="icon-twitter icon" data-dojo-attach-point="twitterButton" title="${i18n.twitterTooltip}"></div>
+        <div tabindex="0" class="icon-gplus icon" data-dojo-attach-point="gplusButton" title="${i18n.gplusTooltip}"></div>
+        <div tabindex="0" class="icon-mail icon" data-dojo-attach-point="emailButton" title="${i18n.emailTooltip}"></div>
+        <div tabindex="0" class="icon-link icon" data-dojo-attach-point="linkButton" title="${i18n.url}"></div>
+        <div class="icon-clear"></div>
+    </div>
+    <div class="use-extent-container">
+        <div class="extent-checkbox" data-dojo-type="dijit/form/CheckBox" data-dojo-attach-point="extentInput"></div>
+        <label class="extent-label">${i18n.extent}</label>
+    </div>
+    <div class="map-url-container">
+        <label>${i18n.url}</label>
+        <input tabindex="0" class="map-url" autofocus="" type="text" data-dojo-attach-point="shareMapUrlText" readonly />
+    </div>
+    <div class="embed-page-container">
+        <label>${i18n.embed}</label>
+        <div class="embed-page">
+            <textarea class="textarea" index="0" autofocus="" data-dojo-attach-point="embedNode" readonly class="share-dialog-textarea"></textarea>
+        </div>
+    </div>
+    <div class="embed-map-size-container">
+        <label class="map-size-label">${i18n.size}</label>
+        <div class="embed-map-size-dropdown">
+        <select tabindex="0" data-dojo-attach-point="comboBoxNode"></select>
+    </div>
+</div>

@@ -56,6 +56,13 @@ Used in conjunction with the [Attributes Tables](https://github.com/tmcgee/cmv-w
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/search2.jpg)
 
 ---
+###Share
+Share your map by using Facebook, Twitter, Google+, E-Mail, Link, or embedded iFrame code.
+#####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Share/README.md)
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=share)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/share1.jpg)
+
+---
 ### Zoom to Feature
 A simple widget to provide a drop-down list of features to zoom to on the map. Similar to bookmarks but driven by actual data in a Map Service.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/ZoomToFeature/README.md)
