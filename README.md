@@ -36,6 +36,12 @@ Export features from the [Attributes Tables](https://github.com/tmcgee/cmv-widge
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/export1.jpg)
 
 ---
+### Geoprocessor
+An example widget demonstrating the display of results from a Geoprocessing Task in the [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget.
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=geoprocessor)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/geoprocessor1.jpg)
+
+---
 ### Multi-Field Geocoder
 Coming Soon
 
