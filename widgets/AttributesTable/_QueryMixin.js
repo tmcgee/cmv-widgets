@@ -358,6 +358,10 @@ define([
             return this.results;
         },
 
+        clearQueryResults: function () {
+            this.results = null;
+        },
+
         hasLinkedQuery: function () {
             var lq = this.linkedQuery;
             if (this.linkField && lq && lq.linkField) {

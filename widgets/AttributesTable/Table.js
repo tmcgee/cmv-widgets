@@ -146,6 +146,9 @@ define([
             // get the results of the query
             this.own(topic.subscribe(this.topicID + '/getQueryResults', lang.hitch(this, 'getQueryResults')));
 
+            // clear the results of the query
+            this.own(topic.subscribe(this.topicID + '/clearQueryResults', lang.hitch(this, 'clearQueryResults')));
+
             // populate the grid
             this.own(topic.subscribe(this.topicID + '/populateGrid', lang.hitch(this, 'populateGrid')));
 
@@ -230,6 +233,7 @@ define([
         },
 
         clearAll: function () {
+            this.clearQuery();
             this.clearFeatures();
             this.clearSelectedFeatures();
 

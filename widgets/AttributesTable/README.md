@@ -601,6 +601,9 @@ topicID + '/clearGrid'
 // get the results of the query
 topicID + '/getQueryResults'
 
+// clear the results of the query
+topicID + '/clearQueryResults'
+
 // get the features
 topicID + '/getFeatures'
 
