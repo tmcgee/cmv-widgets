@@ -139,6 +139,13 @@ define([
                 results = options.results;
             }
 
+            if (!this.results) {
+                this.results = results;
+            }
+            if (!this.idProperty) {
+                this.getIdProperty(results);
+            }
+
             var delim = '', linkField = this.linkField;
             var filteredFields = array.filter(results.fields, function (field) {
                 return (field.name === linkField);
