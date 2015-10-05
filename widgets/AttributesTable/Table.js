@@ -233,7 +233,8 @@ define([
         },
 
         clearAll: function () {
-            this.clearQuery();
+            this.clearQueryResults();
+
             this.clearFeatures();
             this.clearSelectedFeatures();
 
