@@ -28,12 +28,6 @@
 	margin-top: 10px;
 }
 
-.cmvSearchWidget .identifyIcon {
-	background-image: url(../images/identify.png);
-	width: 16px;
-	height: 16px;
-}
-
 .cmvSearchWidget .dijitSelect {
 	height: 30px;
 	width: 100%;
