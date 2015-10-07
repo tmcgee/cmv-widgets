@@ -296,13 +296,11 @@ define([
                     if (column.exportable !== false && column.hidden !== true) {
                         field = column.field;
                         val = row[field];
-                        /*
-                        // this was specific to Stor; do we lose anything by removing it?
+
                         if (column.get) {
                             val = column.get(row);
-
                         }
-                        */
+
                         if (val === null) {
                             c++;
                             return;
