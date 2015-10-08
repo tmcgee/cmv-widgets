@@ -84,7 +84,13 @@ define([], function () {
                 type: 'floating',
                 path: 'widgets/Export',
                 title: 'Export',
-                options: {}
+                options: {
+		    filename: function(){
+			var date = new Date();
+			
+			return "export_results_" + date.toLocaleDateString(); 
+		    }
+		}
             }
 		}
 	};

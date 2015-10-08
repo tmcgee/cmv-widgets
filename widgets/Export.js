@@ -152,6 +152,14 @@ define([
             }
         },
 
+	getFileName: function(extension){
+	    if (this.filename){
+		return (typeof this.filename == "function" ? this.filename.call(this) + extension : this.filename + extension)
+	    } else{
+		return "result" + extension
+	    }
+	},
+
         /*******************************
         *  Export Function
         *******************************/
@@ -198,8 +206,8 @@ define([
                 bookSST: true,
                 type: 'binary'
             });
-
-            this.downloadFile(this.s2ab(wbout), 'application/vnd.ms-excel;', 'results.xlsx', true);
+    
+            this.downloadFile(this.s2ab(wbout), 'application/vnd.ms-excel;', this.getFileName('.xlsx'), true);
         },
 
         s2ab: function (s) {
@@ -223,7 +231,8 @@ define([
                 return;
             }
             var csv = window.XLSX.utils.sheet_to_csv(ws);
-            this.downloadFile(csv, 'text/csv;charset=utf-8;', 'results.csv', true);
+	    
+            this.downloadFile(csv, 'text/csv;charset=utf-8;', this.getFileName('.csv'), true);
         },
 
         createXLSX: function () {
