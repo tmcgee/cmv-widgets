@@ -85,6 +85,10 @@ define([], function () {
                 path: 'widgets/Export',
                 title: 'Export',
                 options: {
+		    // this option can be a string or a function that returns
+		    // a string.
+		    //
+		    // filename: 'my_results'
 		    filename: function(){
 			var date = new Date();
 			
