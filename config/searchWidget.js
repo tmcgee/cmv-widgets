@@ -1,21 +1,33 @@
 define([
     'dojo/on',
+    'dojo/_base/lang',
     'dojo/date/locale'
-], function (on, locale) {
+], function (on, lang, locale) {
 
     function formatDateTime (value) {
-        var date = new Date(value);
-        return locale.format(date, {
-            formatLength: 'short'
-        });
+        if (value instanceof Date) {
+            return locale.format(value, {
+                formatLength: 'short'
+            });
+        }
+        return '';
     }
 
     function formatDate (value) {
-        var date = new Date(value);
-        return locale.format(date, {
-            selector: 'date',
-            formatLength: 'medium'
-        });
+        if (value instanceof Date) {
+            return locale.format(value, {
+                selector: 'date',
+                formatLength: 'medium'
+            });
+        }
+        return '';
+    }
+
+    function getDateTime (value) {
+        if (isNaN(value) || value === 0 || value === null) {
+            return null;
+        }
+        return new Date(value);
     }
 
     return {
@@ -67,7 +79,7 @@ define([
                                     label: 'Inspected',
                                     width: 150,
                                     get: function (object) { // allow export as a proper date
-                                        return new Date(object.inspdate);
+                                        return getDateTime(object.inspdate);
                                     },
                                     formatter: formatDateTime
                                 },
@@ -91,7 +103,7 @@ define([
                                     field: 'lastupdate',
                                     label: 'Updated',
                                     get: function (object) { // allow export as a proper date
-                                        return new Date(object.lastupdate);
+                                        return getDateTime(object.lastupdate);
                                     },
                                     formatter: formatDateTime
                                 }
@@ -123,7 +135,7 @@ define([
                             {
                                 name: 'Hospital Name',
                                 label: 'Name',
-                                expression: '(NAME LIKE \'[value]%\')',
+                                expression: '(NAME LIKE \'%[value]%\')',
                                 placeholder: 'Enter the name of the hospital',
                                 required: true,
                                 minChars: 3
@@ -150,7 +162,7 @@ define([
                                     id: 'Action',
                                     field: 'OBJECTID',
                                     label: 'Action',
-                                    width: 32,
+                                    width: 60,
                                     sortable: false,
                                     exportable: false,
                                     renderCell: function (object, value, node) {
@@ -162,8 +174,7 @@ define([
                                 },
                                 {
                                     field: 'NAME',
-                                    label: 'Name',
-                                    width: 150
+                                    label: 'Name'
                                 },
                                 {
                                     field: 'ADDRESS',
@@ -183,7 +194,7 @@ define([
                                 {
                                     field: 'ZIPCODE',
                                     label: 'Zip Code',
-                                    width: 80
+                                    width: 100
                                 },
                                 {
                                     field: 'TOTALADM',
@@ -193,9 +204,9 @@ define([
                                 {
                                     field: 'LASTUPDATE',
                                     label: 'Last Update',
-                                    width: 100,
+                                    width: 120,
                                     get: function (object) { // allow export as a proper date
-                                        return new Date(object.LASTUPDATE);
+                                        return getDateTime(object.LASTUPDATE);
                                     },
                                     formatter: formatDateTime
                                 }
