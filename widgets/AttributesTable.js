@@ -203,7 +203,10 @@ define([
             if (tab) {
                 if (options.queryOptions) {
                     tab.clearAll();
-                    tab.executeQuery(options);
+                    tab.executeQueryTask(options);
+                } else if (options.findOptions) {
+                    tab.clearAll();
+                    tab.executeFindTask(options);
                 }
             }
             return tab;

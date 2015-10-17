@@ -12,6 +12,10 @@
 	  		<div id="divAttributeQueryText">
 	    		<label data-dojo-attach-point="labelSearchTerm0">&nbsp;</label>
 	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm0" data-dojo-props="trim:true,disabled:true" />
+	            <div data-dojo-attach-point="queryContainsDom">
+	                <input type="checkbox" data-dojo-attach-point="containsSearchText" data-dojo-type="dijit/form/CheckBox" data-dojo-props="'class':'optionsCheckBox'"/>
+	                <label>${i18n.Labels.exactMatches}</label>
+	            </div>
 	    		<label data-dojo-attach-point="labelSearchTerm1">&nbsp;</label>
 	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm1" data-dojo-props="trim:true,disabled:true" />
 	    		<label data-dojo-attach-point="labelSearchTerm2">&nbsp;</label>

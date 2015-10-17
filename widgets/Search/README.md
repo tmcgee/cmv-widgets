@@ -1,5 +1,5 @@
 #Search Widget for CMV
-Used in conjunction with the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, tables and related records.
+Used in conjunction with the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, dynamic layers, tables and related records using QueryTask and FindTask.
 
 ---
 ## Example Configuration:

@@ -109,7 +109,7 @@ define([
             this.isLinkedQuery = false;
         },
 
-        executeQuery: function (options) {
+        executeQueryTask: function (options) {
             if (this.executingQuery === true) {
                 return;
             }
@@ -128,7 +128,7 @@ define([
                 this.featureOptions.buffer = false;
             }
 
-            var url = this.getURL();
+            var url = this.getQueryTaskURL();
             if (!url) {
                 return;
             }
@@ -241,8 +241,8 @@ define([
             esriConfig.defaults.geometryService.buffer(buffParams, lang.hitch(this, 'processBufferQueryResults'));
         },
 
-        refreshQuery: function () {
-            this.executeQuery(this.queryOptions);
+        refreshQueryTask: function () {
+            this.executeQueryTask(this.queryOptions);
         },
 
         processQueryError: function (error) {
@@ -386,7 +386,7 @@ define([
             }
         },
 
-        getURL: function () {
+        getQueryTaskURL: function () {
             var qp = this.queryParameters;
             var url = qp.url;
             if (!url && qp.layerID) {

@@ -137,6 +137,8 @@ define([
             var results = options;
             if (options.results) {
                 results = options.results;
+            } else {
+                options = null; // no options when it is also the results
             }
 
             if (!this.results) {
@@ -242,14 +244,17 @@ define([
         },
 
         getColumnsAndSort: function (results, options) {
-            // reset the columns?
-            if (options.columns) {
-                this.gridOptions.columns = options.columns;
-            }
 
-            // reset the sort?
-            if (options.sort) {
-                this.gridOptions.sort = options.sort;
+            if (options) {
+                // reset the columns?
+                if (options.columns) {
+                    this.gridOptions.columns = options.columns;
+                }
+
+                // reset the sort?
+                if (options.sort) {
+                    this.gridOptions.sort = options.sort;
+                }
             }
 
             // set the columns

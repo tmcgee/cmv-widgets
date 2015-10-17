@@ -10,7 +10,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 Each widget in this repo has at least one configuration example in the [config folder](https://github.com/tmcgee/cmv-widgets/tree/master/config). This folder also contains additional examples for including ESRI widgets, other widgets and functionality.
 
 ### Attributes Table(s)
-A highly configurable widget to display the results of one or more QueryTasks.
+A highly configurable widget to display the results of one or more Query, Find or Geoprocessor Tasks.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/AttributesTable/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=table)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/attributesTables1.jpg)
@@ -54,7 +54,7 @@ An updated version of the PrintPlus widget originally created by [@LarryStout](h
 
 ---
 ###Search
-Used in conjunction with the [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, tables and related records.
+Used in conjunction with the [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables) to provide a user interface for querying feature layers, dynamic layers, tables and related records using QueryTask and FindTask.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Search/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=search)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/search1.jpg)

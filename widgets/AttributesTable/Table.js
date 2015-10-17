@@ -12,7 +12,8 @@ define([
     'dijit/registry',
 
     // using mixins to make code easier to maintain
-    './_QueryMixin',
+    './_QueryTaskMixin',
+    './_FindTaskMixin',
     './_GridMixin',
     './_FeaturesMixin',
     './_GraphicsMixin',
@@ -49,6 +50,7 @@ define([
     registry,
 
     _QueryMixin,
+    _FindMixin,
     _GridMixin,
     _FeaturesMixin,
     _GraphicsMixin,
@@ -58,7 +60,17 @@ define([
     i18n
 ) {
 
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _GridMixin, _QueryMixin, _FeaturesMixin, _GraphicsMixin, _ToolbarMixin], {
+    return declare([
+        _WidgetBase,
+        _TemplatedMixin,
+        _WidgetsInTemplateMixin,
+        _GridMixin,
+        _QueryMixin,
+        _FindMixin,
+        _FeaturesMixin,
+        _GraphicsMixin,
+        _ToolbarMixin
+    ], {
         widgetsInTemplate: true,
         templateString: template,
         baseClass: 'cmvAttributesTableWidget',
@@ -99,9 +111,13 @@ define([
             this.createGrid();
             this.setToolbarButtons();
 
-            if (this.queryParameters.url || this.queryParameters.layerID) {
+            if (this.queryParameters && (this.queryParameters.url || this.queryParameters.layerID)) {
                 this.own(aspect.after(this, 'startup', lang.hitch(this, function () {
-                    this.executeQuery();
+                    this.executeQueryTask();
+                })));
+            } else if (this.findOptions && this.findOptions.url) {
+                this.own(aspect.after(this, 'startup', lang.hitch(this, function () {
+                    this.executeFindTask();
                 })));
             }
         },
@@ -111,6 +127,7 @@ define([
             if (!options) {
                 options = {
                     queryOptions: lang.clone(this.queryOptions),
+                    findOptions: lang.clone(this.findOptions),
                     gridOptions: lang.clone(this.gridOptions),
                     featureOptions: lang.clone(this.featureOptions),
                     symbolOptions: lang.clone(this.symbolOptions),
@@ -121,6 +138,9 @@ define([
             // set the options for each mixin
             if (options.queryOptions) {
                 this.getQueryConfiguration(options.queryOptions);
+            }
+            if (options.findOptions) {
+                this.getFindConfiguration(options.findOptions);
             }
             if (options.gridOptions) {
                 this.getGridConfiguration(options.gridOptions);
@@ -137,17 +157,29 @@ define([
         },
 
         addTopics: function () {
-            // execute a query
-            this.own(topic.subscribe(this.topicID + '/executeQuery', lang.hitch(this, 'executeQuery')));
+            // execute a query task
+            this.own(topic.subscribe(this.topicID + '/executeQuery', lang.hitch(this, 'executeQueryTask')));
 
-            // refresh the grid by running the previous query again
-            this.own(topic.subscribe(this.topicID + '/refreshQuery', lang.hitch(this, 'refreshQuery')));
+            // refresh the grid by running the previous query task again
+            this.own(topic.subscribe(this.topicID + '/refreshQuery', lang.hitch(this, 'refreshQueryTask')));
 
-            // get the results of the query
+            // get the results of the query task
             this.own(topic.subscribe(this.topicID + '/getQueryResults', lang.hitch(this, 'getQueryResults')));
 
-            // clear the results of the query
+            // clear the results of the query task
             this.own(topic.subscribe(this.topicID + '/clearQueryResults', lang.hitch(this, 'clearQueryResults')));
+
+            // execute a find task
+            this.own(topic.subscribe(this.topicID + '/executeFind', lang.hitch(this, 'executeFindTask')));
+
+            // refresh the grid by running the previous find task again
+            this.own(topic.subscribe(this.topicID + '/refreshFind', lang.hitch(this, 'refreshFindTask')));
+
+            // get the results of the find task
+            this.own(topic.subscribe(this.topicID + '/getFindResults', lang.hitch(this, 'getFindResults')));
+
+            // clear the results of the find task
+            this.own(topic.subscribe(this.topicID + '/clearFindResults', lang.hitch(this, 'clearFindResults')));
 
             // populate the grid
             this.own(topic.subscribe(this.topicID + '/populateGrid', lang.hitch(this, 'populateGrid')));
@@ -234,6 +266,7 @@ define([
 
         clearAll: function () {
             this.clearQueryResults();
+            this.clearFindResults();
 
             this.clearFeatures();
             this.clearSelectedFeatures();

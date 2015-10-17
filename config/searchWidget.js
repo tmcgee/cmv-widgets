@@ -10,6 +10,14 @@ define([
         });
     }
 
+    function formatDate (value) {
+        var date = new Date(value);
+        return locale.format(date, {
+            selector: 'date',
+            formatLength: 'medium'
+        });
+    }
+
     return {
         map: true,
         mapClickMode: true,
@@ -265,6 +273,66 @@ define([
                                     attribute: 'PDNAME',
                                     descending: 'ASC'
                                 }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                name: 'Public Safety by Name',
+                findOptions: {
+                    url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
+                    layerIds: [1, 2, 3, 4, 5, 6, 7],
+                    searchFields: ['FDNAME, PDNAME', 'NAME', 'RESNAME']
+                },
+                attributeSearches: [
+                    {
+                        name: 'Search for Public Safety Locations By Name',
+                        searchFields: [
+                            {
+                                name: 'Name',
+                                label: 'Name',
+                                expression: '[value]%\')',
+                                placeholder: 'fdname, pdname, name or resname',
+                                required: true,
+                                minChars: 3
+                            }
+                        ],
+
+                        title: 'Public Safety Locations',
+                        topicID: 'findPublicSafterQuery',
+                        gridOptions: {
+                            columns: [
+                                {
+                                    field: 'value',
+                                    label: 'Name'
+                                },
+                                {
+                                    field: 'displayFieldName',
+                                    label: 'Field',
+                                    width: 150
+                                },
+                                {
+                                    field: 'layerName',
+                                    label: 'Layer',
+                                    width: 150
+                                },
+                                {
+                                    field: 'Last Update Date',
+                                    label: 'Last Updated',
+                                    width: 150,
+                                    get: function (object) { // allow export as a proper date
+                                        return new Date(object['Last Update Date']);
+                                    },
+                                    formatter: formatDate
+
+                                }
+                            ],
+                            sort: [
+                               {
+                                   attribute: 'Name',
+                                   descending: false
+                               }
                             ]
                         }
                     }

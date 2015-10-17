@@ -51,9 +51,10 @@ define([
         getFeaturesFromResults: function () {
             var results = this.results;
             var features = [];
+
             if (results.features) {
                 features = results.features;
-            } else if (this.queryParameters.type === 'relationship') {
+            } else if (this.queryParameters && this.queryParameters.type === 'relationship') {
                 for (var key in results) {
                     if (results.hasOwnProperty(key)) {
                         var item  = results[key];
@@ -62,7 +63,31 @@ define([
                         }
                     }
                 }
+            } else if ((results.length > 0) && (results[0].feature)) {
+                var k = 0, len = results.length, result = null;
+                var feature = null, attributes = null;
+                this.idProperty = 'recID-' + Math.random();
+                for (k =0; k< len; k++) {
+                    result = results[k];
+                    feature = result.feature;
+                    attributes = feature.attributes;
+                    attributes[this.idProperty] = k;
+                    if (!attributes.value) {
+                        attributes.value = result.value;
+                    }
+                    if (!attributes.displayFieldName) {
+                        attributes.displayFieldName = result.displayFieldName;
+                    }
+                    if (!attributes.foundFieldName) {
+                        attributes.foundFieldName = result.foundFieldName;
+                    }
+                    if (!attributes.layerName) {
+                        attributes.layerName = result.layerName;
+                    }
+                    features.push(feature);
+                }
             }
+
             this.features = features;
             return features;
         },

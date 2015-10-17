@@ -8,7 +8,8 @@ define({
             displayBuffer: 'Display Buffer Only',
             selectFeaturesBy: 'Select Features By',
             tabTitleByAttribute: 'By Attribute',
-            tabTitleByShape: 'By Shape'
+            tabTitleByShape: 'By Shape',
+            exactMatches: 'Find exact matches only'
         },
         Buttons: {
             search: 'Search',
