@@ -1,3 +1,4 @@
+/*eslint strict: 0, no-console: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -27,7 +28,7 @@ define([
 
     // css
     'xstyle/css!./Share/css/Share.css'
-],function (
+], function (
     declare,
     _WidgetBase,
     _TemplatedMixin,
@@ -167,7 +168,7 @@ define([
                     this.map.setExtent(extent);
                 }
             }
-         },
+        },
 
         updateUI: function () {
 
@@ -286,10 +287,8 @@ define([
                 this.extentEvt = this.own(this.map.on('extent-change', lang.hitch(this, function () {
                     this.updateUrl();
                 })));
-            } else {
-                if (this.extentEvt && this.extentEvt.remove) {
-                    this.extentEvt.remove();
-                }
+            } else if (this.extentEvt && this.extentEvt.remove) {
+                this.extentEvt.remove();
             }
         },
 

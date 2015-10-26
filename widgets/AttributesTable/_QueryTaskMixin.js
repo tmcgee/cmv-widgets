@@ -26,6 +26,7 @@ define([
     QueryTask,
     BufferParameters
 ) {
+    'use strict';
 
     return declare(null, {
 
@@ -344,12 +345,9 @@ define([
                         }
                     });
 
-                } else {
-                    if (this.featureOptions.source) {
-                        this.addSourceGraphic(this.queryParameters.geometry);
-                        this.zoomToBufferGraphics();
-                    }
-
+                } else if (this.featureOptions.source) {
+                    this.addSourceGraphic(this.queryParameters.geometry);
+                    this.zoomToBufferGraphics();
                 }
             }
         },

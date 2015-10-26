@@ -1,3 +1,4 @@
+/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -148,7 +149,7 @@ define([
             var parent = this.getParent();
             if (parent) {
                 this.own(on(parent, 'show', lang.hitch(this, function () {
-                  this.tabContainer.resize();
+                    this.tabContainer.resize();
                 })));
             }
             aspect.after(this, 'resize', lang.hitch(this, function () {
@@ -194,11 +195,8 @@ define([
                 return;
             }
 
-            var distance, unit, showOnly = false;
             var layer = this.layers[layerIndex];
             var search = layer.attributeSearches[this.searchIndex] || {};
-            var searchTerm = null;
-
             var searchOptions = {
                 title: search.title || layer.title || this.title,
                 topicID: search.topicID || layer.topicID || this.topicID,
@@ -212,82 +210,9 @@ define([
             };
 
             if (layer.findOptions) { // It is a FindTask
-                if (search.searchFields.length > 0) {
-                    searchTerm = this.getSearchTerm(0, search.searchFields[0]);
-                    if (searchTerm === null) {
-                        return;
-                    }
-                }
-                searchOptions.findOptions = lang.mixin(layer.findOptions, {
-                    searchText: searchTerm,
-                    contains: !this.containsSearchText.checked,
-                    outSpatialReference: search.outSpatialReference || this.map.spatialReference
-                });
-
+                searchOptions.findOptions = this.buildFindOptions(layer, search);
             } else {
-
-                var where = layer.expression || '';
-
-                if (geometry) {
-                    distance = this.inputBufferDistance.get('value');
-                    if (isNaN(distance)) {
-                        topic.publish('growler/growl', {
-                            title: 'Search',
-                            message: 'Invalid distance',
-                            level: 'error',
-                            timeout: 3000
-                        });
-                        return;
-                    }
-                    unit = this.selectBufferUnits.get('value');
-                    showOnly = this.checkBufferOnly.get('checked');
-
-                } else {
-                    var fields = search.searchFields;
-                    var len = fields.length;
-                    for (var k = 0; k < len; k++) {
-                        var field = fields[k];
-                        searchTerm = this.getSearchTerm(k, field);
-                        if (searchTerm === null) {
-                            return;
-                        } else if (searchTerm.length > 0 && field.expression) {
-                            var attrWhere = field.expression;
-                            attrWhere = attrWhere.replace(/\[value\]/g, searchTerm);
-                            if (!attrWhere) {
-                                break;
-                            }
-                            if (where !== '') {
-                                where += ' AND ';
-                            }
-                            where += attrWhere;
-                        }
-                    }
-                }
-
-                var queryOptions = {
-                    idProperty: search.idProperty || layer.idProperty || 'FID',
-                    linkField: search.linkField || layer.linkField || null,
-                    linkedQuery: lang.clone(search.linkedQuery || layer.linkedQuery || null)
-                };
-
-                var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
-                queryOptions.queryParameters = lang.mixin(queryParameters, {
-                    //type: search.type || layer.type || 'spatial',
-                    geometry: geometry,
-                    where: where,
-                    outSpatialReference: search.outSpatialReference || this.map.spatialReference,
-                    spatialRelationship: search.spatialRelationship || layer.spatialRelationship || Query.SPATIAL_REL_INTERSECTS
-                });
-
-                var bufferParameters = lang.clone(search.bufferParameters || layer.bufferParameters || {});
-                queryOptions.bufferParameters = lang.mixin(bufferParameters, {
-                    distance: distance,
-                    unit: unit,
-                    showOnly: showOnly
-                });
-
-                searchOptions.queryOptions = queryOptions;
-
+                searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry);
             }
 
             // publish to an accompanying attributed table
@@ -295,6 +220,94 @@ define([
                 topic.publish(this.attributesContainerID + '/addTable', searchOptions);
             }
 
+        },
+
+        buildQueryOptions: function (layer, search, geometry) {
+            var where, distance, unit, showOnly = false;
+            var queryOptions = {
+                idProperty: search.idProperty || layer.idProperty || 'FID',
+                linkField: search.linkField || layer.linkField || null,
+                linkedQuery: lang.clone(search.linkedQuery || layer.linkedQuery || null)
+            };
+
+            if (geometry) {
+                distance = this.inputBufferDistance.get('value');
+                if (isNaN(distance)) {
+                    topic.publish('growler/growl', {
+                        title: 'Search',
+                        message: 'Invalid distance',
+                        level: 'error',
+                        timeout: 3000
+                    });
+                    return null;
+                }
+                unit = this.selectBufferUnits.get('value');
+                showOnly = this.checkBufferOnly.get('checked');
+
+            } else {
+                where = this.buildWhereClause(layer, search);
+            }
+
+            var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
+            queryOptions.queryParameters = lang.mixin(queryParameters, {
+                //type: search.type || layer.type || 'spatial',
+                geometry: geometry,
+                where: where,
+                outSpatialReference: search.outSpatialReference || this.map.spatialReference,
+                spatialRelationship: search.spatialRelationship || layer.spatialRelationship || Query.SPATIAL_REL_INTERSECTS
+            });
+
+            var bufferParameters = lang.clone(search.bufferParameters || layer.bufferParameters || {});
+            queryOptions.bufferParameters = lang.mixin(bufferParameters, {
+                distance: distance,
+                unit: unit,
+                showOnly: showOnly
+            });
+
+            return queryOptions;
+
+
+        },
+
+        buildFindOptions: function (layer, search) {
+            var searchTerm = null;
+            if (search.searchFields.length > 0) {
+                searchTerm = this.getSearchTerm(0, search.searchFields[0]);
+                if (searchTerm === null) {
+                    return null;
+                }
+            }
+            return lang.mixin(layer.findOptions, {
+                searchText: searchTerm,
+                contains: !this.containsSearchText.checked,
+                outSpatialReference: search.outSpatialReference || this.map.spatialReference
+            });
+        },
+
+        buildWhereClause: function (layer, search) {
+            var where = layer.expression || '';
+            var fields = search.searchFields;
+            var searchTerm = null;
+
+            var len = fields.length;
+            for (var k = 0; k < len; k++) {
+                var field = fields[k];
+                searchTerm = this.getSearchTerm(k, field);
+                if (searchTerm === null) {
+                    return null;
+                } else if (searchTerm.length > 0 && field.expression) {
+                    var attrWhere = field.expression;
+                    attrWhere = attrWhere.replace(/\[value\]/g, searchTerm);
+                    if (!attrWhere) {
+                        break;
+                    }
+                    if (where !== '') {
+                        where += ' AND ';
+                    }
+                    where += attrWhere;
+                }
+            }
+            return where;
         },
 
         getSearchTerm: function (idx, field) {
@@ -449,7 +462,7 @@ define([
                         }
 
                         // only show "Contains" checkbox for FindTasks
-                        domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block': 'none'));
+                        domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
 
                         // put focus on the first input field
                         this.inputSearchTerm0.domNode.focus();
@@ -560,7 +573,7 @@ define([
             this.searchFreehandPolygonButtonDijit.set('checked', false);
         },
 
-        endDrawing: function(evt) {
+        endDrawing: function (evt) {
             var clickMode = this.mapClickMode;
             this.uncheckDrawingTools();
             this.map.enableMapNavigation();
@@ -653,6 +666,7 @@ define([
         /*******************************
         *  Miscellaneous Functions
         *******************************/
+
         hideInfoWindow: function () {
             if (this.map && this.map.infoWindow) {
                 this.map.infoWindow.hide();

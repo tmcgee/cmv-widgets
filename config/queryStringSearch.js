@@ -1,21 +1,21 @@
 define([
     'dojo/io-query'
 ], function (ioQuery) {
-
+    'use strict';
     var uri = window.location.href;
     var qs = uri.substring(uri.indexOf('?') + 1, uri.length);
     var qsObj = ioQuery.queryToObject(qs);
     var fips = qsObj.fips || '';
 
-	return {
-		isDebug: false,
+    return {
+        isDebug: false,
 
-		mapOptions: {
+        mapOptions: {
             basemap: 'streets',
             center: [-96.59179687497497, 39.09596293629694],
             zoom: 5,
-			sliderStyle: 'small'
-		},
+            sliderStyle: 'small'
+        },
 
         panes: {
             left: {
@@ -33,10 +33,9 @@ define([
             }
         },
 
-		operationalLayers: [
-        ],
+        operationalLayers: [],
 
-		widgets: {
+        widgets: {
             growler: {
                 include: true,
                 id: 'growler',
@@ -80,6 +79,6 @@ define([
                     ]
                 }
             }
-		}
-	};
+        }
+    };
 });

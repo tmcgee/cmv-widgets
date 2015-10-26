@@ -1,3 +1,4 @@
+/*eslint dot-notation: 0 */
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
@@ -11,6 +12,7 @@ define([
     has,
     domStyle
 ) {
+    'use strict';
 
     return declare(null, {
 
@@ -126,12 +128,12 @@ define([
             var feat = this.features;
             var store = this.grid.get('store');
 
-            disabled = ((feat && feat.length > 0) || (store.data && store.data.length > 0)) ? false : true;
+            var disabled = ((feat && feat.length > 0) || (store.data && store.data.length > 0)) ? false : true;
             this.attributesTableExportButton.set('disabled', disabled);
             this.attributesTableZoomDropDownButton.set('disabled', disabled);
             this.attributesTableClearDropDownButton.set('disabled', disabled);
 
-            var disabled = (feat && feat.length > 0) ? false : true;
+            disabled = (feat && feat.length > 0) ? false : true;
             this.attributesTableClearFeatures.set('disabled', disabled);
             this.attributesTableZoomToFeatures.set('disabled', disabled);
 

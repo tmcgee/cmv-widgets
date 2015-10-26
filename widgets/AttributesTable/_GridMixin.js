@@ -31,6 +31,7 @@ define([
     ColumnResizer,
     Pagination
 ) {
+    'use strict';
 
     return declare(null, {
 
@@ -148,15 +149,17 @@ define([
                 this.getIdProperty(results);
             }
 
+            /* apparently not used
             var delim = '', linkField = this.linkField;
             var filteredFields = array.filter(results.fields, function (field) {
                 return (field.name === linkField);
             });
-            if (filteredFields.length >0) {
+            if (filteredFields.length > 0) {
                 if (filteredFields[0].type === 'esriFieldTypeString') {
                     delim = '\'';
                 }
             }
+            */
 
             var features = this.getFeaturesFromResults();
             var rows = [];
@@ -194,7 +197,7 @@ define([
 
         getRecordFromFeature: function (feature) {
             var rows = [], delim = '';
-            var lq =  null;
+            var lq = null;
             if (this.hasLinkedQuery()) {
                 lq = this.linkedQuery;
             }
@@ -220,7 +223,7 @@ define([
 
         getRelatedRecords: function (feature) {
             var rows = [], delim = '', objectID = feature.objectId;
-            var lq =  null;
+            var lq = null;
             if (this.hasLinkedQuery()) {
                 lq = this.linkedQuery;
             }
@@ -274,7 +277,7 @@ define([
             // set the sort
             var sort = this.gridOptions.sort || [];
             // sort === 'inherit'? use query result order
-            if (typeof sort === 'string' && sort.toLowerCase() === 'inherit'){
+            if (typeof(sort) === 'string' && sort.toLowerCase() === 'inherit') {
                 return;
             }
             // no sort? use the first column
@@ -319,23 +322,25 @@ define([
                             width: 100
                         };
                         switch (field.type) {
-                            case 'esriFieldTypeString':
-                                col.width = 150;
-                                break;
-                            case 'esriFieldTypeSmallInteger':
-                            case 'esriFieldTypeInteger':
-                                col.formatter = formatNumber;
-                                col.style += 'text-align:right;';
-                                break;
-                            case 'esriFieldTypeSingle':
-                            case 'esriFieldTypeDouble':
-                                col.formatter = formatSingleDouble;
-                                col.style += 'text-align:right;';
-                                break;
-                            case 'esriFieldTypeDate':
-                                col.width = 150;
-                                col.formatter = formatDateTime;
-                                break;
+                        case 'esriFieldTypeString':
+                            col.width = 150;
+                            break;
+                        case 'esriFieldTypeSmallInteger':
+                        case 'esriFieldTypeInteger':
+                            col.formatter = formatNumber;
+                            col.style += 'text-align:right;';
+                            break;
+                        case 'esriFieldTypeSingle':
+                        case 'esriFieldTypeDouble':
+                            col.formatter = formatSingleDouble;
+                            col.style += 'text-align:right;';
+                            break;
+                        case 'esriFieldTypeDate':
+                            col.width = 150;
+                            col.formatter = formatDateTime;
+                            break;
+                        default:
+                            break;
                         }
                         columns.push(col);
                     }

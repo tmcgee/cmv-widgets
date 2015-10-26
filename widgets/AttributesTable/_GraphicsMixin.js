@@ -22,6 +22,7 @@ define([
     SimpleFillSymbol,
     graphicsUtils
 ) {
+    'use strict';
 
     return declare(null, {
 
@@ -260,7 +261,7 @@ define([
                         this.highlightGraphic(evt, false);
                     }));
                     this.featureGraphics.on('mouse-out', lang.hitch(this, function (evt) {
-                            this.highlightGraphic(evt, true);
+                        this.highlightGraphic(evt, true);
                     }));
                 }
             }
@@ -515,6 +516,8 @@ define([
                     } else {
                         symbol = this.highlightedPolygonSymbol;
                     }
+                    break;
+                default:
                     break;
                 }
                 if (symbol) {

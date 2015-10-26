@@ -1,3 +1,4 @@
+/*eslint strict: 0, no-alert: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -53,7 +54,7 @@ define([
                 });
                 this.addChild(this.tabContainer);
                 this.tabContainer.startup();
-                this.tabContainer.watch('selectedChildWidget', function(name, oldVal, newVal){
+                this.tabContainer.watch('selectedChildWidget', function (name, oldVal, newVal) {
                     if (oldVal && oldVal.unselectTab) {
                         oldVal.unselectTab(name);
                     }
@@ -76,11 +77,8 @@ define([
                 }
 
                 // just add a table
-            } else {
-                if (this.tables && this.tables.length > 0) {
-                    this.addTables(this.tables);
-                }
-
+            } else if (this.tables && this.tables.length > 0) {
+                this.addTables(this.tables);
             }
 
             aspect.after(this, 'resize', lang.hitch(this, 'resizeChildren'));
@@ -115,7 +113,7 @@ define([
         addTable: function (table) {
             var tab = this.addTab(table);
             topic.publish(this.topicID + '/tableAdded', tab);
-            return  tab;
+            return tab;
         },
 
         // remove a existing Table by ID
@@ -135,10 +133,10 @@ define([
             if (!options.id) {
                 options.id = 'attrTab-' + options.topicID;
             }
-            if (typeof options.closable == 'undefined'){
+            if (typeof options.closable === 'undefined') {
                 options.closable = true;
             }
-            if (typeof options.confirmClose == 'undefined'){
+            if (typeof options.confirmClose === 'undefined') {
                 options.confirmClose = true;
             }
             options.map = this.map;
@@ -146,7 +144,7 @@ define([
 
             if (this.useTabs) {
                 if (!tabs) {
-                    return;
+                    return null;
                 }
                 // see if the tab exists already
                 if (tabs.hasChildren()) {
@@ -233,7 +231,7 @@ define([
                         top = 35;
                     }
                 }
-                children =this.tabContainer.getChildren();
+                children = this.tabContainer.getChildren();
 
             } else {
                 children = this.getChildren();

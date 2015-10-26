@@ -1,8 +1,10 @@
+/*eslint no-alert: 0*/
 define([
     'dojo/on',
     'dojo/_base/lang',
     'dojo/date/locale'
 ], function (on, lang, locale) {
+    'use strict';
 
     function formatDateTime (value) {
         if (value instanceof Date) {
@@ -340,10 +342,10 @@ define([
                                 }
                             ],
                             sort: [
-                               {
-                                   attribute: 'Name',
-                                   descending: false
-                               }
+                                {
+                                    attribute: 'Name',
+                                    descending: false
+                                }
                             ]
                         }
                     }

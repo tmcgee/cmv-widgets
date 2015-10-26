@@ -1,6 +1,6 @@
+/*eslint strict: 0, no-console: 0 */
 //http://resources.arcgis.com/en/help/main/10.2/index.html#//0154000004w8000000
 //https://developers.arcgis.com/javascript/jssamples/map_showloading.html
-
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -56,7 +56,7 @@ define([
 
     'xstyle/css!./PrintPlus/css/Print.css'
 
-], function(
+], function (
     declare,
     _WidgetBase,
     _TemplatedMixin,
@@ -98,6 +98,36 @@ define([
 
 ) {
 
+    // Print result dijit
+    var PrintResultDijit = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+        widgetsInTemplate: true,
+        templateString: printResultTemplate,
+        url: null,
+        postCreate: function () {
+            this.inherited(arguments);
+            this.fileHandle.then(lang.hitch(this, '_onPrintComplete'), lang.hitch(this, '_onPrintError'));
+        },
+        _onPrintComplete: function (data) {
+            if (data.url) {
+                this.url = data.url;
+                this.nameNode.innerHTML = '<span class="bold">' + this.docName + '</span>';
+                domClass.add(this.resultNode, 'printResultHover');
+            } else {
+                this._onPrintError('Error, try again');
+            }
+        },
+        _onPrintError: function (err) {
+            console.log(err.toString()); //lcs - BUG - added toString()
+            this.nameNode.innerHTML = '<span class="bold">Error, try again</span>';
+            domClass.add(this.resultNode, 'printResultError');
+        },
+        _openPrint: function () {
+            if (this.url !== null) {
+                window.open(this.url);
+            }
+        }
+    });
+
     // Main print dijit
     var PrintDijit = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         widgetsInTemplate: true,
@@ -123,31 +153,34 @@ define([
         suspendExtentHandler: false,
         // scaleLabelMaps defines the location of scale labels for an array of scales with length equal to the index in this array + 1
         // (e.g. an array of scales with length 7 would have labels for the first, third, fifth, and seventh scales ([0, 2, 4, 6]))
-        scaleLabelMaps: [[0],[0,1],[0,1,2],[0,1,2,3],[0,1,2,3,4],[0,5],[0,2,4,6],[0,7],[0,2,4,6,8],[0,3,6,9],[0,5,10],[0,11],[0,6,12],
-                         [0,13],[0,7,14],[0,5,10,15],[0,4,8,12,16],[0,17],[0,9,18],[0,19],[0,5,10,15,20],[0,7,14,21],[0,11,22],[0,23],
-                         [0,6,12,18,24],[0,5,10,15,20,25],[0,13,26],[0,9,18,27],[0,7,14,21,28],[0,29],[0,10,19,30],[0,8,16,23,31],
-                         [0,8,16,24,32],[0,11,22,33],[0,17,34],[0,7,14,24,28,35],[0,9,18,28,36],[0,37],[0,19,38],[0,13,25,39]],
+        scaleLabelMaps: [[0], [0, 1], [0, 1, 2], [0, 1, 2, 3], [0, 1, 2, 3, 4], [0, 5], [0, 2, 4, 6], [0, 7], [0, 2, 4, 6, 8], [0, 3, 6, 9], [0, 5, 10], [0, 11], [0, 6, 12],
+            [0, 13], [0, 7, 14], [0, 5, 10, 15], [0, 4, 8, 12, 16], [0, 17], [0, 9, 18], [0, 19], [0, 5, 10, 15, 20], [0, 7, 14, 21], [0, 11, 22], [0, 23],
+            [0, 6, 12, 18, 24], [0, 5, 10, 15, 20, 25], [0, 13, 26], [0, 9, 18, 27], [0, 7, 14, 21, 28], [0, 29], [0, 10, 19, 30], [0, 8, 16, 23, 31],
+            [0, 8, 16, 24, 32], [0, 11, 22, 33], [0, 17, 34], [0, 7, 14, 24, 28, 35], [0, 9, 18, 28, 36], [0, 37], [0, 19, 38], [0, 13, 25, 39]],
         //Print Enhancements END
         //
         baseClass: 'gis_PrintPlusDijit',
         printTaskURL: null,
         printTask: null,
 
-        postCreate: function() {
+        postCreate: function () {
             this.inherited(arguments);
             this.printTask = new PrintTask(this.printTaskURL);
             this.printparams = new PrintParameters();
             this.printparams.map = this.map;
             this.printparams.outSpatialReference = (this.outWkid && this.outWkid !== undefined) ? new SpatialReference(this.outWkid) : this.map.spatialReference;
             if (this.showLayout) {
-                this.mapUnitsToMeters = this.getUnitToMetersFactor(this.map._params.units);  //Print Plus Enhancements (this may break in future API releases)
+                this.mapUnitsToMeters = this.getUnitToMetersFactor(this.map._params.units); //Print Plus Enhancements (this may break in future API releases)
                 if (isNaN(this.mapUnitsToMeters.x) || isNaN(this.mapUnitsToMeters.y)) {
                     this.showLayout = false;
-                } else if (this.map._params.units == Units.DECIMAL_DEGREES || this.map.spatialReference.isWebMercator) {
-                    this.printGL = new GraphicsLayer({ id: 'printGraphics', opacity: 1.0 });
+                } else if (this.map._params.units === Units.DECIMAL_DEGREES || this.map.spatialReference.isWebMercator) {
+                    this.printGL = new GraphicsLayer({
+                        id: 'printGraphics',
+                        opacity: 1.0
+                    });
                     this.map.addLayer(this.printGL);
-                    this.printGL.enableMouseEvents();  //Print Plus Enhancements
-                    var e = this.map.extent;  // change this to get the initial extent???
+                    this.printGL.enableMouseEvents(); //Print Plus Enhancements
+                    var e = this.map.extent; // change this to get the initial extent???
                     var lineN = new Polyline(this.map.spatialReference);
                     lineN.addPath([[e.xmin, e.ymax], [e.xmax, e.ymax]]);
                     var lineS = new Polyline(this.map.spatialReference);
@@ -156,14 +189,17 @@ define([
                     lineE.addPath([[e.xmax, e.ymax], [e.xmax, e.ymin]]);
                     var lineW = new Polyline(this.map.spatialReference);
                     lineW.addPath([[e.xmin, e.ymax], [e.xmin, e.ymin]]);
-                    var eDims = { x: e.getWidth(), y: e.getHeight() };
+                    var eDims = {
+                        x: e.getWidth(),
+                        y: e.getHeight()
+                    };
                     var lp = new LengthsParameters();
                     lp.polylines = [lineN, lineS, lineE, lineW];
                     lp.lengthUnit = esriConfig.defaults.geometryService.UNIT_METER;
                     lp.geodesic = true;
                     esriConfig.defaults.geometryService.lengths(lp,
-                        lang.hitch(this, function(result) {
-                            if (result.lengths.length == 4) {
+                        lang.hitch(this, function (result) {
+                            if (result.lengths.length === 4) {
                                 var southRatio = (result.lengths[0] / eDims.x);
                                 var northRatio = (result.lengths[1] / eDims.x);
                                 var westRatio = (result.lengths[2] / eDims.y);
@@ -183,8 +219,7 @@ define([
                                 }
                             }
                         }),
-                        lang.hitch(this, function() {
-                            console.log('error');
+                        lang.hitch(this, function () {
                             this.showLayout = false;
                             if (this.growler) {
                                 this.growler.growl({
@@ -195,7 +230,10 @@ define([
                         })
                     );
                 } else {
-                    this.printGL = new GraphicsLayer({ id: 'printGraphics', opacity: 1.0 });
+                    this.printGL = new GraphicsLayer({
+                        id: 'printGraphics',
+                        opacity: 1.0
+                    });
                     this.map.addLayer(this.printGL);
                     this.printGL.enableMouseEvents();
                 }
@@ -206,7 +244,7 @@ define([
             }
 
             if (this.parentWidget && this.parentWidget.toggleable) {
-                this.own(aspect.after(this.parentWidget, 'toggle', lang.hitch(this, function() {
+                this.own(aspect.after(this.parentWidget, 'toggle', lang.hitch(this, function () {
                     this._onLayoutChange(this.parentWidget.open);
                 })));
             }
@@ -224,15 +262,15 @@ define([
             //aspect.after(this.printTask, '_createOperationalLayers', this.operationalLayersInspector, false);
         },
 
-        operationalLayersInspector: function(opLayers) {
-            array.forEach(opLayers, function(layer) {
-                if (layer.id == 'Measurement_graphicslayer') {
-                    array.forEach(layer.featureCollection.layers, function(fcLayer) {
-                        array.forEach(fcLayer.featureSet.features, function(feature) {
+        operationalLayersInspector: function (opLayers) {
+            array.forEach(opLayers, function (layer) {
+                if (layer.id === 'Measurement_graphicslayer') {
+                    array.forEach(layer.featureCollection.layers, function (fcLayer) {
+                        array.forEach(fcLayer.featureSet.features, function (feature) {
                             delete feature.attributes;
                             feature.symbol.font.family = 'Courier';
-                            //feature.symbol.font.variant = esri.symbol.Font.VARIANT_NORMAL;
-                            //feature.symbol.font.size = '32pt';
+                        //feature.symbol.font.variant = esri.symbol.Font.VARIANT_NORMAL;
+                        //feature.symbol.font.size = '32pt';
                         });
                     });
                 }
@@ -240,20 +278,27 @@ define([
             return opLayers;
         },
 
-        initializeFeatureLayers: function() {
+        initializeFeatureLayers: function () {
             this.featureLayerStatus = [];
-            array.forEach(this.map.graphicsLayerIds, lang.hitch(this, function(item) {
+            array.forEach(this.map.graphicsLayerIds, lang.hitch(this, function (item) {
                 var l = this.map.getLayer(item);
-                if (l.hasOwnProperty('type') && l.type == 'Feature Layer') {
-                    this.featureLayerStatus.push({ id: l.id, value: true });
-                    l.on('update-start', lang.hitch(this, function() {
-                        array.forEach(this.featureLayerStatus, function(item) {
-                            if (item.id == l.id) { item.value = false; }
+                if (l.hasOwnProperty('type') && l.type === 'Feature Layer') {
+                    this.featureLayerStatus.push({
+                        id: l.id,
+                        value: true
+                    });
+                    l.on('update-start', lang.hitch(this, function () {
+                        array.forEach(this.featureLayerStatus, function (startItem) {
+                            if (startItem.id === l.id) {
+                                startItem.value = false;
+                            }
                         });
                     }));
-                    l.on('update-end', lang.hitch(this, function() {
-                        array.forEach(this.featureLayerStatus, function(item) {
-                            if (item.id == l.id) { item.value = true; }
+                    l.on('update-end', lang.hitch(this, function () {
+                        array.forEach(this.featureLayerStatus, function (endItem) {
+                            if (endItem.id === l.id) {
+                                endItem.value = true;
+                            }
                         });
                         this.printAndRestoreSettings();
                     }));
@@ -261,11 +306,11 @@ define([
             }));
         },
 
-        _handleError: function(err) {
-            console.log(1, err.toString());  //lcs - BUG - added toString()
+        _handleError: function (err) {
+            console.log(1, err.toString()); //lcs - BUG - added toString()
         },
 
-        _handlePrintInfo: function(data) {
+        _handlePrintInfo: function (data) {
             //Print Plus Enhancements BEGIN (somehow, this is required to set the value of this.noTitleBlockPrefix)
             /*
             var dummy = new Memory({
@@ -275,15 +320,15 @@ define([
             var prefix = this.noTitleBlockPrefix;
             //Print Plus Enhancements END
 
-            var Layout_Template = array.filter(data.parameters, function(param) {
+            var layoutTemplate = array.filter(data.parameters, function (param) {
                 return param.name === 'Layout_Template';
             });
-            if (Layout_Template.length === 0) {
+            if (layoutTemplate.length === 0) {
                 console.log('print service parameters name for templates must be "Layout_Template"');
                 return;
             }
             //var allLayoutItems = Layout_Template[0].choiceList;  //Print Plus Enhancements
-            var layoutItems = array.map(Layout_Template[0].choiceList, function(item) {
+            var layoutItems = array.map(layoutTemplate[0].choiceList, function (item) {
                 return {
                     name: item,
                     id: item
@@ -292,38 +337,39 @@ define([
 
             //Print Plus Enhancements BEGIN
             // Filter out the No Title Block templates
-            layoutItems = array.filter(layoutItems, function(item) {
+            layoutItems = array.filter(layoutItems, function (item) {
                 return item.name.indexOf(prefix) !== 0;
             });
 
             // Replace the names with the aliases
+            var keys;
             if (this.layoutParams) {
-                var keys = Object.keys(this.layoutParams);
-                array.forEach(layoutItems, lang.hitch(this, function(item) {
-                   var index = array.indexOf(keys, item.id);
-                   if (index) {
-                       var key = keys[index];
-                       if (key) {
-                            var layout =this.layoutParams[key];
+                keys = Object.keys(this.layoutParams);
+                array.forEach(layoutItems, lang.hitch(this, function (item) {
+                    var index = array.indexOf(keys, item.id);
+                    if (index) {
+                        var key = keys[index];
+                        if (key) {
+                            var layout = this.layoutParams[key];
                             if (layout) {
                                 item.name = layout.alias;
                             }
                         }
-                   }
+                    }
                 }));
 
             }
 
             // Sort the layouts in the order they are listed in layoutParams (config.js).  If a layout is not included in layoutParams
             // (and has not been eliminated by the noTitleBlockPrefix filter above), put it at the end of the list.
-            layoutItems.sort(function(a, b) {
+            layoutItems.sort(function (a, b) {
                 var bIndex = array.indexOf(keys, b.id);
                 return (bIndex !== -1) ? array.indexOf(keys, a.id) - bIndex : -1;
             });
 
             // Replace this sort with the above sort
-            // layoutItems.sort(function(a, b) {
-                // return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
+            // layoutItems.sort(function (a, b) {
+            // return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
             // });
             //Print Plus Enhancements END
 
@@ -334,23 +380,23 @@ define([
             if (this.defaultLayout) {
                 this.layoutDijit.set('value', this.defaultLayout);
             } else {
-                this.layoutDijit.set('value', Layout_Template[0].defaultValue);
+                this.layoutDijit.set('value', layoutTemplate[0].defaultValue);
             }
 
-            var Format = array.filter(data.parameters, function(param) {
+            var Format = array.filter(data.parameters, function (param) {
                 return param.name === 'Format';
             });
             if (Format.length === 0) {
                 console.log('print service parameters name for format must be "Format"');
                 return;
             }
-            var formatItems = array.map(Format[0].choiceList, function(item) {
+            var formatItems = array.map(Format[0].choiceList, function (item) {
                 return {
                     name: item,
                     id: item
                 };
             });
-            formatItems.sort(function(a, b) {
+            formatItems.sort(function (a, b) {
                 return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
             });
             var format = new Memory({
@@ -365,12 +411,12 @@ define([
         },
 
         //Print Plus Enhancements - added this function
-        print: function() {
+        print: function () {
             if (!this.printGL) {
                 // If not showing the layout footprint, just call the original print function (renamed to submitPrintJob).
                 this.printRequested = false;
                 this.submitPrintJob();
-            } else if (this.printSettingsFormDijit.get('value').layout == 'MAP_ONLY') {
+            } else if (this.printSettingsFormDijit.get('value').layout === 'MAP_ONLY') {
                 // For MAP_ONLY, just call the original print function (renamed to submitPrintJob).
                 this.printRequested = false;
                 this.submitPrintJob();
@@ -386,13 +432,17 @@ define([
                 this.printGL.opacity = 0;
                 this.printGL.redraw();
                 this.oldLODs = null;
-                this.suspendExtentHandler = true;  //Suspend the Extent change handler
+                this.suspendExtentHandler = true; //Suspend the Extent change handler
                 var deferred;
                 if (this.map._params.tileInfo && this.map._params.tileInfo.lods) {
                     this.oldLODs = this.map._params.tileInfo.lods;
                     // Set one LOD for the printing scale and zoom to it.
                     var resolution = printScale / (this.oldLODs[0].scale / this.oldLODs[0].resolution);
-                    this.map._params.tileInfo.lods[0] = {'level': 0, 'resolution': resolution, 'scale': printScale};
+                    this.map._params.tileInfo.lods[0] = {
+                        'level': 0,
+                        'resolution': resolution,
+                        'scale': printScale
+                    };
                     deferred = this.map.centerAndZoom(this.mapAreaCenter, 0);
                 } else {
                     // Zoom to the print scale
@@ -403,10 +453,13 @@ define([
         },
 
         //Print Plus Enhancements - added this function
-        printAndRestoreSettings: function() {
+        printAndRestoreSettings: function () {
             // This function is called by the print function and every feature layer's 'update-end' event.
             // Don't do anything unless the print button was clicked and all feature layers have been updated.
-            if (this.printRequested && array.every(this.featureLayerStatus, function(item) { return item.value; })) {
+            var layersSet = array.every(this.featureLayerStatus, function (item) {
+                return item.value;
+            });
+            if (this.printRequested && layersSet) {
                 this.printRequested = false;
 
                 this.submitPrintJob();
@@ -416,7 +469,7 @@ define([
                     this.map._params.tileInfo.lods = this.oldLODs;
                 }
                 var deferred = this.map.setExtent(this.oldExtent);
-                deferred.then(lang.hitch(this, function() {
+                deferred.then(lang.hitch(this, function () {
                     this.suspendExtentHandler = false;
                     this.printGL.opacity = this.oldOpacity;
                     this.printGL.redraw();
@@ -425,11 +478,11 @@ define([
         },
 
         //Print Plus Enhancements - changed the name of this function from "print" to "submitPrintJob"
-        submitPrintJob: function() {
+        submitPrintJob: function () {
             if (this.printSettingsFormDijit.isValid()) {
                 var form = this.printSettingsFormDijit.get('value');
                 var preserve = this.preserveFormDijit.get('value');
-                if (form.layout != 'MAP_ONLY') {
+                if (form.layout !== 'MAP_ONLY') {
                     // Set this here so it doesn't change the user's settings for MAP_ONLY
                     preserve.preserveScale = true;
                 }
@@ -438,18 +491,18 @@ define([
                 var mapQualityForm = this.mapQualityFormDijit.get('value');
                 var dpi = mapQualityForm.dpi;
                 var mapOnlyForm = this.mapOnlyFormDijit.get('value');
-                mapOnlyForm.width = mapOnlyForm.width * dpi;
-                mapOnlyForm.height = mapOnlyForm.height * dpi;
-                if (mapOnlyForm.printUnits == Units.CENTIMETERS) {
-                    mapOnlyForm.width = mapOnlyForm.width / 2.54;
-                    mapOnlyForm.height = mapOnlyForm.height / 2.54;
+                mapOnlyForm.width *= dpi;
+                mapOnlyForm.height *= dpi;
+                if (mapOnlyForm.printUnits === Units.CENTIMETERS) {
+                    mapOnlyForm.width /= 2.54;
+                    mapOnlyForm.height /= 2.54;
                 }
                 lang.mixin(mapOnlyForm, mapQualityForm);
 
                 var template = new PrintTemplate();
                 template.format = form.format;
                 //template.layout = form.layout;
-                template.layout = form.titleBlock[0] ? form.layout : this.noTitleBlockPrefix + form.layout;  //Print Plus Enhancements
+                template.layout = form.titleBlock[0] ? form.layout : this.noTitleBlockPrefix + form.layout; //Print Plus Enhancements
                 template.preserveScale = form.preserveScale;
                 template.label = form.title;
                 template.exportOptions = mapOnlyForm;
@@ -478,14 +531,14 @@ define([
             }
         },
 
-        clearResults: function() {
+        clearResults: function () {
             domConstruct.empty(this.printResultsNode);
             Style.set(this.clearActionBarNode, 'display', 'none');
             this.count = 1;
         },
 
         //Print Plus Enhancements BEGIN
-        _onTitleBlockChange: function() {
+        _onTitleBlockChange: function () {
             // Don't draw a map sheet if the conversion from map units to meters is not known (e.g. Geographic Coordinate Systems)
             if (!this.showLayout) {
                 return;
@@ -497,7 +550,7 @@ define([
             this.drawMapSheet(this.mapAreaCenter);
         },
 
-        _onLayoutChange: function(layout) {
+        _onLayoutChange: function (layout) {
             // Called with a boolean argument whenever the widget is opened or closed (true means it is open).
             // The layout dropdown calls the function with the name of the layout on the change event.
 
@@ -540,7 +593,7 @@ define([
 
             this.mapSheetParams = null;
 
-             if (layout == 'MAP_ONLY') {
+            if (layout === 'MAP_ONLY') {
                 // Delete the map sheet graphic and remove its mouse handlers
                 this.printGL.clear();
                 if (this._zoomEndHandler) {
@@ -562,7 +615,7 @@ define([
                     this._panEndHandler = this.map.on('pan-end', lang.hitch(this, 'adjustLayoutToMap'));
                 }
                 for (var key in this.layoutParams) {
-                    if (key == layout) {
+                    if (key === layout) {
                         var layoutParam = this.layoutParams[key];
                         var layoutUnitsToMeters = this.getUnitToMetersFactor(layoutParam.units);
                         this.mapSheetParams = {
@@ -571,7 +624,10 @@ define([
                             pageMargins: layoutParam.pageMargins,
                             mapSize: layoutParam.mapSize,
                             titleBlockOffsets: layoutParam.titleBlockOffsets,
-                            unitRatio: {x: layoutUnitsToMeters.x / this.mapUnitsToMeters.x, y: layoutUnitsToMeters.y / this.mapUnitsToMeters.y}
+                            unitRatio: {
+                                x: layoutUnitsToMeters.x / this.mapUnitsToMeters.x,
+                                y: layoutUnitsToMeters.y / this.mapUnitsToMeters.y
+                            }
                         };
                         break;
                     }
@@ -589,14 +645,14 @@ define([
                 //var moveStartPt;
                 //var mapSheetMoving = false;
                 this.printGL.on('mouse-down', lang.hitch(this, function (evt) {
-                    if (evt.graphic.id == this.mapSheetGraphicId) {
+                    if (evt.graphic.id === this.mapSheetGraphicId) {
                         this.map.disablePan();
                         this.mapSheetMoving = true;
                         this.moveStartPt = evt.mapPoint;
                     }
                 }));
                 this.printGL.on('mouse-drag', lang.hitch(this, function (evt) {
-                    if (evt.graphic.id == this.mapSheetGraphicId && this.mapSheetMoving) {
+                    if (evt.graphic.id === this.mapSheetGraphicId && this.mapSheetMoving) {
                         var moveEndPt = evt.mapPoint;
                         var xOffset = moveEndPt.x - this.moveStartPt.x;
                         var yOffset = moveEndPt.y - this.moveStartPt.y;
@@ -607,20 +663,20 @@ define([
                         }
                     }
                 }));
-                this.printGL.on('mouse-over', lang.hitch(this, function(evt) {
-                    if (evt.graphic.id == this.mapSheetGraphicId) {
+                this.printGL.on('mouse-over', lang.hitch(this, function (evt) {
+                    if (evt.graphic.id === this.mapSheetGraphicId) {
                         this.map.setMapCursor('move');
                     }
                 }));
-                this.printGL.on('mouse-out', lang.hitch(this, function(evt) {
-                    if (evt.graphic.id == this.mapSheetGraphicId) {
+                this.printGL.on('mouse-out', lang.hitch(this, function (evt) {
+                    if (evt.graphic.id === this.mapSheetGraphicId) {
                         this.map.setMapCursor('default');
                     }
                     this.map.enablePan();
                     this.mapSheetMoving = false;
                 }));
                 this.printGL.on('mouse-up', lang.hitch(this, function (evt) {
-                    if (evt.graphic.id == this.mapSheetGraphicId && this.mapSheetMoving) {
+                    if (evt.graphic.id === this.mapSheetGraphicId && this.mapSheetMoving) {
                         this.map.enablePan();
                         this.mapSheetMoving = false;
                     }
@@ -628,11 +684,11 @@ define([
             }
         },
 
-        _onScaleBoxChange: function(value) {
+        _onScaleBoxChange: function (value) {
             this.scaleSliderDijit.set('value', value);
         },
 
-        _onScaleSliderChange: function(value) {
+        _onScaleSliderChange: function (value) {
             // Don't draw a map sheet if the conversion from map units to meters is not known (e.g. Geographic Coordinate Systems)
             if (!this.showLayout) {
                 return;
@@ -642,7 +698,9 @@ define([
 
             //var form = this.printSettingsFormDijit.get('value');
             //var layout = form.layout;
-            this.relativeScaleDijit.innerHTML = this.relativeScale.replace('[value]', number.format(value * this.relativeScaleFactor, {places: this.scalePrecision} ));
+            this.relativeScaleDijit.innerHTML = this.relativeScale.replace('[value]', number.format(value * this.relativeScaleFactor, {
+                places: this.scalePrecision
+            }));
             this.printGL.clear();
             if (!this.mapAreaCenter) {
                 this.mapAreaCenter = this.map.extent.getCenter();
@@ -650,18 +708,18 @@ define([
             this.drawMapSheet(this.mapAreaCenter);
         },
 
-        setPrintOptionVisibilities: function() {
+        setPrintOptionVisibilities: function () {
             var form = this.printSettingsFormDijit.get('value');
             var layout = form.layout;
             var titleBlock = form.titleBlock[0];
             var state;
-            if (!this.showLayout && layout == 'MAP_ONLY') {
+            if (!this.showLayout && layout === 'MAP_ONLY') {
                 //Don't show the page layout graphic options, but show the 'MAP_ONLY' options
                 state = 'A';
             } else if (!this.showLayout) {
                 //Don't show the page layout graphic options or the 'MAP_ONLY' options
                 state = 'B';
-            } else if (layout == 'MAP_ONLY') {
+            } else if (layout === 'MAP_ONLY') {
                 //Don't show the page layout graphic options, but show the 'MAP_ONLY' options
                 state = 'C';
             } else if (titleBlock) {
@@ -673,14 +731,62 @@ define([
             }
 
             var printOptions = {
-                'relativeScaleDijit':     { A: 'none',   B: 'none',   C: 'none',   D: 'inline',    E: 'inline'   },
-                'scaleBoxRowDijit':       { A: 'none',   B: 'none',   C: 'none',   D: 'table-row', E: 'table-row'},
-                'scaleSliderRowDijit':    { A: 'none',   B: 'none',   C: 'none',   D: 'table-row', E: 'table-row'},
-                'titleDomDijit':          { A: 'none',   B: 'none',   C: 'none',   D: 'inline',    E: 'inline'   },
-                'mapScaleHeaderDijit':    { A: 'inline', B: 'inline', C: 'inline', D: 'none',      E: 'none'     },
-                'layoutHeaderDijit':      { A: 'none',   B: 'inline', C: 'none',   D: 'inline',    E: 'none'     },
-                'mapOnlyHeaderDijit':     { A: 'inline', B: 'none',   C: 'inline', D: 'none',      E: 'none'     },
-                'mapSketchDijit':         { A: 'none',   B: 'none',   C: 'block',  D: 'none',      E: 'none'     }
+                'relativeScaleDijit': {
+                    A: 'none',
+                    B: 'none',
+                    C: 'none',
+                    D: 'inline',
+                    E: 'inline'
+                },
+                'scaleBoxRowDijit': {
+                    A: 'none',
+                    B: 'none',
+                    C: 'none',
+                    D: 'table-row',
+                    E: 'table-row'
+                },
+                'scaleSliderRowDijit': {
+                    A: 'none',
+                    B: 'none',
+                    C: 'none',
+                    D: 'table-row',
+                    E: 'table-row'
+                },
+                'titleDomDijit': {
+                    A: 'none',
+                    B: 'none',
+                    C: 'none',
+                    D: 'inline',
+                    E: 'inline'
+                },
+                'mapScaleHeaderDijit': {
+                    A: 'inline',
+                    B: 'inline',
+                    C: 'inline',
+                    D: 'none',
+                    E: 'none'
+                },
+                'layoutHeaderDijit': {
+                    A: 'none',
+                    B: 'inline',
+                    C: 'none',
+                    D: 'inline',
+                    E: 'none'
+                },
+                'mapOnlyHeaderDijit': {
+                    A: 'inline',
+                    B: 'none',
+                    C: 'inline',
+                    D: 'none',
+                    E: 'none'
+                },
+                'mapSketchDijit': {
+                    A: 'none',
+                    B: 'none',
+                    C: 'block',
+                    D: 'none',
+                    E: 'none'
+                }
             };
             // Add the map sketch settings here
 
@@ -700,7 +806,7 @@ define([
             }
         },
 
-        drawMapSheet: function(centerPt) {
+        drawMapSheet: function (centerPt) {
             if (!this.mapSheetParams) {
                 return;
             }
@@ -717,7 +823,10 @@ define([
                 mapDims = this.mapSheetParams.mapSize;
             } else {
                 mapOffsets = this.mapSheetParams.titleBlockOffsets;
-                mapDims = { x: pageSize.x - mapOffsets.x * 2, y: pageSize.y - mapOffsets.y * 2 };
+                mapDims = {
+                    x: pageSize.x - mapOffsets.x * 2,
+                    y: pageSize.y - mapOffsets.y * 2
+                };
             }
 
             // Calculate the boundaries for the print area
@@ -734,8 +843,8 @@ define([
             this.mapAreaExtent = new Extent(minX, minY, maxX, maxY, this.map.spatialReference);
 
             // Calculate the boundaries for the sheet boundary
-            minX = minX - mapOffsets.x * scale * unitRatio.x;
-            minY = minY - mapOffsets.y * scale * unitRatio.y;
+            minX -= (mapOffsets.x * scale * unitRatio.x);
+            minY -= (mapOffsets.y * scale * unitRatio.y);
             maxX = minX + pageSize.x * scale * unitRatio.x;
             maxY = minY + pageSize.y * scale * unitRatio.y;
 
@@ -748,14 +857,14 @@ define([
 
             var polygonSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
                 new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([33, 33, 33, 0.8]), 1),
-                new Color([255 ,0 , 0, 0.5]));
+                new Color([255, 0, 0, 0.5]));
 
             var gra = new Graphic(printPageGeom, polygonSymbol);
             gra.id = this.mapSheetGraphicId;
             this.printGL.add(gra);
         },
 
-        moveMapSheet: function(gra, xOffset, yOffset) {
+        moveMapSheet: function (gra, xOffset, yOffset) {
             this.mapAreaCenter = this.mapAreaCenter.offset(xOffset, yOffset);
             this.mapAreaExtent = this.mapAreaExtent.centerAt(this.mapAreaCenter);
 
@@ -770,20 +879,26 @@ define([
             gra.getLayer().redraw();
         },
 
-        _adjustMapSketch: function() {
+        _adjustMapSketch: function () {
             // Get the preserve, width, and height settings and draw the map sketch if there is enough data
-            var preserveScale = this.preserveFormDijit.get('value').preserveScale == 'true';
+            var preserveScale = this.preserveFormDijit.get('value').preserveScale === 'true';
             var mapOnlyForm = this.mapOnlyFormDijit.get('value');
             var printWidth = mapOnlyForm.width;
             var printHeight = mapOnlyForm.height;
             var printUnits = mapOnlyForm.printUnits;
 
             //if (printWidth <= 0 || printHeight <= 0) {
-                // Can't draw the sketch
+            // Can't draw the sketch
             //}
 
-            var max = 150;  // This should be coordinated with the width of the layoutDropDownDijit
-            var offset = 80;  // This should be coordinated with the width of the layoutDropDownDijit
+            var max = 150; // This should be coordinated with the width of the layoutDropDownDijit
+            var offset = 80; // This should be coordinated with the width of the layoutDropDownDijit
+
+            // The Dims object is like a Point, only much leaner
+            function Dims (x, y) {
+                this.x = x;
+                this.y = y;
+            }
 
             // Get the dimensions of the paper map and the map in the browser window projected onto paper.
             var paperAspectRatio = printWidth / printHeight;
@@ -792,15 +907,16 @@ define([
             var browserMapDims;
             if (preserveScale) {
                 var layoutUnitsToMeters = this.getUnitToMetersFactor(printUnits);
-                var unitRatio = {x: layoutUnitsToMeters.x / this.mapUnitsToMeters.x, y: layoutUnitsToMeters.y / this.mapUnitsToMeters.y};
+                var unitRatio = {
+                    x: layoutUnitsToMeters.x / this.mapUnitsToMeters.x,
+                    y: layoutUnitsToMeters.y / this.mapUnitsToMeters.y
+                };
                 var scale = this.map.getScale();
                 browserMapDims = new Dims(this.map.extent.getWidth() / scale / unitRatio.x, this.map.extent.getHeight() / scale / unitRatio.y);
+            } else if (paperAspectRatio > browserAspectRatio) {
+                browserMapDims = new Dims(paperMapDims.x * browserAspectRatio / paperAspectRatio, paperMapDims.y);
             } else {
-                if (paperAspectRatio > browserAspectRatio) {
-                    browserMapDims = new Dims(paperMapDims.x * browserAspectRatio / paperAspectRatio, paperMapDims.y);
-                } else {
-                    browserMapDims = new Dims(paperMapDims.x, paperMapDims.y * paperAspectRatio / browserAspectRatio);
-                }
+                browserMapDims = new Dims(paperMapDims.x, paperMapDims.y * paperAspectRatio / browserAspectRatio);
             }
 
             // Normalize the map sizes to the space available
@@ -828,14 +944,9 @@ define([
             browserMap.style.left = browserMapOffset.x.toFixed(0) + 'px';
             browserMap.style.top = browserMapOffset.y.toFixed(0) + 'px';
 
-            // The Dims object is like a Point, only much leaner
-            function Dims(x, y) {
-                this.x = x;
-                this.y = y;
-            }
         },
 
-        adjustLayoutToMap: function(evt) {
+        adjustLayoutToMap: function (evt) {
             if (!this.suspendExtentHandler) {
                 var centerPt;
                 if (evt.hasOwnProperty('level')) {
@@ -845,7 +956,7 @@ define([
                     this.printGL.clear();
                     this.drawMapSheet(centerPt);
                 }
-				if (this.mapAreaExtent && !evt.extent.contains(this.mapAreaExtent)) {
+                if (this.mapAreaExtent && !evt.extent.contains(this.mapAreaExtent)) {
                     // Map extent does not contain the layout's map area, so get correction
                     var correction = this.getCorrection();
                     centerPt = this.mapAreaCenter.offset(correction.x, correction.y);
@@ -855,24 +966,35 @@ define([
             }
         },
 
-        adjustMapToLayout: function() {
+        adjustMapToLayout: function () {
             var correction = this.getCorrection();
             this.suspendExtentHandler = true;
             this.map.setExtent(this.map.extent.offset(-correction.x, -correction.y));
             this.suspendExtentHandler = false;
         },
 
-        getCorrection: function() {
-            var correction = { x: 0, y: 0 };
+        getCorrection: function () {
+            var correction = {
+                x: 0,
+                y: 0
+            };
             var mapExtent = this.map.extent;
-            if (mapExtent.xmin > this.mapAreaExtent.xmin) { correction.x = mapExtent.xmin - this.mapAreaExtent.xmin; }
-            if (mapExtent.ymin > this.mapAreaExtent.ymin) { correction.y = mapExtent.ymin - this.mapAreaExtent.ymin; }
-            if (mapExtent.xmax < this.mapAreaExtent.xmax) { correction.x = mapExtent.xmax - this.mapAreaExtent.xmax; }
-            if (mapExtent.ymax < this.mapAreaExtent.ymax) { correction.y = mapExtent.ymax - this.mapAreaExtent.ymax; }
+            if (mapExtent.xmin > this.mapAreaExtent.xmin) {
+                correction.x = mapExtent.xmin - this.mapAreaExtent.xmin;
+            }
+            if (mapExtent.ymin > this.mapAreaExtent.ymin) {
+                correction.y = mapExtent.ymin - this.mapAreaExtent.ymin;
+            }
+            if (mapExtent.xmax < this.mapAreaExtent.xmax) {
+                correction.x = mapExtent.xmax - this.mapAreaExtent.xmax;
+            }
+            if (mapExtent.ymax < this.mapAreaExtent.ymax) {
+                correction.y = mapExtent.ymax - this.mapAreaExtent.ymax;
+            }
             return correction;
         },
 
-		setScaleRanges: function() {
+        setScaleRanges: function () {
             if (!this.mapSheetParams) {
                 return;
             }
@@ -888,24 +1010,133 @@ define([
             var mapExtent = this.map.extent;
 
             //get the maximum scale of the map
-            if (layout == 'MAP_ONLY') {
-               return;
+            if (layout === 'MAP_ONLY') {
+                return;
             }
 
             if (!isNaN(unitRatio.x) && !isNaN(unitRatio.y)) {
                 if (titleBlock) {
                     maxScale = Math.ceil(Math.min(mapExtent.getHeight() / mapSize.y / unitRatio.y,
-                                                  mapExtent.getWidth() / mapSize.x / unitRatio.x));
+                        mapExtent.getWidth() / mapSize.x / unitRatio.x));
                 } else {
                     maxScale = Math.ceil(Math.min(mapExtent.getHeight() / (pageSize.y - titleBlockOffsets.y * 2) / unitRatio.y,
-                                                  mapExtent.getWidth() / (pageSize.x - titleBlockOffsets.x * 2) / unitRatio.x));
+                        mapExtent.getWidth() / (pageSize.x - titleBlockOffsets.x * 2) / unitRatio.x));
                 }
             } else {
                 maxScale = this.map.scale;
             }
 
+            function getPrimeFactors (value) {
+                // This function returns an array of the factors of value.
+                // The numbers 1 and value are never in the array, so if value is a prime number, a zero length array is returned.
+
+                var primeFactors = [];
+                var newValue = value;
+                for (var i = 2; i < value; i++) {
+                    while (newValue % i === 0) {
+                        newValue /= i;
+                        primeFactors.push(i);
+                    }
+
+                    if (newValue === 1) {
+                        break;
+                    }
+                }
+                return primeFactors;
+            }
+
+            function getSnapInterval (scales) {
+                // This function returns the largest common factor in the scales array.
+                var largestFactor = 1;
+                var minScale = scales[scales.length - 1];
+                var factors = getPrimeFactors(minScale);
+                var failedFactors = [];
+                var tryFactor;
+                var i, j;
+
+                for (i = 0; i < factors.length; i++) {
+                    // if a tryFactor has failed once, don't try it again
+                    if (array.indexOf(failedFactors, largestFactor * factors[i]) === -1) {
+                        tryFactor = largestFactor * factors[i];
+                        // ignore the largest scale - it was calculated, not taken from the list
+                        for (j = 1; j < scales.length - 1; j++) {
+                            if (scales[j] % tryFactor !== 0) {
+                                break;
+                            }
+                        }
+
+                        if (j === scales.length - 1) {
+                            largestFactor = tryFactor;
+                        } else {
+                            failedFactors.push(tryFactor);
+                        }
+                    }
+                }
+
+                return largestFactor;
+            }
+
+            function getValidScales (mapScales) {
+                var validScales = [];
+                var minScale = Math.ceil(maxScale / 7);
+
+                for (var i = 0; i < mapScales.length; i++) {
+                    var scale = mapScales[i];
+                    if (scale < maxScale) {
+                        validScales.push(scale);
+                    }
+                    if (scale < minScale) {
+                        break;
+                    }
+                }
+                return validScales;
+            }
+
+            function getSnapScale (scale, scales) {
+                var snapScale;
+                if (scale === 0) {
+                    // Scale is 0; the widget is just being opened.  Return the scale that will set
+                    // the sheet graphic to the largest size that does not include the entire map extent.
+                    snapScale = scales[1];
+                } else if (array.indexOf(scales, scale) !== -1) {
+                    // Scale is one of the values in scales; return scale
+                    snapScale = scale;
+                } else if (scale > scales[0]) {
+                    // Scale is larger than the largest value in scales; return the second largest value in scales
+                    snapScale = scales[1];
+                } else if (scale < scales[scales.length - 1]) {
+                    // Scale is smaller than the smallest value in scales; return the smallest value in scales
+                    snapScale = scales[scales.length - 1];
+                } else {
+                    // Return the value in scales that is closest to scale
+                    for (var i = 1; i < scales.length; i++) {
+                        if (scale <= scales[i - 1] && scale >= scales[i]) {
+                            if (scales[i - 1] - scale > scale - scales[i]) {
+                                snapScale = scales[i];
+                            } else {
+                                snapScale = scales[i - 1];
+                            }
+                            break;
+                        }
+                    }
+                }
+                return snapScale;
+            }
+
+            function getLabels (minScale, snapInterval, scaleIndices) {
+                var labelArray = [];
+                var scale;
+                for (var i = 0; i < scaleIndices.length; i++) {
+                    scale = minScale + (snapInterval * scaleIndices[i]);
+                    labelArray.push(number.format(scale, {
+                        pattern: '###,###'
+                    }));
+                }
+                return labelArray;
+            }
+
             // set the ranges on the scale slider
-            var scaleArray = getValidScales(maxScale, this.mapScales);
+            var scaleArray = getValidScales(this.mapScales);
             maxScale = scaleArray[0];
             var snapInterval = getSnapInterval(scaleArray);
             var minScale = scaleArray[scaleArray.length - 1];
@@ -962,162 +1193,78 @@ define([
             }, labelsNode);
             this.sliderLabels.startup();
 
-            function getSnapInterval(scales) {
-				// This function returns the largest common factor in the scales array.
-				var largestFactor = 1;
-				var minScale = scales[scales.length - 1];
-				var factors = getPrimeFactors(minScale);
-				var failedFactors = [];
-				var tryFactor;
-
-				for (var i = 0; i < factors.length; i++) {
-					// if a tryFactor has failed once, don't try it again
-					if (array.indexOf(failedFactors, largestFactor * factors[i]) === -1) {
-						tryFactor = largestFactor * factors[i];
-						// ignore the largest scale - it was calculated, not taken from the list
-						for (var j = 1; j < scales.length - 1; j++) {
-							if (scales[j] % tryFactor !== 0) {
-								break;
-                            }
-						}
-
-						if (j == scales.length - 1) {
-							largestFactor = tryFactor;
-                        } else {
-							failedFactors.push(tryFactor);
-                        }
-					}
-				}
-
-				return largestFactor;
-            }
-
-            function getPrimeFactors(value) {
-				// This function returns an array of the factors of value.
-				// The numbers 1 and value are never in the array, so if value is a prime number, a zero length array is returned.
-
-				var primeFactors = [];
-				var newValue = value;
-				for (var i = 2; i < value; i++)
-				{
-					while (newValue % i === 0) {
-						newValue = newValue / i;
-						primeFactors.push(i);
-					}
-
-					if (newValue == 1) {
-						break;
-                    }
-				}
-				return primeFactors;
-            }
-
-            function getValidScales(maxScale, mapScales) {
-                var validScales = [];
-				var minScale = Math.ceil(maxScale / 7);
-
-				for (var i = 0; i < mapScales.length; i++) {
-					var scale = mapScales[i];
-					if (scale < maxScale) {
-						validScales.push(scale);
-                    }
-					if (scale < minScale) {
-						break;
-                    }
-				}
-				return validScales;
-            }
-
-			function getSnapScale(scale, scales) {
-				var snapScale;
-				if (scale === 0) {
-					// Scale is 0; the widget is just being opened.  Return the scale that will set
-					// the sheet graphic to the largest size that does not include the entire map extent.
-					snapScale = scales[1];
-				} else if (array.indexOf(scales, scale) !== -1) {
-					// Scale is one of the values in scales; return scale
-					snapScale = scale;
-				} else if (scale > scales[0]) {
-					// Scale is larger than the largest value in scales; return the second largest value in scales
-					snapScale = scales[1];
-				} else if (scale < scales[scales.length - 1]) {
-					// Scale is smaller than the smallest value in scales; return the smallest value in scales
-					snapScale = scales[scales.length - 1];
-				} else {
-					// Return the value in scales that is closest to scale
-					for (var i = 1; i < scales.length; i++) {
-						if (scale <= scales[i - 1] && scale >= scales[i]) {
-							if (scales[i - 1] - scale > scale - scales[i]) {
-								snapScale = scales[i];
-                            } else {
-								snapScale = scales[i - 1];
-                            }
-							break;
-						}
-					}
-				}
-				return snapScale;
-			}
-
-            function getLabels(minScale, snapInterval, scaleIndices) {
-                var labelArray = [];
-                var scale;
-                for (var i = 0; i < scaleIndices.length; i++) {
-                    scale = minScale + (snapInterval * scaleIndices[i]);
-                    labelArray.push(number.format(scale, {pattern: '###,###'}));
-                }
-                return labelArray;
-            }
         },
-        getUnitToMetersFactor: function(unit) {
-            switch (unit)
-            {
-                case Units.CENTIMETERS:     return {x: 0.01, y: 0.01};
-                case Units.DECIMETERS:      return {x: 0.1, y: 0.1};
-                case Units.FEET:            return {x: 0.3048, y: 0.3048};
-                case Units.INCHES:          return {x: 0.0254, y: 0.0254};
-                case Units.KILOMETERS:      return {x: 100.0, y: 100.0};
-                case Units.METERS:          return {x: 1.0, y: 1.0};
-                case Units.MILES:           return {x: 1609.344, y: 1609.344};
-                case Units.MILLIMETERS:     return {x: 0.001, y: 0.001};
-                case Units.NAUTICAL_MILES:  return {x: 1852.0, y: 1852.0};
-                case Units.YARDS:           return {x: 0.9144, y: 0.9144};
-                case Units.UNKNOWN_UNITS:   return {x: NaN, y: NaN};
-                case Units.DECIMAL_DEGREES: return {x: 1.0, y: 1.0};
-                default:                    return {x: NaN, y: NaN};
+        getUnitToMetersFactor: function (unit) {
+            switch (unit) {
+            case Units.CENTIMETERS:
+                return {
+                    x: 0.01,
+                    y: 0.01
+                };
+            case Units.DECIMETERS:
+                return {
+                    x: 0.1,
+                    y: 0.1
+                };
+            case Units.FEET:
+                return {
+                    x: 0.3048,
+                    y: 0.3048
+                };
+            case Units.INCHES:
+                return {
+                    x: 0.0254,
+                    y: 0.0254
+                };
+            case Units.KILOMETERS:
+                return {
+                    x: 100.0,
+                    y: 100.0
+                };
+            case Units.METERS:
+                return {
+                    x: 1.0,
+                    y: 1.0
+                };
+            case Units.MILES:
+                return {
+                    x: 1609.344,
+                    y: 1609.344
+                };
+            case Units.MILLIMETERS:
+                return {
+                    x: 0.001,
+                    y: 0.001
+                };
+            case Units.NAUTICAL_MILES:
+                return {
+                    x: 1852.0,
+                    y: 1852.0
+                };
+            case Units.YARDS:
+                return {
+                    x: 0.9144,
+                    y: 0.9144
+                };
+            case Units.UNKNOWN_UNITS:
+                return {
+                    x: NaN,
+                    y: NaN
+                };
+            case Units.DECIMAL_DEGREES:
+                return {
+                    x: 1.0,
+                    y: 1.0
+                };
+            default:
+                return {
+                    x: NaN,
+                    y: NaN
+                };
             }
         }
-        //Print Plus Enhancements END
+    //Print Plus Enhancements END
     });
 
-    // Print result dijit
-    var PrintResultDijit = declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-        widgetsInTemplate: true,
-        templateString: printResultTemplate,
-        url: null,
-        postCreate: function() {
-            this.inherited(arguments);
-            this.fileHandle.then(lang.hitch(this, '_onPrintComplete'), lang.hitch(this, '_onPrintError'));
-        },
-        _onPrintComplete: function(data) {
-            if (data.url) {
-                this.url = data.url;
-                this.nameNode.innerHTML = '<span class="bold">' + this.docName + '</span>';
-                domClass.add(this.resultNode, 'printResultHover');
-            } else {
-                this._onPrintError('Error, try again');
-            }
-        },
-        _onPrintError: function(err) {
-            console.log(err.toString());  //lcs - BUG - added toString()
-            this.nameNode.innerHTML = '<span class="bold">Error, try again</span>';
-            domClass.add(this.resultNode, 'printResultError');
-        },
-        _openPrint: function() {
-            if (this.url !== null) {
-                window.open(this.url);
-            }
-        }
-    });
     return PrintDijit;
 });

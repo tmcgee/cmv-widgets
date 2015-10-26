@@ -1,15 +1,16 @@
+/*eslint strict: 0 */
 define([
-	'dojo/_base/declare',
-	'dijit/_WidgetBase',
-	'dijit/_TemplatedMixin',
-	'dijit/_WidgetsInTemplateMixin',
-	'dojo/_base/lang',
-	'dojo/_base/array',
-	'dojo/on',
+    'dojo/_base/declare',
+    'dijit/_WidgetBase',
+    'dijit/_TemplatedMixin',
+    'dijit/_WidgetsInTemplateMixin',
+    'dojo/_base/lang',
+    'dojo/_base/array',
+    'dojo/on',
     'dojo/keys',
-	'dojo/store/Memory',
-	'esri/tasks/QueryTask',
-	'esri/tasks/query',
+    'dojo/store/Memory',
+    'esri/tasks/QueryTask',
+    'esri/tasks/query',
     'esri/layers/GraphicsLayer',
     'esri/graphic',
     'esri/renderers/SimpleRenderer',
@@ -17,18 +18,18 @@ define([
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleFillSymbol',
     'esri/graphicsUtils',
-	'dojo/text!./ZoomToFeature/templates/ZoomToFeature.html',
+    'dojo/text!./ZoomToFeature/templates/ZoomToFeature.html',
     'dojo/i18n!./ZoomToFeature/nls/resources',
-	'dijit/form/Form',
-	'dijit/form/FilteringSelect',
-	'xstyle/css!./ZoomToFeature/css/ZoomToFeature.css'
+    'dijit/form/Form',
+    'dijit/form/FilteringSelect',
+    'xstyle/css!./ZoomToFeature/css/ZoomToFeature.css'
 ], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, lang, array, on, keys, Memory, QueryTask, Query, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, graphicsUtils, template, i18n) {
-	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-		widgetsInTemplate: true,
-		templateString: template,
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+        widgetsInTemplate: true,
+        templateString: template,
         defaultI18n: i18n,
         i18n: {},
-		baseClass: 'cmwZoomToFeatureWidget',
+        baseClass: 'cmwZoomToFeatureWidget',
 
         // url of the MapServer to Query
         url: null,
@@ -82,16 +83,16 @@ define([
             }
         },
 
-		features: null,
-		featureStore: null,
+        features: null,
+        featureStore: null,
         featureIdx: null,
 
         postMixInProperties: function () {
             this.inherited(arguments);
             this.i18n = this.mixinDeep(this.defaultI18n, this.i18n);
         },
-		postCreate: function () {
-			this.inherited(arguments);
+        postCreate: function () {
+            this.inherited(arguments);
 
             if (!this.spatialReference) {
                 this.spatialReference = this.map.spatialReference.wkid;
@@ -118,7 +119,7 @@ define([
                 this.getFeatures();
             }
 
-	    },
+        },
 
         createGraphicRenderers: function () {
             var pointSymbol = null,
@@ -200,24 +201,26 @@ define([
         },
 
         //Populate the dropdown list box with unique values
-	    populateList: function (results) {
-	        this.features = results.features;
+        populateList: function (results) {
+            this.features = results.features;
 
-	        var values = [], k = 0, field = this.field;
-	        array.forEach (this.features, function(feature) {
-	            values.push({
-	            	id: k,
-	            	name: feature.attributes[field]
-	            });
-	            k++;
-	        });
+            var values = [],
+                k = 0,
+                field = this.field;
+            array.forEach(this.features, function (feature) {
+                values.push({
+                    id: k,
+                    name: feature.attributes[field]
+                });
+                k++;
+            });
 
-			this.featureStore = new Memory({
-				data: values
-			});
-			this.featureSelectDijit.set('store', this.featureStore);
+            this.featureStore = new Memory({
+                data: values
+            });
+            this.featureSelectDijit.set('store', this.featureStore);
             this.featureSelectDijit.set('disabled', false);
-		},
+        },
 
         onFeatureChange: function (featureIdx) {
             if (featureIdx >= 0 && featureIdx < this.features.length) {
@@ -258,33 +261,34 @@ define([
         highlightFeature: function (feature) {
             var graphic;
             switch (feature.geometry.type) {
-                case 'point':
-                    // only add points to the map that have an X/Y
-                    if (feature.geometry.x && feature.geometry.y) {
-                        graphic = new Graphic(feature.geometry);
-                        this.pointGraphics.add(graphic);
-                        this.clearButtonDijit.set('disabled', false);
-                    }
-                    break;
-                case 'polyline':
-                    // only add polylines to the map that have paths
-                    if (feature.geometry.paths && feature.geometry.paths.length > 0) {
-                        graphic = new Graphic(feature.geometry);
-                        this.polylineGraphics.add(graphic);
-                        this.clearButtonDijit.set('disabled', false);
-                    }
-                    break;
-                case 'polygon':
-                    // only add polygons to the map that have rings
-                    if (feature.geometry.rings && feature.geometry.rings.length > 0) {
-                        graphic = new Graphic(feature.geometry, null, {
-                            ren: 1
-                        });
-                        this.polygonGraphics.add(graphic);
-                        this.clearButtonDijit.set('disabled', false);
-                    }
-                    break;
-                default:
+            case 'point':
+                // only add points to the map that have an X/Y
+                if (feature.geometry.x && feature.geometry.y) {
+                    graphic = new Graphic(feature.geometry);
+                    this.pointGraphics.add(graphic);
+                    this.clearButtonDijit.set('disabled', false);
+                }
+                break;
+            case 'polyline':
+                // only add polylines to the map that have paths
+                if (feature.geometry.paths && feature.geometry.paths.length > 0) {
+                    graphic = new Graphic(feature.geometry);
+                    this.polylineGraphics.add(graphic);
+                    this.clearButtonDijit.set('disabled', false);
+                }
+                break;
+            case 'polygon':
+                // only add polygons to the map that have rings
+                if (feature.geometry.rings && feature.geometry.rings.length > 0) {
+                    graphic = new Graphic(feature.geometry, null, {
+                        ren: 1
+                    });
+                    this.polygonGraphics.add(graphic);
+                    this.clearButtonDijit.set('disabled', false);
+                }
+                break;
+            default:
+                break;
             }
         },
 
@@ -310,24 +314,24 @@ define([
             return extent;
         },
 
-        mixinDeep: function(dest, source) {
+        mixinDeep: function (dest, source) {
             //Recursively mix the properties of two objects
             var empty = {};
             for (var name in source) {
-              if (!(name in dest) || (dest[name] !== source[name] && (!(name in empty) || empty[name] !== source[name]))) {
-                   try {
-                        if ( source[name].constructor==Object ) {
-                             dest[name] = this.mixinDeep(dest[name], source[name]);
+                if (!(name in dest) || (dest[name] !== source[name] && (!(name in empty) || empty[name] !== source[name]))) {
+                    try {
+                        if (source[name].constructor === Object) {
+                            dest[name] = this.mixinDeep(dest[name], source[name]);
                         } else {
-                             dest[name] = source[name];
+                            dest[name] = source[name];
                         }
-                   } catch(e) {
+                    } catch (e) {
                         // Property in destination object not set. Create it and set its value.
                         dest[name] = source[name];
-                   }
-              }
+                    }
+                }
             }
             return dest;
         }
-	});
+    });
 });

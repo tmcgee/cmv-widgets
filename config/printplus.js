@@ -3,14 +3,15 @@ define([
     'esri/tasks/GeometryService',
     'esri/layers/ImageParameters'
 ], function (esriConfig, GeometryService, ImageParameters) {
+    'use strict';
 
     esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
 
-	var imageParameters = new ImageParameters();
-	imageParameters.format = 'png32';
+    var imageParameters = new ImageParameters();
+    imageParameters.format = 'png32';
 
-	return {
-		isDebug: true,
+    return {
+        isDebug: true,
 
         mapOptions: {
             basemap: 'topo',
@@ -25,19 +26,19 @@ define([
             pageTitle: 'CMV PrintPlus Widget'
         },
 
-		collapseButtonsPane: 'center', //center or outer
+        collapseButtonsPane: 'center', //center or outer
 
-		operationalLayers: [],
+        operationalLayers: [],
 
-		widgets: {
-			growler: {
-				include: true,
-				id: 'growler',
-				type: 'domNode',
-				path: 'gis/dijit/Growler',
-				srcNodeRef: 'growlerDijit',
-				options: {}
-			},
+        widgets: {
+            growler: {
+                include: true,
+                id: 'growler',
+                type: 'domNode',
+                path: 'gis/dijit/Growler',
+                srcNodeRef: 'growlerDijit',
+                options: {}
+            },
             print: {
                 include: true,
                 id: 'print',
@@ -49,6 +50,6 @@ define([
                 position: 0,
                 options: 'config/printplusWidget'
             }
-		}
-	};
+        }
+    };
 });

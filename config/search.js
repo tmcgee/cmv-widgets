@@ -1,16 +1,17 @@
 define([
-	'esri/config',
-	'esri/tasks/GeometryService',
-	'esri/layers/ImageParameters'
+    'esri/config',
+    'esri/tasks/GeometryService',
+    'esri/layers/ImageParameters'
 ], function (esriConfig, GeometryService, ImageParameters) {
+    'use strict';
 
-	esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
+    esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
 
-	var imageParameters = new ImageParameters();
-	imageParameters.format = 'png32';
+    var imageParameters = new ImageParameters();
+    imageParameters.format = 'png32';
 
-	return {
-		isDebug: false,
+    return {
+        isDebug: false,
 
         defaultMapClickMode: 'identify',
         mapOptions: {
@@ -26,7 +27,7 @@ define([
             pageTitle: 'CMV Search Example'
         },
 
-		panes: {
+        panes: {
             bottom: {
                 id: 'sidebarBottom',
                 placeAt: 'outer',
@@ -38,45 +39,45 @@ define([
                 content: '<div id="attributesContainer"></div>'
             }
         },
-		collapseButtonsPane: 'center', //center or outer
+        collapseButtonsPane: 'center', //center or outer
 
-		operationalLayers: [
-			{
-				type: 'dynamic',
-				url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
-				title: 'Louisville Public Safety',
-				options: {
-					id: 'louisvillePubSafety',
-					opacity: 1.0,
-					visible: true,
-					imageParameters: imageParameters
-				},
-				identifyLayerInfos: {
-					layerIds: [2, 4, 5, 8, 12, 21]
-				}
-			},
-			{
-	            type: 'dynamic',
-	            url: 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer',
-	            title: 'Damage Assessment',
-	            options: {
-	                id: 'DamageAssessment',
-	                opacity: 1.0,
-	                visible: true,
-	                imageParameters: imageParameters
-	            }
+        operationalLayers: [
+            {
+                type: 'dynamic',
+                url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
+                title: 'Louisville Public Safety',
+                options: {
+                    id: 'louisvillePubSafety',
+                    opacity: 1.0,
+                    visible: true,
+                    imageParameters: imageParameters
+                },
+                identifyLayerInfos: {
+                    layerIds: [2, 4, 5, 8, 12, 21]
+                }
+            },
+            {
+                type: 'dynamic',
+                url: 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer',
+                title: 'Damage Assessment',
+                options: {
+                    id: 'DamageAssessment',
+                    opacity: 1.0,
+                    visible: true,
+                    imageParameters: imageParameters
+                }
             }
-		],
+        ],
 
-		widgets: {
-			growler: {
-				include: true,
-				id: 'growler',
-				type: 'domNode',
-				path: 'gis/dijit/Growler',
-				srcNodeRef: 'growlerDijit',
-				options: {}
-			},
+        widgets: {
+            growler: {
+                include: true,
+                id: 'growler',
+                type: 'domNode',
+                path: 'gis/dijit/Growler',
+                srcNodeRef: 'growlerDijit',
+                options: {}
+            },
             identify: {
                 include: true,
                 id: 'identify',
@@ -126,6 +127,6 @@ define([
                 title: 'Export',
                 options: {}
             }
-		}
-	};
+        }
+    };
 });

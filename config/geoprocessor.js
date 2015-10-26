@@ -1,18 +1,18 @@
 define([
     'dojo/number'
-    ], function (
-        dojoNum
-    ) {
+], function (
+    dojoNum
+) {
+    'use strict';
+    return {
+        isDebug: false,
 
-	return {
-		isDebug: false,
-
-		mapOptions: {
+        mapOptions: {
             basemap: 'topo',
             center: [-122.385, 37.615],
             zoom: 12,
-			sliderStyle: 'small'
-		},
+            sliderStyle: 'small'
+        },
 
         titles: {
             header: 'CMV Geoprocessor Example',
@@ -20,7 +20,7 @@ define([
             pageTitle: 'CMV Geoprocessor Example'
         },
 
-		collapseButtonsPane: 'center', //center or outer
+        collapseButtonsPane: 'center', //center or outer
 
         panes: {
             left: {
@@ -39,10 +39,9 @@ define([
             }
         },
 
-		operationalLayers: [
-        ],
+        operationalLayers: [],
 
-		widgets: {
+        widgets: {
             growler: {
                 include: true,
                 id: 'growler',
@@ -117,6 +116,6 @@ define([
                     ]
                 }
             }
-		}
-	};
+        }
+    };
 });

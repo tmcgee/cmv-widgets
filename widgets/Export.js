@@ -1,3 +1,4 @@
+/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -61,7 +62,7 @@ define([
         // optional grid if you want to export only visible columns and use column names
         grid: null,
 
-        postCreate: function() {
+        postCreate: function () {
             this.inherited(arguments);
             this.parentWidget.draggable = this.draggable;
 
@@ -97,7 +98,7 @@ define([
                 {value: 'excel', label: i18n.exportToExcel, type: 'attributes'},
                 {value: 'csv', label: i18n.exportToCSV, type: 'attributes'},
                 {value: 'geojson', label: i18n.exportToGeoJSON, type: 'features'},
-                {value: 'shapefile', label: i18n.exportToShapeFile , type: 'features'}
+                {value: 'shapefile', label: i18n.exportToShapeFile, type: 'features'}
             ];
 
             this.selectExportType.set('options', []);
@@ -152,13 +153,13 @@ define([
             }
         },
 
-	getFileName: function(extension){
-	    if (this.filename){
-		return (typeof this.filename == "function" ? this.filename.call(this) + extension : this.filename + extension)
-	    } else{
-		return "result" + extension
-	    }
-	},
+        getFileName: function (extension) {
+            if (this.filename) {
+                return (typeof this.filename === 'function' ? this.filename(this) + extension : this.filename + extension);
+            } else {
+                return 'result' + extension;
+            }
+        },
 
         /*******************************
         *  Export Function
@@ -178,6 +179,8 @@ define([
                 break;
             case 'shapefile':
                 this.exportToShapeFile();
+                break;
+            default:
                 break;
             }
         },
@@ -206,7 +209,7 @@ define([
                 bookSST: true,
                 type: 'binary'
             });
-    
+
             this.downloadFile(this.s2ab(wbout), 'application/vnd.ms-excel;', this.getFileName('.xlsx'), true);
         },
 
@@ -214,7 +217,7 @@ define([
             var buf = new ArrayBuffer(s.length);
             var view = new Uint8Array(buf);
             /*jslint bitwise: true */
-            for (var i=0; i!=s.length; ++i) {
+            for (var i = 0; i < s.length; ++i) {
                 view[i] = s.charCodeAt(i) & 0xFF;
             }
             /*jslint bitwise: false */
@@ -231,7 +234,7 @@ define([
                 return;
             }
             var csv = window.XLSX.utils.sheet_to_csv(ws);
-	    
+
             this.downloadFile(csv, 'text/csv;charset=utf-8;', this.getFileName('.csv'), true);
         },
 
@@ -243,7 +246,7 @@ define([
 
             // function to format dates as numbers as GMT.
             // ** TODO ** Need to adjust to local time zone.
-            function datenum(v, date1904) {
+            function datenum (v, date1904) {
                 if (date1904) {
                     v += 1462;
                 }
@@ -251,7 +254,7 @@ define([
                 return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
             }
 
-            var ws = {}, cell, cell_ref;
+            var ws = {}, cell, cellRef;
             var range = {
                 s: {
                     c: 0,
@@ -278,11 +281,11 @@ define([
                         v: column.label || aliases[column.field] || column.field,
                         t: 's'
                     };
-                    cell_ref = xlsx.utils.encode_cell({
+                    cellRef = xlsx.utils.encode_cell({
                         c: c,
                         r: 0
                     });
-                    ws[cell_ref] = cell;
+                    ws[cellRef] = cell;
                     wscols.push({
                         wpx: (!isNaN(column.width)) ? (column.width * 1.2) : 200
                     });
@@ -333,11 +336,11 @@ define([
                         }
 
                         //store the cell in the worksheet
-                        cell_ref = xlsx.utils.encode_cell({
+                        cellRef = xlsx.utils.encode_cell({
                             c: c,
                             r: r
                         });
-                        ws[cell_ref] = cell;
+                        ws[cellRef] = cell;
 
                         c++;
                     }
@@ -381,7 +384,6 @@ define([
         },
 
         exportToShapeFile: function () {
-            alert('Export to Shape File is not yet available');
             return;
             /*
             var str = this.createGeoJSON();
@@ -437,19 +439,18 @@ define([
             }
         },
 
-        getRowsAndColumns: function() {
+        getRowsAndColumns: function () {
             var rows = [];
             var columns = [];
-            if(this.grid) {
+            if (this.grid) {
                 rows = this.grid.get('store').data;
                 columns = this.grid.get('columns');
-            }
-            else if(this.featureSet) {
-                if(this.featureSet.features && this.featureSet.features.length > 0) {
+            } else if (this.featureSet) {
+                if (this.featureSet.features && this.featureSet.features.length > 0) {
                     columns = [];
                     var firstFeature = this.featureSet.features[0];
-                    for(var key in firstFeature.attributes) {
-                        if(firstFeature.attributes.hasOwnProperty(key)) {
+                    for (var key in firstFeature.attributes) {
+                        if (firstFeature.attributes.hasOwnProperty(key)) {
                             columns.push({
                                 exportable: true,
                                 hidden: false,
@@ -459,17 +460,12 @@ define([
                             });
                         }
                     }
-                    rows = array.map(this.featureSet.features, function(aFeature) {
+                    rows = array.map(this.featureSet.features, function (aFeature) {
                         return aFeature.attributes;
                     });
                 }
-                else {
-                    // cannot build columns because nothing to export; not really an error;
-                }
             }
-            else {
-                // no datasource was provided; was not an error, so still not an error;
-            }
+
             return {
                 rows: rows,
                 columns: columns
@@ -504,7 +500,7 @@ define([
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                return;
+                return null;
 
              //feature detection using IE10+ routine
             } else if (navigator.msSaveOrOpenBlob) {
@@ -512,7 +508,7 @@ define([
             } else {
                 window.open(dataURI);
                 window.focus();
-                return;
+                return null;
             }
 
         }

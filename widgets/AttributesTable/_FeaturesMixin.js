@@ -8,6 +8,7 @@ define([
     lang,
     topic
 ) {
+    'use strict';
 
     return declare(null, {
 
@@ -57,7 +58,7 @@ define([
             } else if (this.queryParameters && this.queryParameters.type === 'relationship') {
                 for (var key in results) {
                     if (results.hasOwnProperty(key)) {
-                        var item  = results[key];
+                        var item = results[key];
                         if (item.features) {
                             features = features.concat(item.features);
                         }
@@ -67,7 +68,7 @@ define([
                 var k = 0, len = results.length, result = null;
                 var feature = null, attributes = null;
                 this.idProperty = 'recID-' + Math.random();
-                for (k =0; k< len; k++) {
+                for (k = 0; k < len; k++) {
                     result = results[k];
                     feature = result.feature;
                     attributes = feature.attributes;

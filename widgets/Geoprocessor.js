@@ -1,3 +1,4 @@
+/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -84,7 +85,7 @@ define([
         },
 
        // process the results of GP
-       drawViewshed: function (results) {
+        drawViewshed: function (results) {
             // clear any query Results
             topic.publish(this.topicID + '/clearQueryResults');
 
@@ -99,7 +100,6 @@ define([
                 pane: 'bottom',
                 show: 'block'
             });
-
         }
     });
 });
