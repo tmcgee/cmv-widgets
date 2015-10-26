@@ -1,0 +1,11 @@
+engines:
+    eslint:
+        enabled: true
+    csslint:
+        enabled: true
+ratings:
+    paths:
+        - "**.js"
+        - "**.css"
+exclude_paths:
+    - cmv/**/*
