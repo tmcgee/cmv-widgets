@@ -10,7 +10,7 @@
 }
 
 .cmvSearchWidget .searchTab {
-    padding: 10px !important;
+    padding: 10px;
 }
 
 .cmvSearchWidget label {
@@ -21,10 +21,7 @@
 	margin-bottom: 10px;
 }
 
-.cmvSearchWidget #divAttributeQuerySelect,
-.cmvSearchWidget #divAttributeQueryText,
-.cmvSearchWidget #divShapeTypeSelection,
-.cmvSearchWidget #divShapeBufferSelection {
+.cmvSearchWidget .searchSelector {
 	margin-top: 10px;
 }
 

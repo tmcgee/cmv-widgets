@@ -7,21 +7,21 @@
 }
 .cmvAttributesTableWidget .attributesTableToolbar {
     position:absolute;
-	top: 0px;
-	left: 0px;
-    right: 0px;
+	top: 0;
+	left: 0;
+    right: 0;
     display:none;
 }
 
 .cmvAttributesTableWidget .attributesTableGrid {
 	position:absolute;
-	top: 0px;
-	left: 0px;
-    bottom: 0px;
-    right: 0px;
+	top: 0;
+	left: 0;
+    bottom: 0;
+    right: 0;
     width: auto;
     height: auto;
-	padding: 0px;
+	padding: 0;
 	overflow: hidden;
     overflow-x: auto;
 }
@@ -47,7 +47,7 @@
 
 /* for a floating widget, will this ever be used? */
 .floatingWidget .cmvAttributesTableWidget .attributesTableGrid {
-	top: 0px;
+	top: 0;
 	height: 300px;
 	position:relative;
 }

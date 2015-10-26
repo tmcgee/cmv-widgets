@@ -1,14 +1,13 @@
-.cmvDisclaimerWidget {
-}
+/*csslint ids: false */
 .cmvDisclaimerWidget .disclaimerMessageContainer {
-	padding: 0px;
+	padding: 0;
 }
 
 .cmvDisclaimerWidget .disclaimerButtonContainer {
     position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     padding: 5px 30px;
 }
 

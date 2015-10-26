@@ -1,0 +1,21 @@
+{
+    "adjoining-classes": true,
+    "box-sizing": true,
+    "box-model": true,
+    "compatible-vendor-prefixes": true,
+    "floats": true,
+    "font-sizes": true,
+    "gradients": true,
+    "important": true,
+    "ids": true,
+    "known-properties": true,
+    "outline-none": true,
+    "qualified-headings": true,
+    "padding": true,
+    "regex-selectors": true,
+    "shorthand": true,
+    "text-indent": true,
+    "unique-headings": true,
+    "universal-selector": true,
+    "unqualified-attributes": true
+}
