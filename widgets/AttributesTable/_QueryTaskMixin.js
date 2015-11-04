@@ -220,7 +220,7 @@ define([
                 lq.spatialRelationship = qp.spatialRelationship;
             }
 
-            this.executeQuery({
+            this.executeQueryTask({
                 queryOptions: {
                     queryParameters: lq,
                     isLinkedQuery: true
@@ -335,7 +335,7 @@ define([
                     var qParams = lang.clone(this.queryParameters);
                     qParams.bufferGeometry = geometries[0];
 
-                    this.executeQuery({
+                    this.executeQueryTask({
                         queryOptions: {
                             queryParameters: qParams,
                             bufferParameters: this.bufferParameters,
