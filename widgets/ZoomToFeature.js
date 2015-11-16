@@ -189,6 +189,7 @@ define([
         getFeatures: function () {
             var query = new Query();
             query.outFields = [this.field];
+            query.orderByFields = [this.field];
             query.where = this.where;
             query.returnGeometry = true;
             //query.returnDistinctValues = true;
