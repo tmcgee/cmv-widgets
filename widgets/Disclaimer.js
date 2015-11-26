@@ -1,6 +1,8 @@
 /*eslint strict: 0 */
 define([
     'dojo/_base/declare',
+    'dojo/cookie',
+
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
@@ -17,6 +19,8 @@ define([
 
 ], function (
     declare,
+    cookie,
+
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
@@ -40,6 +44,13 @@ define([
         href: null,
         declineHref: '#',
 
+        useCookies: false,
+        cookieName: 'skipCMVDisclaimer',
+        cookieValue: 'true',
+        cookieProps: {
+            expires: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000))  // show disclaimer every 30 days
+        },
+
         postMixInProperties: function () {
             this.inherited(arguments);
             this.i18n = this.mixinDeep(this.defaultI18n, this.i18n);
@@ -55,10 +66,23 @@ define([
 
             // prevent the dialog from closing with the escape key
             this.parentWidget._onKey = function () {};
+
+            // check for cookies
+            if (this.useCookies) {
+                var chkCookie = cookie(this.cookieName);
+                if (chkCookie && chkCookie === this.cookieValue) {
+                    this.openOnStartup = false;
+                }
+            }
         },
 
         acceptDisclaimer: function () {
             this.parentWidget.hide();
+
+            // set a cookie so it is only show again
+            if (this.useCookies) {
+                cookie(this.cookieName, this.cookieValue, this.cookieProps);
+            }
         },
 
         declineDisclaimer: function () {

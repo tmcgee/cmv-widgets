@@ -12,6 +12,10 @@ A simple yet configurable disclaimer widget for CMV
 | `href` | String | Default is null. Instead of HTML, you can point to a page that contains your HTML text. |
 | `declineHref` | String | Default is `javascript:void(0)`. The url to navigate to when you user presses the decline button|
 | `i18n` | Object | Default is {}. You can override the Internationalization with your own strings for the text on the buttons. See example below |
+| `useCookies` | Boolean | Default is false. Whether to set a cookie so the disclaimer will not be seen again for X Days|
+| `cookieName` | String | Default is `skipCMVDisclaimer`. Name of the cookie to set.|
+| `cookieValue` | String | Default is `true`. This value can be whatever you want it to be.|
+| `cookieProps` | Object | Default is `{expires: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000))`. Using the default, the disclaimer will be shown every 30 days.|
 
 
 ---
