@@ -1,5 +1,5 @@
 #Search Widget for CMV
-Used in conjunction with the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, dynamic layers, tables and related records using QueryTask and FindTask.
+Used in conjunction with the [Attributes Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, dynamic layers, tables and related records using QueryTask and FindTask.
 
 ---
 ## Example Configuration:
@@ -38,6 +38,59 @@ define([
     return {
         map: true,
         mapClickMode: true,
+
+        /*
+           Show button to open the Query Builder widget
+           This new widget not yet been released
+        */
+        enableQueryBuilder: false,
+        
+        /*
+            continue adding multiple shapes before searching
+        */
+        enableDrawMultipleShapes: true, 
+
+        /*
+            add the results of a search to the existing results from a previous search
+        */
+        enableAddToExistingResults: true,
+        
+        /*
+            use spatial filters in searches by attribute
+        */
+        enableSpatialFilters: true,
+
+        /*
+            control which spatial filters are available
+        */
+        spatialFilters: {
+            entireMap: true,
+            currentExtent: true,
+            identifiedFeature: true,
+            searchFeatures: true,
+            searchSelected: true,
+            searchSource: true,
+            searchBuffer: true
+        },
+
+        /*
+            Control which drawing tools are available to the user
+        */
+        drawingOptions: {
+            rectangle: true,
+            circle: true,
+            point: true,
+            polyline: true,
+            freehandPolyline: true,
+            polygon: true,
+            freehandPolygon: true,
+            stopDrawing: true,
+            identifiedFeature: true,
+            selectedFeatures: true,
+
+            // change the symbology for drawn shapes and buffer around them
+            symbols: {}
+        },
 
         layers: [
             {
@@ -302,3 +355,46 @@ define([
 
 ## Screenshot:
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/search2.jpg)
+
+---
+##Search Topics
+
+### Subscribed Topics
+The Search widget subscribes to the following topics. The topicID should be unique for each instance of the widget.
+``` javascript
+// execute a basic search  (incomplete and untested)
+topicID + '/search'
+
+// execute a query
+topicID + '/executeQuery'
+
+//  update the available spatial filters when the table (tab) is updated
+this.attributesContainerID + '/tableUpdated'
+
+// set the sql where clause for the current attributes search
+this.topicID + '/setSQLWhereClause'
+
+this.topicID + '/clearSQLWhereClause'
+
+// listens for the mapClickMode changing
+'mapClickMode/currentSet'
+```
+
+### Published Topics
+The Search widdet publishes the following topics. The topicID should be unique for each instance of the widget.
+```javascript
+// publishes to Growl widget to provide users with information such as when a query is executing or details about the query results (number of results)
+'growler/growl'
+
+// publish a change in mapClickMode
+'mapClickMode/setCurrent'
+
+// return the  mapClickMode to the default
+'mapClickMode/setDefault'
+
+// publish to an accompanying attributes table and running the submitted query or find task. 
+this.attributesContainerID + '/addTable'
+
+// opens the QueryBuilder widget
+this.queryBuilderTopicID + '/openDialog'
+```
