@@ -1,7 +1,7 @@
 .cmvSearchWidget {
 	width: 100%;
     min-width: 225px;
-	height: 410px;
+	height: 450px;
 }
 
 .cmvSearchWidget .tabContainer {
@@ -23,6 +23,16 @@
 
 .cmvSearchWidget .searchSelector {
 	margin-top: 10px;
+}
+
+.cmvSearchWidget .searchFields {
+    max-height: 180px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.cmvSearchWidget .bottomButtons {
+    text-align: center;
 }
 
 .cmvSearchWidget .dijitSelect {

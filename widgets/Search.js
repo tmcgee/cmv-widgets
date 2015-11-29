@@ -5,15 +5,23 @@ define([
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
 
-    'esri/toolbars/draw',
-    'esri/tasks/query',
-    'esri/tasks/GeometryService',
     'dojo/_base/lang',
     'dojo/on',
     'dojo/dom-style',
     'dojo/aspect',
     'dojo/topic',
     'dojo/keys',
+
+    'esri/toolbars/draw',
+    'esri/tasks/query',
+    'esri/tasks/GeometryService',
+    'esri/geometry/geometryEngine',
+
+    'esri/layers/GraphicsLayer',
+    'esri/graphic',
+    'esri/symbols/SimpleMarkerSymbol',
+    'esri/symbols/SimpleLineSymbol',
+    'esri/symbols/SimpleFillSymbol',
 
     // template
     'dojo/text!./Search/templates/Search.html',
@@ -41,15 +49,22 @@ define([
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
 
-    Draw,
-    Query,
-    GeometryService,
     lang,
     on,
     domStyle,
     aspect,
     topic,
     keys,
+
+    Draw,
+    Query,
+    GeometryService,
+    geometryEngine,
+    GraphicsLayer,
+    Graphic,
+    SimpleMarkerSymbol,
+    SimpleLineSymbol,
+    SimpleFillSymbol,
 
     template,
 
@@ -69,6 +84,7 @@ define([
         title: 'Search Results',
         topicID: 'searchResults',
         attributesContainerID: 'attributesContainer',
+        queryBuilderTopicID: 'queryBuilderWidget',
 
         shapeLayer: 0,
         attributeLayer: 0,
@@ -84,6 +100,32 @@ define([
         */
         hiddenTabs: [],
 
+        // collects the geometry from multiple shapes for use in the search
+        spatialGeometry: null,
+
+        // the current tab/table of search results
+        selectedTable: null,
+
+        /*
+            Search capabilities that can be enabled/disabled
+            individually in the configuration file.
+        */
+        enableQueryBuilder: false, //Query Builder widget not yet released
+        enableDrawMultipleShapes: true,
+        enableAddToExistingResults: true,
+        enableSpatialFilters: true,
+
+        // configure which spatial filters are available
+        spatialFilters: {
+            entireMap: true,
+            currentExtent: true,
+            identifiedFeature: true,
+            searchFeatures: true,
+            searchSelected: true,
+            searchSource: true,
+            searchBuffer: true
+        },
+
         drawingOptions: {
             rectangle: true,
             circle: true,
@@ -92,8 +134,60 @@ define([
             freehandPolyline: true,
             polygon: true,
             freehandPolygon: true,
+            stopDrawing: true,
             identifiedFeature: true,
-            selectedFeatures: false
+            selectedFeatures: true,
+
+            symbols: {}
+        },
+
+        // symbology for drawn shapes
+        defaultSymbols: {
+            point: {
+                type: 'esriSMS',
+                style: 'esriSMSCircle',
+                size: 6,
+                color: [0, 0, 0, 64],
+                angle: 0,
+                xoffset: 0,
+                yoffset: 0,
+                outline: {
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid',
+                    color: [255, 0, 0],
+                    width: 2
+                }
+            },
+            polyline: {
+                type: 'esriSLS',
+                style: 'esriSLSSolid',
+                color: [255, 0, 0],
+                width: 2
+            },
+            polygon: {
+                type: 'esriSFS',
+                style: 'esriSFSSolid',
+                color: [0, 0, 0, 64],
+                outline: {
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid',
+                    color: [255, 0, 0],
+                    width: 1
+                }
+            },
+
+            // symbology for buffer around shapes
+            buffer: {
+                type: 'esriSFS',
+                style: 'esriSFSSolid',
+                color: [255, 0, 0, 32],
+                outline: {
+                    type: 'esriSLS',
+                    style: 'esriSLSDash',
+                    color: [255, 0, 0, 255],
+                    width: 1
+                }
+            }
         },
 
         bufferUnits: [
@@ -127,10 +221,17 @@ define([
 
         postCreate: function () {
             this.inherited(arguments);
+            this.initAdvancedFeatures();
             this.initLayerSelect();
+            this.initSpatialFilters();
             this.selectBufferUnits.set('options', this.bufferUnits);
             this.drawToolbar = new Draw(this.map);
             this.enableDrawingButtons();
+            this.addGraphicsLayer();
+
+            this.tabContainer.watch('selectedChildWidget', lang.hitch(this, function (name, oldVal, newVal) {
+                this.cancelDrawing();
+            }));
 
             if (this.map.infoWindow) {
                 on(this.map.infoWindow, 'show', lang.hitch(this, 'enableIdentifyButton'));
@@ -174,7 +275,12 @@ define([
 
         addTopics: function () {
             this.own(topic.subscribe('mapClickMode/currentSet', lang.hitch(this, 'setMapClickMode')));
-            this.own(topic.subscribe('searchWidget/search', lang.hitch(this, 'executeSearch')));
+            this.own(topic.subscribe(this.topicID + '/search', lang.hitch(this, 'executeSearch')));
+            this.own(topic.subscribe(this.attributesContainerID + '/tableUpdated', lang.hitch(this, 'setSearchTable')));
+
+            // used with QueryBuilder widget
+            this.own(topic.subscribe(this.topicID + '/setSQLWhereClause', lang.hitch(this, 'setSQLWhereClause')));
+            this.own(topic.subscribe(this.topicID + '/clearSQLWhereClause', lang.hitch(this, 'clearSQLWhereClause')));
         },
 
         /*******************************
@@ -183,7 +289,7 @@ define([
 
         executeSearchWithReturn: function (evt) {
             if (evt.keyCode === keys.ENTER) {
-                this.onSearch();
+                this.doAttributeSearch();
             }
         },
 
@@ -215,6 +321,8 @@ define([
                 searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry);
             }
 
+            this.hideInfoWindow();
+
             // publish to an accompanying attributed table
             if (searchOptions.findOptions || searchOptions.queryOptions) {
                 topic.publish(this.attributesContainerID + '/addTable', searchOptions);
@@ -223,7 +331,7 @@ define([
         },
 
         buildQueryOptions: function (layer, search, geometry) {
-            var where, distance, unit, showOnly = false;
+            var where, distance, unit, showOnly = false, addToExisting = false;
             var queryOptions = {
                 idProperty: search.idProperty || layer.idProperty || 'FID',
                 linkField: search.linkField || layer.linkField || null,
@@ -243,9 +351,15 @@ define([
                 }
                 unit = this.selectBufferUnits.get('value');
                 showOnly = this.checkBufferOnly.get('checked');
+                addToExisting = this.checkSpatialAddToExisting.get('checked');
 
             } else {
                 where = this.buildWhereClause(layer, search);
+                if (where === null) {
+                    return null;
+                }
+                geometry = this.getSpatialFilterGeometry();
+                addToExisting = this.checkAttributeAddToExisting.get('checked');
             }
 
             var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
@@ -253,6 +367,7 @@ define([
                 //type: search.type || layer.type || 'spatial',
                 geometry: geometry,
                 where: where,
+                addToExisting: addToExisting,
                 outSpatialReference: search.outSpatialReference || this.map.spatialReference,
                 spatialRelationship: search.spatialRelationship || layer.spatialRelationship || Query.SPATIAL_REL_INTERSECTS
             });
@@ -265,7 +380,6 @@ define([
             });
 
             return queryOptions;
-
 
         },
 
@@ -308,6 +422,74 @@ define([
                 }
             }
             return where;
+        },
+
+        getSpatialFilterGeometry: function () {
+            var geometry = null, type = this.selectAttributeSpatialFilter.get('value');
+
+            switch (type) {
+            case 'entireMap':
+                break;
+            case 'currentExtent':
+                geometry = this.map.extent;
+                break;
+            case 'identifiedFeatures':
+                geometry = this.getGeometryFromIdentifiedFeature();
+                break;
+            case 'searchSource':
+                if (this.selectedTable) {
+                    geometry = this.getGeometryFromGraphicsLayer(this.selectedTable.sourceGraphics);
+                }
+                break;
+            case 'searchFeatures':
+                if (this.selectedTable) {
+                    geometry = this.getGeometryFromGraphicsLayer(this.selectedTable.featureGraphics);
+                }
+                break;
+            case 'searchSelected':
+                if (this.selectedTable) {
+                    geometry = this.getGeometryFromSelectedFeatures();
+                }
+                break;
+            case 'searchBuffer':
+                if (this.selectedTable) {
+                    geometry = this.getGeometryFromGraphicsLayer(this.selectedTable.bufferGraphics);
+                }
+                break;
+            default:
+                break;
+            }
+
+            return geometry;
+        },
+
+        getGeometryFromGraphicsLayer: function (layer) {
+            if (!layer || !layer.graphics) {
+                return null;
+            }
+
+            var graphics = layer.graphics;
+            var k = 0, len = graphics.length, geoms = [];
+            for (k = 0; k < len; k++) {
+                geoms.push(graphics[k].geometry);
+            }
+            return geometryEngine.union(geoms);
+        },
+
+        getGeometryFromIdentifiedFeature: function () {
+            var popup = this.map.infoWindow, feature;
+            if (popup && popup.isShowing) {
+                feature = popup.getSelectedFeature();
+            }
+            return feature.geometry;
+        },
+
+        getGeometryFromSelectedFeatures: function () {
+            var geom;
+            if (this.selectedTable) {
+                geom = this.getGeometryFromGraphicsLayer(this.selectedTable.selectedGraphics);
+            }
+            return geom;
         },
 
         getSearchTerm: function (idx, field) {
@@ -384,6 +566,33 @@ define([
                 this.onShapeLayerChange(this.shapeLayer);
             } else {
                 this.selectLayerByShape.set('disabled', true);
+            }
+        },
+
+        initAdvancedFeatures: function () {
+            // show the queryBuilder button
+            if (this.enableQueryBuilder) {
+                this.btnQueryBuilder.set('disabled', false);
+            } else {
+                domStyle.set(this.btnQueryBuilder.domNode, 'display', 'none');
+            }
+
+            // allow or not the drawing multiple shapes before searching
+            if (!this.enableDrawMultipleShapes) {
+                domStyle.set(this.btnSpatialSearch.domNode, 'display', 'none');
+                this.drawingOptions.stopDrawing = false;
+            }
+
+            // allow or the search results to be added to the previous results
+            if (!this.enableAddToExistingResults) {
+                domStyle.set(this.divAttributeAddToExisting, 'display', 'none');
+                domStyle.set(this.divSpatialAddToExisting, 'display', 'none');
+                this.drawingOptions.selectedFeatures = false;
+            }
+
+            // allow or not the use of spatial features
+            if (!this.enableSpatialFilters) {
+                domStyle.set(this.divAttributeSpatialFilter, 'display', 'none');
             }
         },
 
@@ -466,16 +675,77 @@ define([
 
                         // put focus on the first input field
                         this.inputSearchTerm0.domNode.focus();
-                        this.btnSearch.set('disabled', false);
+                        this.btnAttributeSearch.set('disabled', false);
+
                     }
                 }
             }
         },
 
-        onSearch: function () {
+        doAttributeSearch: function () {
             this.search(null, this.attributeLayer);
         },
 
+        initSpatialFilters: function () {
+            var type = this.selectAttributeSpatialFilter.get('value');
+            var geomOptions = [], popup = this.map.infoWindow, includeOption;
+            for (var key in this.spatialFilters) {
+                if (this.spatialFilters.hasOwnProperty(key)) {
+                    if (this.spatialFilters[key]) {
+                        includeOption = false;
+                        switch (key) {
+                        case 'identifiedFeature':
+                            if (popup && popup.isShowing) {
+                                includeOption = true;
+                            }
+                            break;
+                        case 'searchSource':
+                            if (this.selectedTable && this.selectedTable.sourceGraphics.graphics.length > 0) {
+                                includeOption = true;
+                            }
+                            break;
+                        case 'searchFeatures':
+                            if (this.selectedTable && this.selectedTable.featureGraphics.graphics.length > 0) {
+                                includeOption = true;
+                            }
+                            break;
+                        case 'searchSelected':
+                            if (this.selectedTable && this.selectedTable.selectedGraphics.graphics.length > 0) {
+                                includeOption = true;
+                            }
+                            break;
+                        case 'searchBuffer':
+                            if (this.selectedTable && this.selectedTable.bufferGraphics.graphics.length > 0) {
+                                includeOption = true;
+                            }
+                            break;
+                        default:
+                            includeOption = true;
+                            break;
+                        }
+                        if (includeOption) {
+                            geomOptions.push({
+                                value: key,
+                                label: this.i18n.Labels.spatialFilters[key]
+                            });
+                        }
+                    }
+                }
+            }
+
+            this.selectAttributeSpatialFilter.set('options', geomOptions);
+            this.selectGeometry = null;
+            if (geomOptions.length > 0) {
+                this.selectAttributeSpatialFilter.set('disabled', false);
+                this.selectAttributeSpatialFilter.set('value', type);
+            } else {
+                this.selectAttributeSpatialFilter.set('disabled', true);
+            }
+        },
+
+        onSpatialBufferChange: function () {
+            this.addBufferGraphic();
+        },
 
         /*******************************
         *  Drawing Functions
@@ -497,6 +767,8 @@ define([
             domStyle.set(this.searchPolygonButtonDijit.domNode, 'display', disp);
             disp = (opts.freehandPolygon !== false) ? 'inline-block' : 'none';
             domStyle.set(this.searchFreehandPolygonButtonDijit.domNode, 'display', disp);
+            disp = (opts.stopDrawing !== false) ? 'inline-block' : 'none';
+            domStyle.set(this.searchStopDrawingButtonDijit.domNode, 'display', disp);
             disp = (opts.identifiedFeatures !== false) ? 'inline-block' : 'none';
             domStyle.set(this.searchIdentifyButtonDijit.domNode, 'display', disp);
             disp = (opts.selectedFeatures !== false) ? 'inline-block' : 'none';
@@ -571,19 +843,28 @@ define([
             this.searchFreehandPolylineButtonDijit.set('checked', false);
             this.searchPolygonButtonDijit.set('checked', false);
             this.searchFreehandPolygonButtonDijit.set('checked', false);
+            this.searchStopDrawingButtonDijit.set('checked', true);
+            this.btnSpatialSearch.set('disabled', true);
         },
 
         endDrawing: function (evt) {
-            var clickMode = this.mapClickMode;
-            this.uncheckDrawingTools();
-            this.map.enableMapNavigation();
-            this.drawToolbar.deactivate();
-            this.connectMapClick();
+            var clickMode = this.mapClickMode, geometry;
+            if (clickMode === 'search' && evt) {
+                geometry = evt.geometry;
+            }
+            if (geometry) {
+                if (this.spatialGeometry) {
+                    this.spatialGeometry = geometryEngine.union(this.spatialGeometry, geometry);
+                } else {
+                    this.spatialGeometry = geometry;
+                }
+                this.addDrawingGraphic(evt);
+                this.addBufferGraphic();
 
-            if (clickMode === 'search') {
-                var geometry = evt.geometry;
-                if (geometry) {
-                    this.search(geometry, this.shapeLayer);
+                if (this.enableDrawMultipleShapes) {
+                    this.btnSpatialSearch.set('disabled', false);
+                } else {
+                    this.doSpatialSearch();
                 }
             }
         },
@@ -592,8 +873,85 @@ define([
             this.hideInfoWindow();
             this.disconnectMapClick();
             this.uncheckDrawingTools();
+            this.drawToolbar.deactivate();
+            this.spatialGeometry = null;
+            this.drawingGraphicsLayer.clear();
+            this.bufferGraphic = null;
         },
 
+        doSpatialSearch: function () {
+            this.uncheckDrawingTools();
+            this.map.enableMapNavigation();
+            this.drawToolbar.deactivate();
+            this.drawingGraphicsLayer.clear();
+            this.bufferGraphic = null;
+            this.connectMapClick();
+
+            if (this.spatialGeometry) {
+                this.search(this.spatialGeometry, this.shapeLayer);
+                this.spatialGeometry = null;
+            }
+        },
+
+        addGraphicsLayer: function () {
+            this.drawingGraphicsLayer = new GraphicsLayer({
+                id: this.topicID + '_SourceGraphics',
+                title: 'Search Drawing Graphics'
+            });
+            this.map.addLayer(this.drawingGraphicsLayer);
+
+            // symbology for drawn features
+            var symbolOptions = this.drawingOptions.symbols || {};
+            var symbols = this.mixinDeep(lang.clone(this.defaultSymbols), symbolOptions);
+            this.drawingPointSymbol = new SimpleMarkerSymbol(symbols.point);
+            this.drawingPolylineSymbol = new SimpleLineSymbol(symbols.polyline);
+            this.drawingPolygonSymbol = new SimpleFillSymbol(symbols.polygon);
+            this.bufferPolygonSymbol = new SimpleFillSymbol(symbols.buffer);
+        },
+
+        addDrawingGraphic: function (feature) {
+            var symbol, graphic;
+            switch (feature.geometry.type) {
+            case 'point':
+            case 'multipoint':
+                symbol = this.drawingPointSymbol;
+                break;
+            case 'polyline':
+                symbol = this.drawingPolylineSymbol;
+                break;
+            case 'extent':
+            case 'polygon':
+                symbol = this.drawingPolygonSymbol;
+                break;
+            default:
+            }
+            if (symbol) {
+                graphic = new Graphic(feature.geometry, symbol, feature.attributes);
+                this.drawingGraphicsLayer.add(graphic);
+            }
+        },
+
+        addBufferGraphic: function () {
+            var geometry,
+                distance = this.inputBufferDistance.get('value'),
+                unit = this.selectBufferUnits.get('value');
+
+            this.drawingGraphicsLayer.remove(this.bufferGraphic);
+            this.bufferGraphic = null;
+
+            if (isNaN(distance) || distance === 0 || !this.spatialGeometry) {
+                return;
+            }
+            if (this.map.spatialReference.wkid === 4326 || this.map.spatialReference.wkid === 102100) {
+                geometry = geometryEngine.geodesicBuffer(this.spatialGeometry, distance, unit);
+                if (geometry) {
+                    this.bufferGraphic = new Graphic(geometry, this.bufferPolygonSymbol);
+                    this.drawingGraphicsLayer.add(this.bufferGraphic);
+                }
+            }
+        },
+
+        /*
         onDrawToolbarDrawEnd: function (graphic) {
             this.map.enableMapNavigation();
             this.drawToolbar.deactivate();
@@ -601,21 +959,19 @@ define([
 
             this.search(graphic.geometry, this.shapeLayer);
         },
+        */
 
         /*******************************
         *  Using Identify Functions
         *******************************/
 
         useIdentifiedFeatures: function () {
-            var popup = this.map.infoWindow;
-            if (popup && popup.isShowing) {
-                var feature = popup.getSelectedFeature();
-                if (feature) {
-                    popup.hide();
-                    this.search(feature.geometry, this.shapeLayer);
-                    return;
-                }
+            var geometry = this.getGeometryFromIdentifiedFeature();
+            if (geometry) {
+                this.search(geometry, this.shapeLayer);
+                return;
             }
+
             topic.publish('growler/growl', {
                 title: 'Search',
                 message: 'You must have identified a feature',
@@ -626,27 +982,25 @@ define([
 
         enableIdentifyButton: function () {
             this.searchIdentifyButtonDijit.set('disabled', false);
+            this.initSpatialFilters();
         },
 
         disableIdentifyButton: function () {
             this.searchIdentifyButtonDijit.set('disabled', true);
+            this.initSpatialFilters();
         },
 
         /*******************************
         *  Using Selected Functions
         *******************************/
-        // not yet implemented - need a selection widget
+
         useSelectedFeatures: function () {
-            /*
-            var selected = false;
-            if (selected) {
-                var feature = this.getSelectedFeatures();
-                if (feature) {
-                    this.search(feature.geometry, this.shapeLayer);
-                    return;
-                }
+            var geometry = this.getGeometryFromSelectedFeatures();
+            if (geometry) {
+                this.search(geometry, this.shapeLayer);
+                return;
             }
-            */
+
             topic.publish('growler/growl', {
                 title: 'Search',
                 message: 'You must have selected feature(s)',
@@ -655,12 +1009,43 @@ define([
             });
         },
 
+        toggleSelectedButton: function () {
+            var geometry = this.getGeometryFromSelectedFeatures();
+            if (geometry) {
+                this.enableSelectedButton();
+            } else {
+                this.disableSelectedButton();
+            }
+        },
+
         enableSelectedButton: function () {
             this.searchSelectedButtonDijit.set('disabled', false);
         },
 
         disableSelectedButton: function () {
             this.searchSelectedButtonDijit.set('disabled', true);
+        },
+
+        /*******************************
+        *  Query Builder Functions
+        *******************************/
+
+        openQueryBuilder: function () {
+            var layer = this.layers[this.attributeLayer], search = layer.attributeSearches[this.searchIndex] || {};
+            topic.publish(this.queryBuilderTopicID + '/openDialog', {
+                layer: layer,
+                sqlText: search.sqlWhereClause
+            });
+        },
+
+        setSQLWhereClause: function (sqlText) {
+            var layer = this.layers[this.attributeLayer], search = layer.attributeSearches[this.searchIndex] || {};
+            search.sqlWhereClause = sqlText;
+        },
+
+        clearSQLWhereClause: function () {
+            var layer = this.layers[this.attributeLayer], search = layer.attributeSearches[this.searchIndex] || {};
+            search.sqlWhereClause = null;
         },
 
         /*******************************
@@ -691,6 +1076,32 @@ define([
                 this.drawToolbar.deactivate();
                 this.inherited(arguments);
             }
+        },
+
+        setSearchTable: function (searchTable) {
+            this.selectedTable = searchTable;
+            this.initSpatialFilters();
+            this.toggleSelectedButton();
+        },
+
+        mixinDeep: function (dest, source) {
+            //Recursively mix the properties of two objects
+            var empty = {};
+            for (var name in source) {
+                if (!(name in dest) || (dest[name] !== source[name] && (!(name in empty) || empty[name] !== source[name]))) {
+                    try {
+                        if (source[name].constructor === Object) {
+                            dest[name] = this.mixinDeep(dest[name], source[name]);
+                        } else {
+                            dest[name] = source[name];
+                        }
+                    } catch (e) {
+                        // Property in destination object not set. Create it and set its value.
+                        dest[name] = source[name];
+                    }
+                }
+            }
+            return dest;
         }
     });
 });
