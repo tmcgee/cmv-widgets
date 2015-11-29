@@ -72,7 +72,6 @@ define([
                         if (tab && tab.selectTab) {
                             tab.selectTab();
                         }
-                        topic.publish(this.topicID + '/tableUpdated', tab);
                     }
                 }));
 

@@ -304,6 +304,7 @@ define([
         selectTab: function () {
             this.showAllGraphics();
             this.checkSizing();
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
         },
 
         unselectTab: function () {
