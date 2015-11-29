@@ -301,13 +301,6 @@ define([
             }
         },
 
-        // get the sidebar pane containing the widget (if any)
-        getSidebarPane: function () {
-            if (!this.sidebarPane) {
-                this.sidebarPane = registry.byId(this.sidebarID);
-            }
-        },
-
         selectTab: function () {
             this.showAllGraphics();
             this.checkSizing();
@@ -315,6 +308,13 @@ define([
 
         unselectTab: function () {
             this.hideAllGraphics();
+        },
+
+        // get the sidebar pane containing the widget (if any)
+        getSidebarPane: function () {
+            if (!this.sidebarPane) {
+                this.sidebarPane = registry.byId(this.sidebarID);
+            }
         },
 
         /*
@@ -348,16 +348,10 @@ define([
             domStyle.set(bodyNode, 'margin-bottom', (ftrBox.h + 1) + 'px');
         },
 
-        // open the sidebar pane containing this widget (if any)
-        openPane: function () {
-            this.getSidebarPane();
-            if (this.sidebarPane) {
-                var paneID = this.sidebarPane.id.toLowerCase().replace('sidebar', '');
-                topic.publish('viewer/togglePane', {
-                    pane: paneID,
-                    show: 'block'
-                });
-            }
+        destroy: function () {
+            this.clearAll();
+            this.removeGraphicLayers();
+            this.inherited(arguments);
         },
 
         mixinDeep: function (dest, source) {

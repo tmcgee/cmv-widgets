@@ -51,10 +51,10 @@ define([
 
         getFeaturesFromResults: function () {
             var results = this.results;
-            var features = [];
+            var features = this.features || [];
 
             if (results.features) {
-                features = results.features;
+                features = features.concat(results.features);
             } else if (this.queryParameters && this.queryParameters.type === 'relationship') {
                 for (var key in results) {
                     if (results.hasOwnProperty(key)) {
@@ -109,6 +109,7 @@ define([
             this.clearFeatureGraphics();
             this.clearSelectedFeatures();
             this.features = [];
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
         },
 
         clearSelectedFeatures: function () {
@@ -117,6 +118,7 @@ define([
             }
             this.clearSelectedGraphics();
             this.selectedFeatures = [];
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
         },
 
         doneSelectingFeatures: function (zoom) {
@@ -137,6 +139,7 @@ define([
             }
 
             this.setToolbarButtons();
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
 
             // publish the results of our selection
             var sv = (zoom && this.selectedFeatures.length === 1) ? this.featureOptions.streetView : false;

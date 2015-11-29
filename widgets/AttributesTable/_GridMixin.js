@@ -1,6 +1,7 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
+    'dojo/topic',
     'dojo/sniff',
     'dojo/_base/array',
     'dojo/date/locale',
@@ -17,6 +18,7 @@ define([
 ], function (
     declare,
     lang,
+    topic,
     has,
     array,
     locale,
@@ -135,7 +137,7 @@ define([
         },
 
         populateGrid: function (options) {
-            var results = options;
+            var features, results = options;
             if (options.results) {
                 results = options.results;
             } else {
@@ -144,6 +146,9 @@ define([
 
             if (!this.results) {
                 this.results = results;
+                features = this.getFeaturesFromResults();
+            } else {
+                features = this.getFeatures();
             }
             if (!this.idProperty) {
                 this.getIdProperty(results);
@@ -161,8 +166,8 @@ define([
             }
             */
 
-            var features = this.getFeaturesFromResults();
             var rows = [];
+
             array.forEach(features, lang.hitch(this, function (feature) {
                 // relationship query
                 if (feature.relatedRecords) {
@@ -414,6 +419,7 @@ define([
                 this.grid.refresh();
             }
             this.setToolbarButtons();
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
         }
 
     });

@@ -16,9 +16,11 @@ define({
                 title: 'Search Results',
                 message: null,
                 noFeatures: 'No features',
+                newFeatures: 'new',
                 feature: 'feature',
                 features: 'features',
-                found: 'found'
+                found: 'found',
+                total: 'total'
             }
         },
 

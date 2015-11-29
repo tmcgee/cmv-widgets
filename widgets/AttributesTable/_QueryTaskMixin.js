@@ -10,6 +10,7 @@ define([
     'esri/tasks/query',
     'esri/tasks/RelationshipQuery',
     'esri/tasks/QueryTask',
+    'esri/geometry/geometryEngine',
     'esri/tasks/BufferParameters'
 
 ], function (
@@ -24,6 +25,7 @@ define([
     Query,
     RelationshipQuery,
     QueryTask,
+    geometryEngine,
     BufferParameters
 ) {
     'use strict';
@@ -45,6 +47,7 @@ define([
                 objectIDs: null,
                 outFields: ['*'],
                 where: '1=1',
+                addToExisting: false,
                 geometry: null,
                 distance: null,
                 start: null,
@@ -114,11 +117,27 @@ define([
             if (this.executingQuery === true) {
                 return;
             }
-            this.getConfiguration(options);
 
-            this.clearFeatures();
+            // grab the query parameters
+            if (options && options.queryOptions && options.queryOptions.queryParameters) {
+                this.queryParameters = options.queryOptions.queryParameters;
+            }
+
+            var qp = this.queryParameters;
+
+            // only clear everything when we want to preserve the previous results
+            if (qp.addToExisting !== true && !qp.bufferGeometry) {
+                this.clearAll();
+            }
+
+            this.getConfiguration(options);
+            qp = this.queryParameters;
+
+            if (qp.addToExisting !== true) {
+                this.clearFeatures();
+            }
             this.clearSelectedFeatures();
-            if ((this.isLinkedQuery !== true || this.type === 'table') && (this.bufferParameters && !this.bufferParameters.showOnly)) {
+            if ((qp.addToExisting !== true) && (this.isLinkedQuery !== true || this.type === 'table') && (this.bufferParameters && !this.bufferParameters.showOnly)) {
                 this.clearGrid();
             }
 
@@ -135,7 +154,6 @@ define([
             }
 
             this.executingQuery = true;
-            var qp = this.queryParameters;
             var qt = new QueryTask(url);
             var q = null;
             if (qp.type === 'relationship') {
@@ -231,15 +249,21 @@ define([
         executeBuffer: function () {
             this.clearBufferGraphics();
 
-            var buffParams = new BufferParameters();
-            buffParams.geometries = [this.queryParameters.geometry];
-            buffParams.distances = [this.bufferParameters.distance];
-            buffParams.unit = this.bufferParameters.unit || units.FEET;
-            buffParams.geodesic = this.bufferParameters.geodesic || true;
-            buffParams.bufferSpatialReference = this.map.spatialReference;
-            buffParams.outSpatialReference = this.map.spatialReference;
+            // experimental use of geometryEngine
+            if (this.map.spatialReference.wkid === 4326 || this.map.spatialReference.wkid === 102100) {
+                var geometries = geometryEngine.geodesicBuffer(this.queryParameters.geometry, this.bufferParameters.distance, (this.bufferParameters.unit || units.FEET));
+                this.processBufferQueryResults([geometries]);
+            } else {
+                var buffParams = new BufferParameters();
+                buffParams.geometries = [this.queryParameters.geometry];
+                buffParams.distances = [this.bufferParameters.distance];
+                buffParams.unit = this.bufferParameters.unit || units.FEET;
+                buffParams.geodesic = this.bufferParameters.geodesic || true;
+                buffParams.bufferSpatialReference = this.map.spatialReference;
+                buffParams.outSpatialReference = this.map.spatialReference;
 
-            esriConfig.defaults.geometryService.buffer(buffParams, lang.hitch(this, 'processBufferQueryResults'));
+                esriConfig.defaults.geometryService.buffer(buffParams, lang.hitch(this, 'processBufferQueryResults'));
+            }
         },
 
         refreshQueryTask: function () {
@@ -268,6 +292,7 @@ define([
                 return;
             }
 
+            var originalRecs = this.getFeatureCount();
             this.results = results;
             this.getFeaturesFromResults();
 
@@ -276,13 +301,21 @@ define([
             }
 
             var recCount = this.getFeatureCount();
+            var newRecs = (originalRecs === 0) ? 0 : recCount - originalRecs;
             var msgNls = this.i18n.messages.searchResults;
             var msg = msgNls.message;
             if (!msg) {
                 if (recCount > 0) {
-                    msg = num.format(recCount) + ' ';
+                    msg = '';
+                    if (newRecs > 0) {
+                        msg += num.format(newRecs) + ' ' + msgNls.newFeatures + ' ';
+                        msg += (newRecs > 1) ? msgNls.features : msgNls.feature;
+                        msg += ' ' + msgNls.found + '.<br/>';
+                    }
+                    msg += num.format(recCount) + ' ';
                     msg += (recCount > 1) ? msgNls.features : msgNls.feature;
-                    msg += ' ' + msgNls.found + '.';
+                    msg += ' ' + msgNls.found;
+                    msg += (newRecs > 0) ? ' ' + msgNls.total + '.' : '.';
                 } else {
                     msg = msgNls.noFeatures;
                 }
@@ -296,7 +329,6 @@ define([
             }
 
             if (this.growlOptions.results && !this.isLinkedQuery) {
-                this.openPane();
 
                 topic.publish('growler/growl', {
                     title: this.title + ' ' + msgNls.title,
@@ -307,6 +339,8 @@ define([
             }
 
             topic.publish(this.topicID + '/queryResults', this.results);
+            topic.publish(this.attributesContainerID + '/openPane');
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
 
             if (this.linkedQuery && (this.linkedQuery.url || this.linkedQuery.layerID)) {
                 var lq = lang.clone(this.linkedQuery);

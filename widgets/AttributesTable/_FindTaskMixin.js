@@ -42,11 +42,9 @@ define([
             if (this.executingQuery === true) {
                 return;
             }
-            this.getConfiguration(options);
+            this.clearAll();
 
-            this.clearFeatures();
-            this.clearSelectedFeatures();
-            this.clearGrid();
+            this.getConfiguration(options);
 
             var url = this.getFindTaskURL();
             if (!url) {

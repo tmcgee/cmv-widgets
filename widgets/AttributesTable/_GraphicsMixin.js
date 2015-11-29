@@ -1,6 +1,8 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
+    'dojo/topic',
+    'dojo/_base/array',
     'dojo/sniff',
 
     'esri/layers/GraphicsLayer',
@@ -13,6 +15,8 @@ define([
 ], function (
     declare,
     lang,
+    topic,
+    array,
     has,
 
     GraphicsLayer,
@@ -271,6 +275,8 @@ define([
                 id: this.topicID + '_SelectedGraphics',
                 title: 'Attribute Selected Graphics'
             });
+            this.selectedGraphics.on('click', lang.hitch(this, 'selectFeatureFromMap'));
+
             this.map.addLayer(this.selectedGraphics);
 
         },
@@ -376,32 +382,41 @@ define([
                 if (key) {
                     row = this.grid.row(key);
                     if (row) {
-                        if (!evt.ctrlKey) {
-                            this.clearSelectedFeatures();
-                        }
-                        if (row.element) { // it is in the current grid
-                            if (this.grid.select) {
-                                // prevents the map from moving around
-                                // by zooming to selected features
-                                var mnu = this.toolbarOptions.zoom;
-                                var zm = mnu.selected;
-                                mnu.selected = false;
-                                this.grid.select(row);
-                                this.grid.focus(row.element);
-                                row.element.focus();
-                                mnu.selected = zm;
-                                this.setToolbarButtons();
+                        // prevents the map from moving around
+                        // by zooming to selected features
+                        var mnu = this.toolbarOptions.zoom;
+                        var zm = mnu.selected;
+                        mnu.selected = false;
+
+                        var selection = lang.clone(this.grid.get('selection'));
+                        selection[key] = (selection[key] !== true);
+
+                        this.selectedFeatures = [];
+                        this.selectedGraphics.clear();
+                        //this.grid.clearSelection();
+
+                        for (var sKey in selection) {
+                            if (selection.hasOwnProperty(sKey)) {
+                                if (this.grid.select) {
+                                    row = this.grid.row(sKey);
+                                    this.grid.select(row, null, selection[sKey]);
+                                }
+                                if (selection[sKey]) {
+                                    feature = this.getFeatureFromStore(sKey);
+                                    if (feature && feature.geometry) {
+                                        this.addSelectedGraphic(feature);
+                                    }
+                                }
                             }
-                        } else {
-                            feature = this.getFeatureFromStore(key);
-                            if (feature && feature.geometry) {
-                                this.addSelectedGraphic(feature);
-                                this.doneSelectingFeatures(false);
-                            }
                         }
+                        this.doneSelectingFeatures(false);
+
+                        // reset the original zooming
+                        mnu.selected = zm;
+                        this.setToolbarButtons();
                     }
                 }
-                if (!evt.ctrlKey && this.selectedFeatures.length === 1) {
+                if (!evt.ctrlKey && !evt.shiftKey && this.selectedFeatures.length === 1) {
                     if (graphic.infoTemplate && this.map.infoWindow) {
                         var center,
                             extent = this.getGraphicsExtent(this.selectedGraphics);
@@ -639,7 +654,26 @@ define([
                 layer.clear();
             }
             this.setToolbarButtons();
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
 
+        },
+
+        /*******************************
+         *  Remove Graphic Layers
+         *******************************/
+
+        removeGraphicLayers: function () {
+            this.map.removeLayer(this.featureGraphics);
+            this.featureGraphics = null;
+
+            this.map.removeLayer(this.selectedGraphics);
+            this.selectedGraphics = null;
+
+            this.map.removeLayer(this.sourceGraphics);
+            this.sourceGraphics = null;
+
+            this.map.removeLayer(this.bufferGraphics);
+            this.bufferGraphics = null;
         }
     });
 });
