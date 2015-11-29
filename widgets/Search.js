@@ -229,7 +229,7 @@ define([
             this.enableDrawingButtons();
             this.addGraphicsLayer();
 
-            this.tabContainer.watch('selectedChildWidget', lang.hitch(this, function (name, oldVal, newVal) {
+            this.tabContainer.watch('selectedChildWidget', lang.hitch(this, function () {
                 this.cancelDrawing();
             }));
 

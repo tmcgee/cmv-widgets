@@ -183,6 +183,11 @@ queryOptions:
         where: '1=1',
 
         /*
+            Whether the results should be added to existing results or clear them first
+        */
+        addToExisting: null,
+
+        /*
             The geometry to apply to the spatial filter.
         */
         geometry: null,
@@ -753,8 +758,8 @@ The Attribute Table publishes the following topics. The topicID should be unique
 // publishes to the central error handler when an unexpected error occurs
 'viewer/handleError'
 
-// publishes to the central pane management to open/close the pane containing the Attribute Table
-'viewer/togglePane'
+// published when a table is updated in some way.
+topicID + '/tableUpdated'
 
 // publishes the raw results of the QueryTask
 topicID + '/queryResults'
@@ -784,6 +789,15 @@ topicID + '/addTab'
 
 // remove a tab from the tab strip
 topicID + '/removeTab'
+
+// select a tab in the tab strip
+topicID + '/selectTab'
+
+// open the associated sidebar pane if it exists
+topicID + '/openPane'
+
+// open the associated sidebar pane if it exists
+topicID + '/closePane'
 ```
 
 ### Published Topics
@@ -794,4 +808,10 @@ topicID + '/tableAdded'
 
 // published when a table is removed. returns the id of the table removed.
 topicID + '/tableRemoved'
+
+// published when a table is updated in some way.
+topicID + '/tableUpdated'
+
+// publishes to the central pane management to open/close the pane containing the Attribute Table
+'viewer/togglePane'
 ```
