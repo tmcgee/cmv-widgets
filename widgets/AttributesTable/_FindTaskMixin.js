@@ -104,7 +104,7 @@ define([
                 this.populateGrid(results);
             }
 
-            this.openPane();
+            topic.publish(this.attributesContainerID + '/openPane');
 
             topic.publish('growler/growl', {
                 title: this.title + ' ' + msgNls.title,
