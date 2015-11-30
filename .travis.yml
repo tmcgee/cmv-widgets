@@ -16,4 +16,4 @@ deploy:
   skip_cleanup: true
 notifications:
   slack:
-    secure: NNR7OOLQ/aAwIhDqDgMgn5LSkQG98nQwKy72jHCUHZrJIsVP//tkzde7X4nvBs8Lbo+Or0kYoACqWmyB7OU8i1DrtAnDtCt4biJvUxub/ZKEeBwGXMRdXAhrzEHnf+j$
+    secure: PGsxufNYe3UrJhJnblafVeCrOjYjfVs8N6leOVCriIhxwIWpDS+whiGOpQQxZNRVN4beSgEhCbewNXHT0t3RT/Mrz4G800Gkdi+JaVADM5ZUSvAzM+02J780MSmbityVBwsHAQpn1/+cBInKQ/Yxf+G2b4f4ZDBloThrJwxLHTA=
