@@ -4,3 +4,6 @@ node_js:
 sudo: false
 before_install: npm install -g grunt-cli
 before_script: grunt build --verbose
+notifications:
+  slack:
+    secure: NNR7OOLQ/aAwIhDqDgMgn5LSkQG98nQwKy72jHCUHZrJIsVP//tkzde7X4nvBs8Lbo+Or0kYoACqWmyB7OU8i1DrtAnDtCt4biJvUxub/ZKEeBwGXMRdXAhrzEHnf+j$
