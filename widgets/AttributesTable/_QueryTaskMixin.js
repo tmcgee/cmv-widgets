@@ -144,9 +144,8 @@ define([
             if (this.featureOptions.buffer && this.bufferParameters && this.bufferParameters.distance) {
                 this.executeBuffer();
                 return;
-            } else {
-                this.featureOptions.buffer = false;
             }
+            this.featureOptions.buffer = false;
 
             var url = this.getQueryTaskURL();
             if (!url) {

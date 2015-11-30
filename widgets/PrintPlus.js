@@ -168,7 +168,7 @@ define([
             this.printTask = new PrintTask(this.printTaskURL);
             this.printparams = new PrintParameters();
             this.printparams.map = this.map;
-            this.printparams.outSpatialReference = (this.outWkid && this.outWkid !== undefined) ? new SpatialReference(this.outWkid) : this.map.spatialReference;
+            this.printparams.outSpatialReference = (this.outWkid && typeof(this.outWkid) !== 'undefined') ? new SpatialReference(this.outWkid) : this.map.spatialReference;
             if (this.showLayout) {
                 this.mapUnitsToMeters = this.getUnitToMetersFactor(this.map._params.units); //Print Plus Enhancements (this may break in future API releases)
                 if (isNaN(this.mapUnitsToMeters.x) || isNaN(this.mapUnitsToMeters.y)) {

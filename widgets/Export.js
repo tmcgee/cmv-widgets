@@ -131,10 +131,10 @@ define([
             this.results = options.results;
             this.grid = options.grid;
 
-            if (options.excel !== undefined) {
+            if (typeof(options.excel) !== 'undefined') {
                 this.excel = options.excel;
             }
-            if (options.csv !== undefined) {
+            if (typeof(options.csv) !== 'undefined') {
                 this.csv = options.csv;
             }
             /*
@@ -156,9 +156,8 @@ define([
         getFileName: function (extension) {
             if (this.filename) {
                 return (typeof this.filename === 'function' ? this.filename(this) + extension : this.filename + extension);
-            } else {
-                return 'result' + extension;
             }
+            return 'result' + extension;
         },
 
         /*******************************
@@ -487,7 +486,7 @@ define([
             });
 
             // feature detection
-            if (link.download !== undefined) {
+            if (typeof(link.download) !== 'undefined') {
                 // Browsers that support HTML5 download attribute
                 if (useBlob) {
                     url = window.URL.createObjectURL(blob);
@@ -505,11 +504,12 @@ define([
              //feature detection using IE10+ routine
             } else if (navigator.msSaveOrOpenBlob) {
                 return navigator.msSaveOrOpenBlob(blob, fileName);
-            } else {
-                window.open(dataURI);
-                window.focus();
-                return null;
             }
+
+            // catch all. for which browsers?
+            window.open(dataURI);
+            window.focus();
+            return null;
 
         }
     });
