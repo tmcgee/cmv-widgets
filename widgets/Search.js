@@ -231,6 +231,7 @@ define([
 
             this.tabContainer.watch('selectedChildWidget', lang.hitch(this, function () {
                 this.cancelDrawing();
+                this.connectMapClick();
             }));
 
             if (this.map.infoWindow) {

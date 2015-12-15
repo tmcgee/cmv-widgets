@@ -1,7 +1,7 @@
 <div>
 	<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center'" tabStrip="true" data-dojo-attach-point="tabContainer" class="tabContainer">
-		<div data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByAttribute}" class="searchTab" selected="true">
-	  		<div>
+		<div id="tabByAttribute" data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByAttribute}" class="searchTab" selected="true">
+	  		<div class="selectALayer">
 	    		<label>${i18n.Labels.selectALayer}:</label><br>
 		    	<select style="width:100%;" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" data-dojo-attach-event="onChange:onAttributeLayerChange"></select>
 	  		</div>
@@ -46,13 +46,13 @@
     			<button data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-wrench fa-fw',showLabel:true,disabled:true" data-dojo-attach-point="btnQueryBuilder" data-dojo-attach-event="click:openQueryBuilder">${i18n.Buttons.openQueryBuilder}</button>
 		  	</div>
 		</div>
-		<div data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" class="searchTab" title="${i18n.Labels.tabTitleByShape}">
-		  	<div>
+		<div id="tabByShape" data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" class="searchTab" title="${i18n.Labels.tabTitleByShape}">
+		  	<div class="selectALayer">
 		    	<label>${i18n.Labels.selectALayer}:</label><br/>
 		    	<select style="width:100%;" data-dojo-attach-point="selectLayerByShape" data-dojo-type="dijit/form/Select" data-dojo-attach-event="onChange:onShapeLayerChange"></select>
 		  	</div>
 		  	<div id="divShapeBufferSelection" class="searchSelector">
-			  	<table>
+			  	<table id="tblBufferInput">
 			    	<tr valign="top">
 			    		<td align="right">
 			    			<label>${i18n.Labels.buffer}:</label>
@@ -65,7 +65,7 @@
 				      	</td>
 			    	</tr>
 			  	</table>
-			  	<table>
+			  	<table id="tblDisplayBufferOnly">
 			    	<tr valign="top">
 			    		<td>
 			    			<label style="margin-left:10px;margin-right:5px;">${i18n.Labels.displayBuffer}:</label>
