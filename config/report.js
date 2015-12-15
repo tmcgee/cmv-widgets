@@ -1,7 +1,13 @@
 define([
+    'esri/urlUtils',
     'esri/layers/ImageParameters'
-], function (ImageParameters) {
+], function (urlUtils, ImageParameters) {
     'use strict';
+
+    urlUtils.addProxyRule({
+        urlPrefix: 'http://gis.scwa.ca.gov',
+        proxyUrl: '/proxy/proxy.ashx'
+    });
 
     var imageParameters = new ImageParameters();
     imageParameters.format = 'png32';

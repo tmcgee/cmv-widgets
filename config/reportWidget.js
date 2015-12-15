@@ -5,12 +5,17 @@ define([
 
     return {
         map: true,
-        printTaskURL: 'https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
+
+        /*
+            printTaskURL must be on the same same as application
+            or the server must be configured for CORS
+            or you can use a proxy
+        */
+        printTaskURL: 'http://gis.scwa.ca.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
+        //'https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
 
         startup: function () {
-            window.setTimeout(function () {
-                topic.publish('reportWidget/createReport');
-            }, 200);
+            topic.publish('reportWidget/createReport');
         },
 
         reportLayout: {
@@ -32,14 +37,14 @@ define([
                 right: 30
             },
             font: {
-                color: 20,
+                color: [33, 33, 33],
                 size: 11,
                 font: 'helvetica',
                 style: 'normal'
             },
             line: {
                 width: 0.5,
-                color: 0
+                color: 30
             },
             border: {
                 width: 0.5,
@@ -47,13 +52,19 @@ define([
             },
             header: {
                 text: 'City of Petaluma Parcel Report',
+                left: 306, // page width = 612 pts
+                top: 40,
+                align: 'center',
                 font: {
-                    color: [41, 128, 185],
-                    size: 20,
+                    color: [66, 66, 66],
+                    size: 24,
                     style: 'bold'
                 },
                 line: {
-                    width: 1
+                    left: 60,
+                    top: 47,
+                    width: 1.5,
+                    color: 66
                 }
             },
             footer: {
@@ -62,6 +73,7 @@ define([
                     color: 66
                 },
                 date: {
+                    left: 35, // just inside the left margin
                     includeTime: false,
                     font: {
                         color: [66, 66, 66],
@@ -71,6 +83,8 @@ define([
                 },
                 copyright: {
                     text: 'Copyright 2015, City of Petaluma California',
+                    left: 575, // just inside the right margin
+                    align: 'right',
                     font: {
                         color: [66, 66, 66],
                         size: 9,
@@ -79,27 +93,37 @@ define([
                 }
             },
             map: {
-                top: 55,
-                left: 35,
+                top: 85,
+                left: 40,
                 height: 250,
                 width: 290,
-                dpi: 360,  //multiple of 72
+                dpi: 144,  //multiple of 72
                 format: 'PNG32',
                 preserveScale: true,
                 border: true
             },
-            images: [],
+            images: [
+                {
+                    top: 15,
+                    left: 15,
+                    width: 50,
+                    height: 50,
+                    url: '/proxy/proxy.ashx?https://xara1-4.cityofpetaluma.net/jsviewers/maplibrary/images/Petaluma1858verC2_graybg.bmp'
+                }
+            ],
             text: [],
+            lines: [],
+            shapes: [],
             attributes: [
                 {
-                    top: 67,
+                    top: 97,
                     left: 350,
                     height: 235,
                     width: 225,
                     title: {
                         text: 'These are attributes',
                         font: {
-                            color: 41,
+                            color: [66, 66, 66],
                             size: 12,
                             style: 'bold'
                         }
@@ -160,25 +184,21 @@ define([
                     ]
                 },
                 {
-                    top: 350,
+                    top: 370,
                     left: 35,
                     right: 45,
                     height: 270,
                     title: {
                         text: 'These are attributes two',
                         font: {
-                            color: 40,
+                            color: [66, 66, 66],
                             size: 12,
                             style: 'bold'
                         }
                     },
                     border: true,
                     layout: 'table',
-                    fields: [
-                        {
-                            label: 'Tabular Attributes will go here'
-                        }
-                    ]
+                    fields: []
                 }
             ]
 
