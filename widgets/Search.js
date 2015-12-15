@@ -870,6 +870,11 @@ define([
             }
         },
 
+        stopDrawing: function () {
+            this.cancelDrawing();
+            this.connectMapClick();
+        },
+
         cancelDrawing: function () {
             this.hideInfoWindow();
             this.disconnectMapClick();
