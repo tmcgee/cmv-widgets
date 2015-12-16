@@ -230,8 +230,7 @@ define([
             this.addGraphicsLayer();
 
             this.tabContainer.watch('selectedChildWidget', lang.hitch(this, function () {
-                this.cancelDrawing();
-                this.connectMapClick();
+                this.stopDrawing();
             }));
 
             if (this.map.infoWindow) {
