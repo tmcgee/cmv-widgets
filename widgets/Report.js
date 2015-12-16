@@ -532,7 +532,7 @@ define([
 
         preloadImages: function () {
             if (this.reportLayout.map) {
-                this.reportLayout.map.id = this.reportLayout.map.id || this.imagePrefix + 'map'
+                this.reportLayout.map.id = this.reportLayout.map.id || this.imagePrefix + 'map';
                 this.images[this.reportLayout.map.id] = null;
             }
 
