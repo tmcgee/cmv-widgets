@@ -1,15 +1,15 @@
 {
 	"name": "cmv-widgets",
-	"version": "v1.0.0",
+	"version": "v1.5.0",
 	"author": "Tim McGee",
-	"license": "",
+	"license": "MIT",
 	"year": "2015",
     "homepage": "https://tmcgee.github.io/cmv-widgets/",
     "repository": "https://github.com/tmcgee/cmv-widgets",
 	"dependencies": {
         "csslint": "0.10.x",
         "babel-eslint": "4.1.x",
-        "eslint": "1.7.x",
+        "eslint": "1.10.x",
         "grunt": "0.4.x",
         "grunt-autoprefixer": "0.7.x",
         "grunt-contrib-clean": "0.5.x",
@@ -24,5 +24,5 @@
         "grunt-open": "0.2.x",
         "grunt-contrib-compress": "0.10.x"
 	},
-	"engine": "node >= 0.10"
+	"engine": "node >= 0.12"
 }
