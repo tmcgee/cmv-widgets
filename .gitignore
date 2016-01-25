@@ -2,3 +2,4 @@
 *.sublime-project
 node_modules/
 dist/
+.project
