@@ -139,7 +139,7 @@ define([
             if (typeof(options.csv) !== 'undefined') {
                 this.csv = options.csv;
             }
-            if (options.xlsExcel !== undefined) {
+            if (options.xlsExcel !== 'undefined') {
                 this.xlsExcel = options.xlsExcel;
             }
             /*
@@ -208,7 +208,7 @@ define([
 
             // To UTF-8
             var uint8 = new Uint8Array(xlsContents.length);
-            for (var i = 0; i <  uint8.length; i++){
+            for (var i = 0; i < uint8.length; i++) {
                 uint8[i] = xlsContents.charCodeAt(i);
             }
 
@@ -222,17 +222,17 @@ define([
             var columns = this.grid.get('columns');
 
             // Prepare formatted columns
-            var formattedColumns = columns.map(function(column) {
-            	if (column.exportable !== false && column.hidden !== true) {
-            		return column.label || column.field;
-            	}
-        	});
+            var formattedColumns = columns.map(function (column) {
+                if (column.exportable !== false && column.hidden !== true) {
+                    return column.label || column.field;
+                }
+            });
 
             var formattedRows = [];
 
             // Prepare rows' contents
             array.forEach(rows, function (row) {
-            	var formattedRow = [];
+                var formattedRow = [];
 
                 array.forEach(columns, function (column) {
                     if (column.exportable !== false && column.hidden !== true) {
@@ -242,8 +242,8 @@ define([
                         if (column.get) {
                             val = column.get(row);
                         }
-                        if (val === null || val === undefined) {
-                        	formattedRow.push('');
+                        if (val === null || val === 'undefined') {
+                            formattedRow.push('');
                             return;
                         }
 
