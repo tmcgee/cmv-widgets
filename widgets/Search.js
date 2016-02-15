@@ -493,9 +493,11 @@ define([
         },
 
         getSearchTerm: function (idx, field) {
-            var searchTerm = this['inputSearchTerm' + idx].get('value');
+            var fixedValues = field.values && field.values.length > 0;
+            var targedField = this[(fixedValues ? 'selectSearchTerm' : 'inputSearchTerm') + idx];
+            var searchTerm = targedField.get('value');
             if (!searchTerm && field.required) {
-                this['inputSearchTerm' + idx].domNode.focus();
+                targedField.domNode.focus();
 
                 topic.publish('growler/growl', {
                     title: 'Search',
@@ -523,6 +525,7 @@ define([
         executeSearch: function (options) {
             if (options.searchTerm) {
                 this.inputSearchTerm0.set('value', options.searchTerm);
+                this.selectSearchTerm0.set('value', options.searchTerm);
             }
             if (options.bufferDistance) {
                 this.inputBufferDistance.set('value', options.bufferDistance);
@@ -646,26 +649,60 @@ define([
                             if (k > 0 && layer.findOptions) { // only show one field for FindTasks
                                 display = 'none';
                             }
+                            var hasField = false;
                             var formLabel = this['labelSearchTerm' + k];
                             var formInput = this['inputSearchTerm' + k];
-                            if (formInput) {
+                            var formSelect = this['selectSearchTerm' + k];
+                            var targetInput = formInput;
+                            if (formInput || formSelect) {
                                 var field = fields[k];
                                 if (field) {
+                                    hasField = true;
                                     var txt = field.label + ':';
-                                    if (field.minChars) {
-                                        txt += ' (at least ' + field.minChars + ' chars)';
-                                    }
-
                                     formLabel.textContent = txt;
-                                    formInput.set('value', '');
-                                    formInput.set('placeHolder', field.placeholder);
+
+                                    var fixedValues = field.values && field.values.length > 0;
+                                    if (fixedValues) {
+                                        targetInput = formSelect;
+                                        targetInput.set('value', null);
+                                        targetInput.set('options', null);
+
+                                        var options = [];
+                                        for (var i = 0; i < field.values.length; i++) {
+                                            var option = {
+                                                value: field.values[i],
+                                                label: field.values[i]
+                                            };
+                                            options.push(option);
+                                            if (i === 0) {
+                                                options[i].selected = true;
+                                            }
+                                        }
+
+                                        domStyle.set(formInput.domNode, 'display', 'none');
+                                        targetInput.set('options', options);
+                                        targetInput.set('value', options[0].value);
+                                    } else {
+                                        if (field.minChars) {
+                                            txt += ' (at least ' + field.minChars + ' chars)';
+                                        }
+
+                                        domStyle.set(formSelect.domNode, 'display', 'none');
+                                        targetInput.set('value', '');
+                                        targetInput.set('placeHolder', field.placeholder);
+                                    }
                                 } else {
                                     display = 'none';
                                     disabled = true;
                                 }
 
-                                formInput.set('disabled', disabled);
-                                domStyle.set(formInput.domNode, 'display', display);
+                                targetInput.set('disabled', disabled);
+                                if (hasField) {
+                                    domStyle.set(targetInput.domNode, 'display', display);
+                                } else {
+                                    domStyle.set(formInput.domNode, 'display', display);
+                                    domStyle.set(formSelect.domNode, 'display', display);
+                                }
                                 domStyle.set(formLabel, 'display', display);
                             }
                         }

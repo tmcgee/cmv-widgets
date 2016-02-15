@@ -64,6 +64,7 @@ define([
                                 label: 'Type of Damage',
                                 expression: '(typdamage LIKE \'[value]%\')',
                                 placeholder: 'Enter the text Destroyed, Major or Minor',
+                                values: ['Destroyed', 'Major', 'Minor'],
                                 minChars: 3
                             }
                         ],
