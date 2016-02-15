@@ -14,6 +14,7 @@ define({
         'errorExcel': 'Could not create Excel Spreadsheet',
         'errorCSV': 'Could not create CSV File',
         'errorGeoJSON': 'Could not create GeoJSON File',
-        'errorShapeFile': 'Could not create Shapefile'
+        'errorShapeFile': 'Could not create Shapefile',
+        'exportToXlsExcel': 'Export To Excel (XLS)'
     }
 });
