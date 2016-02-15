@@ -50,6 +50,7 @@ define([
 
         excel: true,        // allow attributes to be exported to Excel
         csv: true,          // allow attributes to be exported to CSV
+        xlsExcel: true,		// allow attributes to be exported to Excel (XLS format)
 
         // spatial exports are not ready
         //geojson: false,     // allow features to be exported to GeoJSON
@@ -96,6 +97,7 @@ define([
             var options = [];
             var exportOptions = [
                 {value: 'excel', label: i18n.exportToExcel, type: 'attributes'},
+                {value: 'xlsExcel', label: i18n.exportToXlsExcel, type: 'attributes'},
                 {value: 'csv', label: i18n.exportToCSV, type: 'attributes'},
                 {value: 'geojson', label: i18n.exportToGeoJSON, type: 'features'},
                 {value: 'shapefile', label: i18n.exportToShapeFile, type: 'features'}
@@ -136,6 +138,9 @@ define([
             }
             if (typeof(options.csv) !== 'undefined') {
                 this.csv = options.csv;
+            }
+            if (options.xlsExcel !== 'undefined') {
+                this.xlsExcel = options.xlsExcel;
             }
             /*
             if (options.geojson !== undefined) {
@@ -179,6 +184,9 @@ define([
             case 'shapefile':
                 this.exportToShapeFile();
                 break;
+            case 'xlsExcel':
+                this.exportToXLS();
+                break;
             default:
                 break;
             }
@@ -187,6 +195,67 @@ define([
         /*******************************
         *  Excel/CSV Functions
         *******************************/
+
+        exportToXLS: function () {
+            var xlsContents = this.buildXLSContents();
+            if (!xlsContents) {
+                topic.publish('viewer/handleError', {
+                    widget: 'Export',
+                    error: '${i18n.errorExcel}'
+                });
+                return;
+            }
+
+            // To UTF-8
+            var uint8 = new Uint8Array(xlsContents.length);
+            for (var i = 0; i < uint8.length; i++) {
+                uint8[i] = xlsContents.charCodeAt(i);
+            }
+
+            this.downloadFile(uint8, 'application/vnd.ms-excel', 'results.xls', true);
+        },
+
+        buildXLSContents: function () {
+            var separator = '\t';
+            var carriageReturn = '\r';
+            var rows = this.grid.get('store').data;
+            var columns = this.grid.get('columns');
+
+            // Prepare formatted columns
+            var formattedColumns = columns.map(function (column) {
+                if (column.exportable !== false && column.hidden !== true) {
+                    return column.label || column.field;
+                }
+            });
+
+            var formattedRows = [];
+
+            // Prepare rows' contents
+            array.forEach(rows, function (row) {
+                var formattedRow = [];
+
+                array.forEach(columns, function (column) {
+                    if (column.exportable !== false && column.hidden !== true) {
+                        var field = column.field;
+                        var val = row[field];
+
+                        if (column.get) {
+                            val = column.get(row);
+                        }
+                        if (val === null || val === 'undefined') {
+                            formattedRow.push('');
+                            return;
+                        }
+
+                        formattedRow.push(val.toString());
+                    }
+                });
+
+                formattedRows.push(formattedRow.join(separator));
+            });
+
+            return formattedColumns.join(separator) + carriageReturn + formattedRows.join(carriageReturn);
+        },
 
         exportToXLSX: function () {
             var ws = this.createXLSX();
