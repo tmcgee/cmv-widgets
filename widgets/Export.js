@@ -139,7 +139,7 @@ define([
             if (typeof(options.csv) !== 'undefined') {
                 this.csv = options.csv;
             }
-            if (options.xlsExcel !== 'undefined') {
+            if (typeof(options.xlsExcel) !== 'undefined') {
                 this.xlsExcel = options.xlsExcel;
             }
             /*
