@@ -3,6 +3,6 @@
     margin-bottom: 10px;
 }
 
-.cmwZoomToFeatureWidget .clearButton {
-    float: right;
+.cmwZoomToFeatureWidget .buttonContainer {
+    text-align: right;
 }

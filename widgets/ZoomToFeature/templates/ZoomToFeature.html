@@ -4,11 +4,13 @@
             <div data-dojo-attach-point="featureSelectDom">
                 <label data-dojo-attach-point="featureSelectLabel">${i18n.selectFeature}:</label><br/>
     			<input type="select" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="disabled:true,autoComplete:true,'class':'featureSelect'"
-                data-dojo-attach-point="featureSelectDijit" data-dojo-attach-event="onChange:onFeatureChange"/><br/>
-                <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-history fa-fw','class':'clearButton',disabled:true" data-dojo-attach-event="onClick:clearResults" data-dojo-attach-point="clearButtonDijit">
-                    ${i18n.clearButton}
-                </div>
+                data-dojo-attach-point="featureSelectDijit" data-dojo-attach-event="onChange:onFeatureChange"/>
             </div>
     	</div>
 	</div>
+    <div class="buttonContainer">
+        <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-history fa-fw','class':'clearButton',disabled:true" data-dojo-attach-event="onClick:clearResults" data-dojo-attach-point="clearButtonDijit">
+            ${i18n.clearButton}
+        </div>
+    </div>
 </div>
