@@ -114,6 +114,7 @@ define([
         },
 
         executeQueryTask: function (options) {
+            this.getConfiguration(options);
             if (this.executingQuery === true) {
                 return;
             }

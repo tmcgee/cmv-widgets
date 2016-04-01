@@ -39,6 +39,7 @@ define([
         },
 
         executeFindTask: function (options) {
+            this.getConfiguration(options);
             if (this.executingQuery === true) {
                 return;
             }

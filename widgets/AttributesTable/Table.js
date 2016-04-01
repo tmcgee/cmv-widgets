@@ -112,13 +112,22 @@ define([
             this.createGrid();
             this.setToolbarButtons();
 
+            var options = {
+                queryOptions: this.queryOptions,
+                findOptions: this.findOptions,
+                gridOptions: this.gridOptions,
+                featureOptions: this.featureOptions,
+                symbolOptions: this.symbolOptions,
+                toolbarOptions: this.toolbarOptions
+            };
+
             if (this.queryParameters && (this.queryParameters.url || this.queryParameters.layerID)) {
                 this.own(aspect.after(this, 'startup', lang.hitch(this, function () {
-                    this.executeQueryTask();
+                    this.executeQueryTask(options);
                 })));
             } else if (this.findOptions && this.findOptions.url) {
                 this.own(aspect.after(this, 'startup', lang.hitch(this, function () {
-                    this.executeFindTask();
+                    this.executeFindTask(options);
                 })));
             }
         },
