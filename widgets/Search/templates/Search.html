@@ -1,15 +1,15 @@
 <div>
 	<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center'" tabStrip="true" data-dojo-attach-point="tabContainer" class="tabContainer">
-		<div id="tabByAttribute" data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByAttribute}" class="searchTab" selected="true">
+		<div data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByAttribute}" class="searchTab" selected="true">
 	  		<div class="selectALayer">
 	    		<label>${i18n.Labels.selectALayer}:</label><br>
 		    	<select style="width:100%;" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" data-dojo-attach-event="onChange:onAttributeLayerChange"></select>
 	  		</div>
-	  		<div data-dojo-attach-point="divAttributeQuerySelect" id="divAttributeQuerySelect" class="searchSelector">
+	  		<div data-dojo-attach-point="divAttributeQuerySelect" class="searchSelector">
 	    		<label>${i18n.Labels.selectAQuery}:</label><br>
 		    	<select style="width:100%;" data-dojo-attach-point="selectAttributeQuery" data-dojo-type="dijit/form/Select" data-dojo-props="disabled:true" data-dojo-attach-event="onChange:onAttributeQueryChange"></select>
 	    	</div>
-	  		<div id="divAttributeQueryFields" class="searchSelector searchFields">
+	  		<div class="searchSelector searchFields">
 	    		<label data-dojo-attach-point="labelSearchTerm0">&nbsp;</label>
 	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm0" data-dojo-props="trim:true,disabled:true" />
                 <select style="width:100%; display:none;" data-dojo-attach-point="selectSearchTerm0" data-dojo-type="dijit/form/Select"></select>
@@ -51,13 +51,13 @@
     			<button data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-wrench fa-fw',showLabel:true,disabled:true" data-dojo-attach-point="btnQueryBuilder" data-dojo-attach-event="click:openQueryBuilder">${i18n.Buttons.openQueryBuilder}</button>
 		  	</div>
 		</div>
-		<div id="tabByShape" data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" class="searchTab" title="${i18n.Labels.tabTitleByShape}">
+		<div data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" class="searchTab" title="${i18n.Labels.tabTitleByShape}">
 		  	<div class="selectALayer">
 		    	<label>${i18n.Labels.selectALayer}:</label><br/>
 		    	<select style="width:100%;" data-dojo-attach-point="selectLayerByShape" data-dojo-type="dijit/form/Select" data-dojo-attach-event="onChange:onShapeLayerChange"></select>
 		  	</div>
-		  	<div id="divShapeBufferSelection" class="searchSelector">
-			  	<table id="tblBufferInput">
+		  	<div class="searchSelector">
+			  	<table>
 			    	<tr valign="top">
 			    		<td align="right">
 			    			<label>${i18n.Labels.buffer}:</label>
@@ -70,7 +70,7 @@
 				      	</td>
 			    	</tr>
 			  	</table>
-			  	<table id="tblDisplayBufferOnly">
+			  	<table>
 			    	<tr valign="top">
 			    		<td>
 			    			<label style="margin-left:10px;margin-right:5px;">${i18n.Labels.displayBuffer}:</label>
@@ -81,7 +81,7 @@
 			    	</tr>
 			  	</table>
 		  	</div>
-		  	<div id="divShapeTypeSelection" class="searchSelector">
+		  	<div class="searchSelector">
 			  	<label>${i18n.Labels.selectFeaturesBy}:</label><br/>
                 <button data-dojo-type="dijit/form/ToggleButton" data-dojo-attach-point="searchRectangleButtonDijit" data-dojo-props="iconClass:'draw-icon-rectangle',showLabel:false" data-dojo-attach-event="onClick:drawRectangle" title="${i18n.Buttons.selectByRectangle}"></button>
                 <button data-dojo-type="dijit/form/ToggleButton" data-dojo-attach-point="searchCircleButtonDijit" data-dojo-props="iconClass:'draw-icon-circle',showLabel:false" data-dojo-attach-event="onClick:drawCircle" title="${i18n.Buttons.selectByCircle}"></button>
