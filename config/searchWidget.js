@@ -63,9 +63,7 @@ define([
                                 name: 'Type of Damage',
                                 label: 'Type of Damage',
                                 expression: '(typdamage LIKE \'[value]%\')',
-                                placeholder: 'Enter the text Destroyed, Major or Minor',
-                                values: ['Destroyed', 'Major', 'Minor'],
-                                minChars: 3
+                                values: ['*', 'Destroyed', 'Major', 'Minor']
                             }
                         ],
 
@@ -239,12 +237,10 @@ define([
                         name: 'Search For Police Station By Name',
                         searchFields: [
                             {
-                                name: 'Police Station',
-                                label: 'Name',
-                                expression: '(PDNAME LIKE \'[value]%\')',
-                                placeholder: 'Enter the Name of the Police Station',
-                                required: true,
-                                minChars: 3
+                                name: 'PDNAME',
+                                label: 'Station Name',
+                                expression: '(PDNAME = \'[value]\')',
+                                unique: true
                             }
                         ],
 

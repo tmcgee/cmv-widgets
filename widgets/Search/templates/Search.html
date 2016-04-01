@@ -9,27 +9,9 @@
 	    		<label>${i18n.Labels.selectAQuery}:</label><br>
 		    	<select style="width:100%;" data-dojo-attach-point="selectAttributeQuery" data-dojo-type="dijit/form/Select" data-dojo-props="disabled:true" data-dojo-attach-event="onChange:onAttributeQueryChange"></select>
 	    	</div>
-	  		<div class="searchSelector searchFields">
-	    		<label data-dojo-attach-point="labelSearchTerm0">&nbsp;</label>
-	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm0" data-dojo-props="trim:true,disabled:true" />
-                <select style="width:100%; display:none;" data-dojo-attach-point="selectSearchTerm0" data-dojo-type="dijit/form/Select"></select>
-	            <div data-dojo-attach-point="queryContainsDom">
-	                <input type="checkbox" data-dojo-attach-point="containsSearchText" data-dojo-type="dijit/form/CheckBox" data-dojo-props="'class':'optionsCheckBox'"/>
-	                <label>${i18n.Labels.exactMatches}</label>
-	            </div>
-	    		<label data-dojo-attach-point="labelSearchTerm1">&nbsp;</label>
-	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm1" data-dojo-props="trim:true,disabled:true" />
-                <select style="width:100%; display:none;" data-dojo-attach-point="selectSearchTerm1" data-dojo-type="dijit/form/Select"></select>
-	    		<label data-dojo-attach-point="labelSearchTerm2">&nbsp;</label>
-	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm2" data-dojo-props="trim:true,disabled:true" />
-                <select style="width:100%; display:none;" data-dojo-attach-point="selectSearchTerm2" data-dojo-type="dijit/form/Select"></select>
-	    		<label data-dojo-attach-point="labelSearchTerm3">&nbsp;</label>
-	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm3" data-dojo-props="trim:true,disabled:true" />
-                <select style="width:100%; display:none;" data-dojo-attach-point="selectSearchTerm3" data-dojo-type="dijit/form/Select"></select>
-	    		<label data-dojo-attach-point="labelSearchTerm4">&nbsp;</label>
-	    		<input type="text" style="width:100%;" data-dojo-type="dijit/form/TextBox" data-dojo-attach-point="inputSearchTerm4" data-dojo-props="trim:true,disabled:true" />
-                <select style="width:100%; display:none;" data-dojo-attach-point="selectSearchTerm4" data-dojo-type="dijit/form/Select"></select>
-	    	</div>
+	        <div data-dojo-attach-point="divAttributeQueryFields" class="searchSelector searchFields">
+	          <!-- Search dijits are injected here -->
+	        </div>
 	  		<div data-dojo-attach-point="divAttributeSpatialFilter" class="searchSelector">
 	    		<label>${i18n.Labels.spatialFilter}:</label><br>
 		    	<select style="width:100%;" data-dojo-attach-point="selectAttributeSpatialFilter" data-dojo-type="dijit/form/Select"></select>

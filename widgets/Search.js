@@ -1,4 +1,4 @@
-/*eslint strict: 0 */
+/*eslint strict: 0, no-loop-func: 0  */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -11,6 +11,13 @@ define([
     'dojo/aspect',
     'dojo/topic',
     'dojo/keys',
+    'dojo/_base/array',
+    'dojo/dom',
+    'dojo/dom-construct',
+    'dijit/registry',
+
+    'dijit/form/Select',
+    'dijit/form/TextBox',
 
     'esri/toolbars/draw',
     'esri/tasks/query',
@@ -22,6 +29,8 @@ define([
     'esri/symbols/SimpleMarkerSymbol',
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleFillSymbol',
+
+    './Search/GetDistinctValues',
 
     // template
     'dojo/text!./Search/templates/Search.html',
@@ -38,6 +47,7 @@ define([
     'dijit/form/NumberTextBox',
     'dijit/form/Button',
     'dijit/form/CheckBox',
+    'dijit/form/ToggleButton',
 
     // css
     'xstyle/css!./Search/css/Search.css',
@@ -55,6 +65,13 @@ define([
     aspect,
     topic,
     keys,
+    arrayUtil,
+    dom,
+    domConstruct,
+    registry,
+
+    Select,
+    TextBox,
 
     Draw,
     Query,
@@ -65,6 +82,8 @@ define([
     SimpleMarkerSymbol,
     SimpleLineSymbol,
     SimpleFillSymbol,
+
+    GetDistinctValues,
 
     template,
 
@@ -239,14 +258,14 @@ define([
             }
             this.own(on(this.drawToolbar, 'draw-end', lang.hitch(this, 'endDrawing')));
 
-            for (var k = 0; k < 5; k++) {
-                this.own(on(this['inputSearchTerm' + k], 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
-            }
             this.addTopics();
         },
 
         startup: function () {
             this.inherited(arguments);
+
+            this.buildSearchControls();
+
             var parent = this.getParent();
             if (parent) {
                 this.own(on(parent, 'show', lang.hitch(this, function () {
@@ -406,7 +425,9 @@ define([
             var len = fields.length;
             for (var k = 0; k < len; k++) {
                 var field = fields[k];
-                searchTerm = this.getSearchTerm(k, field);
+                var inputId = search.inputIds[k];
+                var input = registry.byId(inputId);
+                searchTerm = this.getSearchTerm(input, field);
                 if (searchTerm === null) {
                     return null;
                 } else if (searchTerm.length > 0 && field.expression) {
@@ -492,12 +513,12 @@ define([
             return geom;
         },
 
-        getSearchTerm: function (idx, field) {
-            var fixedValues = field.values && field.values.length > 0;
-            var targedField = this[(fixedValues ? 'selectSearchTerm' : 'inputSearchTerm') + idx];
-            var searchTerm = targedField.get('value');
+        getSearchTerm: function (input, field) {
+            //var searchTerm = this['inputSearchTerm' + idx].get('value');
+            var searchTerm = input.get('value');
             if (!searchTerm && field.required) {
-                targedField.domNode.focus();
+                //this['inputSearchTerm' + idx].domNode.focus();
+                input.domNode.focus();
 
                 topic.publish('growler/growl', {
                     title: 'Search',
@@ -509,6 +530,7 @@ define([
             }
             if (field.minChars && field.required) {
                 if (searchTerm.length < field.minChars) {
+                    input.domNode.focus();
                     topic.publish('growler/growl', {
                         title: 'Search',
                         message: 'Search term for ' + field.name + ' must be at least ' + field.minChars + ' characters.',
@@ -518,6 +540,9 @@ define([
                     return null;
                 }
             }
+            if (searchTerm === '*') {
+                searchTerm = '';
+            }
             return searchTerm;
         },
 
@@ -525,7 +550,6 @@ define([
         executeSearch: function (options) {
             if (options.searchTerm) {
                 this.inputSearchTerm0.set('value', options.searchTerm);
-                this.selectSearchTerm0.set('value', options.searchTerm);
             }
             if (options.bufferDistance) {
                 this.inputBufferDistance.set('value', options.bufferDistance);
@@ -540,6 +564,112 @@ define([
         /*******************************
         *  Form/Field Functions
         *******************************/
+
+        // Initialize the controls used for the search.
+        buildSearchControls: function () {
+            // change to
+            var domNode = this.divAttributeQueryFields;
+            if (domNode) {
+                for (var i = 0; i < this.layers.length; i++) {
+                    var layer = this.layers[i];
+                    if (layer) {
+                        var searches = layer.attributeSearches;
+                        if (searches) {
+                            for (var j = 0; j < searches.length; j++) {
+                                var search = searches[j];
+                                if (search) {
+                                    // add the div for the search
+                                    var id = '_' + i.toString() + '_' + j.toString();
+                                    var divName = 'divSearch' + id;
+                                    var divNode = domConstruct.create('div', {
+                                        id: divName,
+                                        style: {
+                                            display: 'none'
+                                        }
+                                    }, domNode, 'last');
+                                    // display the first search
+                                    if ((i === 0) && (j === 0)) {
+                                        domStyle.set(divName, 'display', 'block');
+                                    }
+                                    search.divName = divName;
+                                    search.inputIds = [];
+
+                                    // add the controls for the search
+                                    for (var k = 0; k < search.searchFields.length; k++) {
+                                        var field = search.searchFields[k];
+                                        var options = [], input = null;
+                                        if (field) {
+                                            var txt = field.label + ':';
+                                            if (field.minChars) {
+                                                txt += ' (at least ' + field.minChars + ' chars)';
+                                            }
+                                            domConstruct.create('label', {
+                                                innerHTML: txt
+                                            }, divNode, 'last');
+
+                                            var inputId = 'inputSearch_' + id + '_' + k.toString();
+                                            if (field.unique) {
+                                                options = [];
+                                                input = new Select({
+                                                    id: inputId,
+                                                    options: options,
+                                                    style: {
+                                                        width: '100%'
+                                                    }
+                                                });
+                                                // should actually only do this for the first control
+                                                if ((i === 0) && (j === 0)) {
+                                                    this.getDistinctValues(inputId, layer.queryParameters.layerID, layer.queryParameters.sublayerID, field.name);
+                                                }
+                                                input.placeAt(divNode, 'last');
+                                                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+                                            } else if (field.values) {
+                                                options = [];
+                                                arrayUtil.forEach(field.values, function (item) {
+                                                    options.push({
+                                                        label: item,
+                                                        value: item,
+                                                        selected: false
+                                                    });
+                                                });
+                                                if (options.length > 0) {
+                                                    options[0].selected = true;
+                                                }
+                                                input = new Select({
+                                                    id: inputId,
+                                                    options: options,
+                                                    style: {
+                                                        width: '100%'
+                                                    }
+                                                });
+                                                input.placeAt(divNode, 'last');
+                                                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+                                            } else {
+                                                input = new TextBox({
+                                                    id: inputId,
+                                                    type: 'text',
+                                                    style: {
+                                                        width: '100%'
+                                                    }
+                                                });
+                                                input.set('value', '');
+                                                input.set('placeHolder', field.placeholder);
+                                                input.placeAt(divNode, 'last');
+                                                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+                                            }
+
+                                            // the first input field is for focus
+                                            search.inputIds.push(inputId);
+                                        }
+                                    }
+                                    //this.initialized = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
 
         initLayerSelect: function () {
             var attrOptions = [],
@@ -635,88 +765,72 @@ define([
         },
 
         onAttributeQueryChange: function (newValue) {
-            this.searchIndex = newValue;
-            var layer = this.layers[this.attributeLayer];
-            if (layer) {
-                var searches = layer.attributeSearches;
-                if (searches) {
-                    var search = searches[newValue];
-                    if (search) {
-                        // initialize all the search field inputs
-                        var fields = search.searchFields;
-                        for (var k = 0; k < 10; k++) {
-                            var display = 'block', disabled = false;
-                            if (k > 0 && layer.findOptions) { // only show one field for FindTasks
-                                display = 'none';
-                            }
-                            var hasField = false;
-                            var formLabel = this['labelSearchTerm' + k];
-                            var formInput = this['inputSearchTerm' + k];
-                            var formSelect = this['selectSearchTerm' + k];
-                            var targetInput = formInput;
-                            if (formInput || formSelect) {
-                                var field = fields[k];
-                                if (field) {
-                                    hasField = true;
-                                    var txt = field.label + ':';
-                                    formLabel.textContent = txt;
-
-                                    var fixedValues = field.values && field.values.length > 0;
-                                    if (fixedValues) {
-                                        targetInput = formSelect;
-                                        targetInput.set('value', null);
-                                        targetInput.set('options', null);
-
-                                        var options = [];
-                                        for (var i = 0; i < field.values.length; i++) {
-                                            var option = {
-                                                value: field.values[i],
-                                                label: field.values[i]
-                                            };
-                                            options.push(option);
-                                            if (i === 0) {
-                                                options[i].selected = true;
-                                            }
-                                        }
-
-                                        domStyle.set(formInput.domNode, 'display', 'none');
-                                        targetInput.set('options', options);
-                                        targetInput.set('value', options[0].value);
-                                    } else {
-                                        if (field.minChars) {
-                                            txt += ' (at least ' + field.minChars + ' chars)';
-                                        }
-
-                                        domStyle.set(formSelect.domNode, 'display', 'none');
-                                        targetInput.set('value', '');
-                                        targetInput.set('placeHolder', field.placeholder);
-                                    }
-                                } else {
-                                    display = 'none';
-                                    disabled = true;
+            // 'none' all of the query divs
+            var domNode = this.divAttributeQueryFields,
+                searches, search, layer, divNode;
+            if (domNode) {
+                for (var i = 0; i < this.layers.length; i++) {
+                    layer = this.layers[i];
+                    if (layer) {
+                        searches = layer.attributeSearches;
+                        if (searches) {
+                            for (var j = 0; j < searches.length; j++) {
+                                search = searches[j];
+                                divNode = dom.byId(search.divName);
+                                if (divNode) {
+                                    domStyle.set(search.divName, 'display', 'none');
                                 }
-
-                                targetInput.set('disabled', disabled);
-                                if (hasField) {
-                                    domStyle.set(targetInput.domNode, 'display', display);
-                                } else {
-                                    domStyle.set(formInput.domNode, 'display', display);
-                                    domStyle.set(formSelect.domNode, 'display', display);
-                                }
-                                domStyle.set(formLabel, 'display', display);
                             }
                         }
-
-                        // only show "Contains" checkbox for FindTasks
-                        domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
-
-                        // put focus on the first input field
-                        this.inputSearchTerm0.domNode.focus();
-                        this.btnAttributeSearch.set('disabled', false);
-
                     }
                 }
             }
+
+            // 'block' the query div and set the focus to the first widget
+            this.searchIndex = newValue;
+            layer = this.layers[this.attributeLayer];
+            if (layer) {
+                searches = layer.attributeSearches;
+                if (searches) {
+                    search = searches[newValue];
+                    if (search) {
+                        divNode = dom.byId(search.divName);
+                        if (!divNode) {
+                            return;
+                        }
+                        // refresh the controls if any require unique values
+                        for (var k = 0; k < search.searchFields.length; k++) {
+                            var field = search.searchFields[k];
+                            if (field.unique) {
+                                this.getDistinctValues(search.inputIds[k], layer.queryParameters.layerID, layer.queryParameters.sublayerID, field.name);
+                            }
+                        }
+                        domStyle.set(search.divName, 'display', 'block');
+
+                        // put focus on the first input field
+                        var input = registry.byId(search.inputIds[0]);
+                        if (input && input.domNode) {
+                            input.domNode.focus();
+                            this.btnAttributeSearch.set('disabled', false);
+                        }
+                    }
+                }
+            }
+        },
+
+        /*
+         * Retrieve the list of distinct values from ArcGIS Server using the ArcGIS API for JavaScript.
+         * @param {string} inputId The Dojo id of the control to populate with unique values.
+         * @param {string} layerID The id defined for the layer in the operationalLayers setting of the viewer configuration file.
+         * @param {integer} sublayerID The id of the layer within the operational layer to query for unique values.
+         * @param {string} fieldName The field name for which to retrieve unique values.
+         */
+        getDistinctValues: function (inputId, layerID, sublayerID, fieldName) {
+            var layer = this.map._layers[layerID];
+            var url = layer.url + '/' + sublayerID;
+
+            var q = new GetDistinctValues(inputId, url, fieldName);
+            q.executeQuery();
         },
 
         doAttributeSearch: function () {
