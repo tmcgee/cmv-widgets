@@ -21,6 +21,7 @@ define([
 ) {
 
     return declare(null, {
+
         registryId: null,
         url: null,
         fieldName: null,
