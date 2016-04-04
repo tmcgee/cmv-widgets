@@ -89,7 +89,7 @@ define({
                 filename: function () {
                     'use strict';
                     var date = new Date();
-                    return `export_results_` + date.toLocaleDateString();
+                    return 'export_results_' + date.toLocaleDateString();
                 }
             }
         }
