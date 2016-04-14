@@ -49,7 +49,7 @@
             "getWithoutSet": true
         }],
         "block-scoped-var": 2,
-        "complexity": [2, 20], /** TODO should try to get this lower **/
+        "complexity": [1, 20], /** TODO always try to get this lower **/
         "consistent-return": 2,
         "curly": 2,
         "default-case": 2,
@@ -57,11 +57,11 @@
         "dot-notation": 2,
         "eqeqeq": 2,
         "guard-for-in": 2,
+        "max-statements": [1, 40, {"ignoreTopLevelFunctions": true}],
         "no-alert": 2,
         "no-caller": 2,
         "no-div-regex": 2,
         "no-else-return": 2,
-        "no-empty-label": 2,
         "no-empty-pattern": 2,
         "no-eq-null": 2,
         "no-eval": 2,
@@ -151,15 +151,14 @@
         "comma-style": 2,
         "computed-property-spacing": [2, "never"],
         "consistent-this": [2, "self"],
-        "constructor-super": 2,
         "func-style": [2, "declaration"],
-        "id-match": [2, "^[a-z]+([A-Z][a-z]+)*$", {"properties": true}],
         "indent": [2, 4],
         "key-spacing": [2, {
             "beforeColon": false,
             "afterColon": true,
             "mode": "strict"
         }],
+        "keyword-spacing": [2, {"before": true, "after": true, "overrides": {}}],
         "max-nested-callbacks": [2, 4],
         "new-cap": 2,
         "new-parens": 2,
@@ -177,13 +176,10 @@
             "after": true
         }],
         "semi": [2, "always"],
-        "space-after-keywords": [2, "always"],
         "space-before-blocks": [2, "always"],
         "space-before-function-paren": [2, "always"],
-        "space-before-keywords": [2, "always"],
         "space-in-parens": [2, "never"],
         "space-infix-ops": 2,
-        "space-return-throw-case": 2,
         "wrap-regex": 2,
 
         // ignored stylistic rules
@@ -242,8 +238,8 @@
         "browser": true
     },
     "globals": {
-        "define": false,
-        "require": false
+        "define": true,
+        "require": true
     },
     "parser": "babel-eslint",
     "extends": "eslint:recommended"
