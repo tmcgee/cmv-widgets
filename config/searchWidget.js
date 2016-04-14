@@ -290,7 +290,7 @@ define([
             {
                 name: 'Public Safety by Name',
                 findOptions: {
-                    url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
+                    url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
                     layerIds: [1, 2, 3, 4, 5, 6, 7],
                     searchFields: ['FDNAME, PDNAME', 'NAME', 'RESNAME']
                 },
