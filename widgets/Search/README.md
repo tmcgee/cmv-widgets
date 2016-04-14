@@ -92,6 +92,37 @@ define([
             symbols: {}
         },
 
+        /*
+            Override the units available for the buffer tool.
+        */
+        bufferUnits: [
+            {
+                value: GeometryService.UNIT_FOOT,
+                label: 'Feet',
+                selected: true
+            },
+            {
+                value: GeometryService.UNIT_STATUTE_MILE,
+                label: 'Miles'
+            },
+            {
+                value: GeometryService.UNIT_METER,
+                label: 'Meters'
+            },
+            {
+                value: GeometryService.UNIT_KILOMETER,
+                label: 'Kilometers'
+            },
+            {
+                value: GeometryService.UNIT_NAUTICAL_MILE,
+                label: 'Nautical Miles'
+            },
+            {
+                value: GeometryService.UNIT_US_NAUTICAL_MILE,
+                label: 'US Nautical Miles'
+            }
+        ],
+
         layers: [
             {
                 name: 'Damage Assessment',
