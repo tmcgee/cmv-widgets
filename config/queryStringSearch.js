@@ -1,7 +1,7 @@
 define([
     'dojo/io-query'
 ], function (ioQuery) {
-    'use strict';
+
     var uri = window.location.href;
     var qs = uri.substring(uri.indexOf('?') + 1, uri.length);
     var qsObj = ioQuery.queryToObject(qs);
@@ -67,7 +67,7 @@ define([
                             topicID: 'censusQuery',
                             queryOptions: {
                                 queryParameters: {
-                                    url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
+                                    url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
                                     where: 'FIPS = \'' + fips + '\''
                                 },
                                 idProperty: 'ObjectID'

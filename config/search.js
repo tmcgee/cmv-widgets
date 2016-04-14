@@ -3,9 +3,8 @@ define([
     'esri/tasks/GeometryService',
     'esri/layers/ImageParameters'
 ], function (esriConfig, GeometryService, ImageParameters) {
-    'use strict';
 
-    esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
+    esriConfig.defaults.geometryService = new GeometryService('https://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
 
     var imageParameters = new ImageParameters();
     imageParameters.format = 'png32';
@@ -44,7 +43,7 @@ define([
         operationalLayers: [
             {
                 type: 'dynamic',
-                url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
+                url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
                 title: 'Louisville Public Safety',
                 options: {
                     id: 'louisvillePubSafety',
@@ -58,7 +57,7 @@ define([
             },
             {
                 type: 'dynamic',
-                url: 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer',
+                url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer',
                 title: 'Damage Assessment',
                 options: {
                     id: 'DamageAssessment',
@@ -100,6 +99,14 @@ define([
                 open: true,
                 position: 0,
                 options: 'config/searchWidget'
+            },
+            queryBuilder: {
+                include: true,
+                id: 'queryBuilder',
+                type: 'floating',
+                path: 'widgets/QueryBuilder',
+                title: 'Query Builder',
+                options: {}
             },
             attributesTable: {
                 include: true,

@@ -33,7 +33,7 @@ define({
                 i18n: {
                     selectFeature: 'Select A County'
                 },
-                url: 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2',
+                url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/2',
                 field: 'NAME',
                 where: 'STATE_FIPS = \'06\''
             }

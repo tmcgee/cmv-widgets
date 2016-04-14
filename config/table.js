@@ -66,7 +66,7 @@ define({
                         topicID: 'censusQuery',
                         queryOptions: {
                             queryParameters: {
-                                url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
+                                url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer/4',
                                 maxAllowableOffset: 100,
                                 where: 'STATE_FIPS = \'06\' OR STATE_FIPS = \'08\''
                             }
@@ -87,7 +87,6 @@ define({
                 //
                 // filename: 'my_results'
                 filename: function () {
-                    'use strict';
                     var date = new Date();
                     return 'export_results_' + date.toLocaleDateString();
                 }
