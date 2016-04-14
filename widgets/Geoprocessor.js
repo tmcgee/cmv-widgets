@@ -30,7 +30,7 @@ define([
 
         topicID: 'attributesContainer',
 
-        url: 'http://sampleserver6.arcgisonline.com/ArcGIS/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed',
+        url: 'https://sampleserver6.arcgisonline.com/ArcGIS/rest/services/Elevation/ESRI_Elevation_World/GPServer/Viewshed',
 
         symbol: {
             type: 'esriSMS',
