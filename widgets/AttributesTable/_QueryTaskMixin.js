@@ -208,6 +208,7 @@ define([
                 q.definitionExpression = qp.definitionExpression;
                 q.relationshipId = qp.relationshipID;
             }
+            return q;
         },
 
         executeLinkedQuery: function (lq) {
