@@ -100,14 +100,6 @@ define([
                 position: 0,
                 options: 'config/searchWidget'
             },
-            queryBuilder: {
-                include: true,
-                id: 'queryBuilder',
-                type: 'floating',
-                path: 'widgets/QueryBuilder',
-                title: 'Query Builder',
-                options: {}
-            },
             attributesTable: {
                 include: true,
                 id: 'attributesContainer',
