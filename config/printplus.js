@@ -1,13 +1,9 @@
 define([
     'esri/config',
-    'esri/tasks/GeometryService',
-    'esri/layers/ImageParameters'
-], function (esriConfig, GeometryService, ImageParameters) {
+    'esri/tasks/GeometryService'
+], function (esriConfig, GeometryService) {
 
-    esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
-
-    var imageParameters = new ImageParameters();
-    imageParameters.format = 'png32';
+    esriConfig.defaults.geometryService = new GeometryService('https://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
 
     return {
         isDebug: true,
