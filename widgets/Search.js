@@ -405,7 +405,9 @@ define([
         buildFindOptions: function (layer, search) {
             var searchTerm = null;
             if (search.searchFields.length > 0) {
-                searchTerm = this.getSearchTerm(0, search.searchFields[0]);
+                var inputId = search.inputIds[0];
+                var input = registry.byId(inputId);
+                searchTerm = this.getSearchTerm(input, search.searchFields[0]);
                 if (searchTerm === null) {
                     return null;
                 }
@@ -810,6 +812,9 @@ define([
                             }
                         }
                         domStyle.set(search.divName, 'display', 'block');
+
+                        // only show "Contains" checkbox for FindTasks
+                        domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
 
                         // put focus on the first input field
                         var input = registry.byId(search.inputIds[0]);
