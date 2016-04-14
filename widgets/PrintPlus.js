@@ -438,11 +438,11 @@ define([
                     this.oldLODs = this.map._params.tileInfo.lods;
                     // Set one LOD for the printing scale and zoom to it.
                     var resolution = printScale / (this.oldLODs[0].scale / this.oldLODs[0].resolution);
-                    this.map._params.tileInfo.lods[0] = {
+                    this.map._params.tileInfo.lods = [{
                         'level': 0,
                         'resolution': resolution,
                         'scale': printScale
-                    };
+                    }];
                     deferred = this.map.centerAndZoom(this.mapAreaCenter, 0);
                 } else {
                     // Zoom to the print scale
