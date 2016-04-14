@@ -3,7 +3,7 @@ define([
 ], function (
     dojoNum
 ) {
-    'use strict';
+
     return {
         isDebug: false,
 

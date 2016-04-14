@@ -596,71 +596,7 @@ define([
 
                                     // add the controls for the search
                                     for (var k = 0; k < search.searchFields.length; k++) {
-                                        var field = search.searchFields[k];
-                                        var options = [], input = null;
-                                        if (field) {
-                                            var txt = field.label + ':';
-                                            if (field.minChars) {
-                                                txt += ' (at least ' + field.minChars + ' chars)';
-                                            }
-                                            domConstruct.create('label', {
-                                                innerHTML: txt
-                                            }, divNode, 'last');
-
-                                            var inputId = 'inputSearch_' + id + '_' + k.toString();
-                                            if (field.unique) {
-                                                options = [];
-                                                input = new Select({
-                                                    id: inputId,
-                                                    options: options,
-                                                    style: {
-                                                        width: '100%'
-                                                    }
-                                                });
-                                                // should actually only do this for the first control
-                                                if ((i === 0) && (j === 0)) {
-                                                    this.getDistinctValues(inputId, layer.queryParameters.layerID, layer.queryParameters.sublayerID, field.name);
-                                                }
-                                                input.placeAt(divNode, 'last');
-                                                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
-                                            } else if (field.values) {
-                                                options = [];
-                                                arrayUtil.forEach(field.values, function (item) {
-                                                    options.push({
-                                                        label: item,
-                                                        value: item,
-                                                        selected: false
-                                                    });
-                                                });
-                                                if (options.length > 0) {
-                                                    options[0].selected = true;
-                                                }
-                                                input = new Select({
-                                                    id: inputId,
-                                                    options: options,
-                                                    style: {
-                                                        width: '100%'
-                                                    }
-                                                });
-                                                input.placeAt(divNode, 'last');
-                                                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
-                                            } else {
-                                                input = new TextBox({
-                                                    id: inputId,
-                                                    type: 'text',
-                                                    style: {
-                                                        width: '100%'
-                                                    }
-                                                });
-                                                input.set('value', '');
-                                                input.set('placeHolder', field.placeholder);
-                                                input.placeAt(divNode, 'last');
-                                                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
-                                            }
-
-                                            // the first input field is for focus
-                                            search.inputIds.push(inputId);
-                                        }
+                                        this.buildSearchControl(search, layer, divNode, id, i, j, k);
                                     }
                                     //this.initialized = true;
                                 }
@@ -669,6 +605,74 @@ define([
                     }
                 }
             }
+        },
+
+        buildSearchControl: function (search, layer, divNode, id, i, j, k) {
+            var field = search.searchFields[k];
+            var options = [], input = null;
+            if (field) {
+                var txt = field.label + ':';
+                if (field.minChars) {
+                    txt += ' (at least ' + field.minChars + ' chars)';
+                }
+                domConstruct.create('label', {
+                    innerHTML: txt
+                }, divNode, 'last');
+
+                var inputId = 'inputSearch_' + id + '_' + k.toString();
+                if (field.unique) {
+                    options = [];
+                    input = new Select({
+                        id: inputId,
+                        options: options,
+                        style: {
+                            width: '100%'
+                        }
+                    });
+                    // should actually only do this for the first control
+                    if ((i === 0) && (j === 0)) {
+                        this.getDistinctValues(inputId, layer.queryParameters.layerID, layer.queryParameters.sublayerID, field.name);
+                    }
+                } else if (field.values) {
+                    options = [];
+                    arrayUtil.forEach(field.values, function (item) {
+                        options.push({
+                            label: item,
+                            value: item,
+                            selected: false
+                        });
+                    });
+                    if (options.length > 0) {
+                        options[0].selected = true;
+                    }
+                    input = new Select({
+                        id: inputId,
+                        options: options,
+                        style: {
+                            width: '100%'
+                        }
+                    });
+                } else {
+                    input = new TextBox({
+                        id: inputId,
+                        type: 'text',
+                        style: {
+                            width: '100%'
+                        }
+                    });
+                    input.set('value', '');
+                    input.set('placeHolder', field.placeholder);
+                }
+
+                if (input) {
+                    input.placeAt(divNode, 'last');
+                    this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+                }
+
+                // the first input field is for focus
+                search.inputIds.push(inputId);
+            }
+
         },
 
         initLayerSelect: function () {

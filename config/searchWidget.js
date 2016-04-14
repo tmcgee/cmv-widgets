@@ -4,7 +4,6 @@ define([
     'dojo/_base/lang',
     'dojo/date/locale'
 ], function (on, lang, locale) {
-    'use strict';
 
     function formatDateTime (value) {
         if (value instanceof Date) {

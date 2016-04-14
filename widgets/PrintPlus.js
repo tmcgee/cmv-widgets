@@ -1,4 +1,4 @@
-/*eslint strict: 0, no-console: 0 */
+/*eslint strict: 0, max-statements: 0, no-console: 0 */
 //http://resources.arcgis.com/en/help/main/10.2/index.html#//0154000004w8000000
 //https://developers.arcgis.com/javascript/jssamples/map_showloading.html
 define([

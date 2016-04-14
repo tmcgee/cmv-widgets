@@ -3,7 +3,6 @@ define([
     'esri/tasks/GeometryService',
     'esri/layers/ImageParameters'
 ], function (esriConfig, GeometryService, ImageParameters) {
-    'use strict';
 
     esriConfig.defaults.geometryService = new GeometryService('http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer');
 

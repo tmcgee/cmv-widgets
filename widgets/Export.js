@@ -226,6 +226,7 @@ define([
                 if (column.exportable !== false && column.hidden !== true) {
                     return column.label || column.field;
                 }
+                return null;
             });
 
             var formattedRows = [];

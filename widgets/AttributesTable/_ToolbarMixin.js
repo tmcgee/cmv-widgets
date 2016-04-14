@@ -12,7 +12,6 @@ define([
     has,
     domStyle
 ) {
-    'use strict';
 
     return declare(null, {
 

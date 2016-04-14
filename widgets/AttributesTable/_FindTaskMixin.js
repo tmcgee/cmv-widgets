@@ -15,7 +15,6 @@ define([
     FindTask,
     FindParameters
 ) {
-    'use strict';
 
     return declare(null, {
 

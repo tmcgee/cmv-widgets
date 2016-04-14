@@ -2,7 +2,6 @@ define([
     'dojo/on',
     'dojo/topic'
 ], function (on, topic) {
-    'use strict';
 
     return {
         map: true,

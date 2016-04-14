@@ -33,7 +33,6 @@ define([
     ColumnResizer,
     Pagination
 ) {
-    'use strict';
 
     return declare(null, {
 

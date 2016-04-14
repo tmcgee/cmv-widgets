@@ -26,7 +26,6 @@ define([
     SimpleFillSymbol,
     graphicsUtils
 ) {
-    'use strict';
 
     return declare(null, {
 

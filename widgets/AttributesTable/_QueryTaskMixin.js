@@ -28,7 +28,6 @@ define([
     geometryEngine,
     BufferParameters
 ) {
-    'use strict';
 
     return declare(null, {
 
@@ -155,6 +154,26 @@ define([
 
             this.executingQuery = true;
             var qt = new QueryTask(url);
+            var q = this.buildQueryFromParameters(qp);
+
+            if (this.growlOptions.loading && !this.isLinkedQuery) {
+                this.growlID = this.topicID + 'Growl-StartSearch';
+                var msg = lang.mixin(this.i18n.messages.searching, {
+                    id: this.growlID,
+                    timeout: (esriConfig.defaults.io.timeout + 5000),
+                    showProgressBar: true
+                });
+                topic.publish('growler/growl', msg);
+            }
+
+            if (qp.type === 'relationship') {
+                qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+            } else {
+                qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+            }
+        },
+
+        buildQueryFromParameters: function (qp) {
             var q = null;
             if (qp.type === 'relationship') {
                 q = new RelationshipQuery();
@@ -188,22 +207,6 @@ define([
             } else if (qp.type === 'relationship') {
                 q.definitionExpression = qp.definitionExpression;
                 q.relationshipId = qp.relationshipID;
-            }
-
-            if (this.growlOptions.loading && !this.isLinkedQuery) {
-                this.growlID = this.topicID + 'Growl-StartSearch';
-                var msg = lang.mixin(this.i18n.messages.searching, {
-                    id: this.growlID,
-                    timeout: (esriConfig.defaults.io.timeout + 5000),
-                    showProgressBar: true
-                });
-                topic.publish('growler/growl', msg);
-            }
-
-            if (qp.type === 'relationship') {
-                qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
-            } else {
-                qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
             }
         },
 

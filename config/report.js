@@ -2,7 +2,6 @@ define([
     'esri/urlUtils',
     'esri/layers/ImageParameters'
 ], function (urlUtils, ImageParameters) {
-    'use strict';
 
     urlUtils.addProxyRule({
         urlPrefix: 'http://gis.scwa.ca.gov',

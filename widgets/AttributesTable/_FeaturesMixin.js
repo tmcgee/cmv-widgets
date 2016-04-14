@@ -8,7 +8,6 @@ define([
     lang,
     topic
 ) {
-    'use strict';
 
     return declare(null, {
 
