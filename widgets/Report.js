@@ -19,9 +19,6 @@ define([
     // a custom version for loading AMD-style
     './libs/jsPDF/jspdf.debug'
 
-    // cannot load the current version from the CDN!
-    //'//cdnjs.cloudflare.com/ajax/libs/jspdf/1.1.135/jspdf.min.js'
-
 ], function (
     declare,
     _WidgetBase,
@@ -63,8 +60,7 @@ define([
         addjsPDFModules: function () {
             var modules = [
                 // load the autotable plugin
-                //'//cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js'
-                '//cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.src.js'
+                'https//cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js'
             ];
 
             switch (this.reportLayout.output.type) {
@@ -72,9 +68,8 @@ define([
             case 'bloburi':
             case 'bloburl':
             case 'save':
-                modules.push('//cdn.rawgit.com/eligrey/Blob.js/master/Blob.js');
-                //modules.push('//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js');
-                modules.push('//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.js');
+                modules.push('https//cdn.rawgit.com/eligrey/Blob.js/master/Blob.js');
+                modules.push('https//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js');
                 break;
             default:
             }
