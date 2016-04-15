@@ -431,7 +431,7 @@ define([
             if (this.excel || this.csv) {
                 require([
                     // consider making this a local library
-                    '//cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.8/xlsx.core.min.js'
+                    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.8/xlsx.core.min.js'
                 ]);
             }
         },
@@ -499,10 +499,10 @@ define([
             if (this.geojson || this.shapefile) {
                 // consider making these local libraries
                 require([
-                    '//cdn-geoweb.s3.amazonaws.com/terraformer/1.0.4/terraformer.min.js'
+                    'https://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.5/terraformer.min.js'
                 ], function () {
                     require([
-                        '//cdn-geoweb.s3.amazonaws.com/terraformer-arcgis-parser/1.0.4/terraformer-arcgis-parser.min.js'
+                        'https://cdn-geoweb.s3.amazonaws.com/terraformer-arcgis-parser/1.0.4/terraformer-arcgis-parser.min.js'
                     ]);
                 });
             }
