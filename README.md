@@ -70,6 +70,12 @@ Share your map by using Facebook, Twitter, Google+, E-Mail, Link, or embedded iF
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/share1.jpg)
 
 ---
+### What3Words
+A simple widget to send a 3 word address or lat/lng to what3words and zoom the map to the resulting location. The lat/lng and 3 word address for the location are displayed from the search result.
+#####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/What3Words/README.md)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/what3words.jpg)
+
+---
 ### Zoom to Feature
 A simple widget to provide a drop-down list of features to zoom to on the map. Similar to bookmarks but driven by actual data in a Map Service.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/ZoomToFeature/README.md)

@@ -1,0 +1,21 @@
+<div class="cmwWhat3WordsWidget" >
+    <div class="formContainer">
+        <a href="https://what3words.com/" target="_blank">
+            <div class="w3wLink"></div>
+        </a>
+        <div data-dojo-attach-point="w3wDom">
+            <label data-dojo-attach-point="w3wLabel">${i18n.stringInstructions}</label><br/>
+            <input type="select" data-dojo-type="dijit/form/TextBox" data-dojo-props="'class':'w3wText',placeholder:'${i18n.stringPlaceholder}'" data-dojo-attach-point="w3wStringDijit"/><br/>
+            <label data-dojo-attach-point="w3wLabel">${i18n.positionInstructions}</label><br/>
+            <input type="select" data-dojo-type="dijit/form/TextBox" data-dojo-props="'class':'w3wText',placeholder:'${i18n.positionPlaceholder}'" data-dojo-attach-point="w3wPositionDijit"/>
+        </div>
+    </div>
+    <div class="buttonContainer">
+        <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-search fa-fw','class':'searchButton'" data-dojo-attach-event="onClick:executeStringSearch" data-dojo-attach-point="searchButtonDijit">
+            ${i18n.searchButton}
+        </div>
+        <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-history fa-fw','class':'clearButton',disabled:true" data-dojo-attach-event="onClick:clearResults" data-dojo-attach-point="clearButtonDijit">
+            ${i18n.clearButton}
+        </div>
+    </div>
+</div>
