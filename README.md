@@ -73,7 +73,7 @@ Share your map by using Facebook, Twitter, Google+, E-Mail, Link, or embedded iF
 ### What3Words
 A simple widget to send a 3 word address or lat/lng to what3words and zoom the map to the resulting location. The lat/lng and 3 word address for the location are displayed from the search result.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/What3Words/README.md)
-![Screenshot](https://tmcgee.github.io/cmv-widgets/images/what3words.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/what3words1.jpg)
 
 ---
 ### Zoom to Feature
