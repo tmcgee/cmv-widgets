@@ -428,6 +428,11 @@ toolbarOptions: {
         selected: true,
 
         /*
+            Allow the user to zoom to the source graphic(s)
+        */
+        source: true,
+
+        /*
             Allow the user to zoom to the buffer
         */
         buffer: true
@@ -449,6 +454,11 @@ toolbarOptions: {
             Allow the user to clear the selected features
         */
         selected: true,
+
+        /*
+            Allow the user to clear the source graphic(s)
+        */
+        source: true,
 
         /*
             Allow the user to clear the buffer

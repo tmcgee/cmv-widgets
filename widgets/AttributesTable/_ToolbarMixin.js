@@ -36,6 +36,7 @@ define([
                 grid: true,
                 features: true,
                 selected: true,
+                source: true,
                 buffer: true
             },
 
@@ -91,7 +92,10 @@ define([
             display = (options.selected && featOptions.selected) ? 'block' : 'none';
             domStyle.set(this.attributesTableZoomToSelected.domNode, 'display', display);
 
-            display = (options.buffer && featOptions.buffer) ? 'block' : 'none';
+            display = (options.source && featOptions.source) ? 'block' : 'none';
+            domStyle.set(this.attributesTableZoomToSource.domNode, 'display', display);
+
+            display = (options.buffer) ? 'block' : 'none';
             domStyle.set(this.attributesTableZoomToBuffer.domNode, 'display', display);
         },
 
@@ -113,7 +117,11 @@ define([
             itemCount += (display === 'none') ? 0 : 1;
             domStyle.set(this.attributesTableClearSelected.domNode, 'display', display);
 
-            display = (options.buffer && featOptions.buffer) ? 'block' : 'none';
+            display = (options.source && featOptions.source) ? 'block' : 'none';
+            itemCount += (display === 'none') ? 0 : 1;
+            domStyle.set(this.attributesTableClearSource.domNode, 'display', display);
+
+            display = (options.buffer) ? 'block' : 'none';
             itemCount += (display === 'none') ? 0 : 1;
             domStyle.set(this.attributesTableClearBuffer.domNode, 'display', display);
 
@@ -139,6 +147,10 @@ define([
             disabled = (this.selectedGraphics && this.selectedGraphics.graphics && this.selectedGraphics.graphics.length > 0) ? false : true;
             this.attributesTableClearSelected.set('disabled', disabled);
             this.attributesTableZoomToSelected.set('disabled', disabled);
+
+            disabled = (this.sourceGraphics && this.sourceGraphics.graphics && this.sourceGraphics.graphics.length > 0) ? false : true;
+            this.attributesTableClearSource.set('disabled', disabled);
+            this.attributesTableZoomToSource.set('disabled', disabled);
 
             disabled = (this.bufferGraphics && this.bufferGraphics.graphics.length > 0) ? false : true;
             this.attributesTableClearBuffer.set('disabled', disabled);
