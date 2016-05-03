@@ -32,18 +32,26 @@
         </div>
         <script type="text/javascript">
             var path = location.pathname.replace(/[^\/]+$/, '');
-            var dojoConfig = {
+            window.dojoConfig = {
                 async: true,
                 packages: [{
                     name: 'viewer',
                     location: path + './cmv/js/viewer'
-                },{
+                }, {
                     name: 'gis',
                     location: path + './cmv/js/gis'
-                },{
+                }, {
                     name: 'config',
                     location: path + './config'
-                },{
+                }, {
+                    name: 'put-selector',
+                    main: 'put',
+                    location: 'https://cdn.rawgit.com/kriszyp/put-selector/v0.3.6'
+                }, {
+                    name: 'xstyle',
+                    main: 'css',
+                    location: 'https://cdn.rawgit.com/kriszyp/xstyle/v0.3.2'
+                }, {
                     name: 'widgets',
                     location: path + './widgets'
                 }]
@@ -58,11 +66,11 @@
             var file = 'config/viewer', s = window.location.search, q = s.match(/config=([^&]*)/i);
             if (q && q.length > 0) {
                 file = q[1];
-                if(file.indexOf('/') < 0) {
+                if (file.indexOf('/') < 0) {
                     file = 'config/' + file;
                 }
             }
-            require(['viewer/Controller', file], function(Controller, config){
+            require(['viewer/Controller', file], function (Controller, config) {
                 Controller.startup(config);
             });
         </script>
