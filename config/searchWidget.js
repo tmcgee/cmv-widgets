@@ -35,6 +35,10 @@ define([
         map: true,
         mapClickMode: true,
 
+        queryStringOptions: {
+            valueParameter: 'NAME'
+        },
+
         layers: [
             {
                 name: 'Damage Assessment',

@@ -93,6 +93,77 @@ define([
         },
 
         /*
+            Override the options used for searching from the URL query string.
+        */
+        queryStringOptions: {
+            // what parameter is used to pass the layer index
+            layerParameter: 'layer',
+
+            // what parameter is used to pass the attribute search index
+            searchParameter: 'search',
+
+            // what parameter is used to pass the values to be searched
+            valueParameter: 'values',
+
+            // if passing multiple values, how are they delimited
+            valueDelimiter: '|',
+
+            // Should the widget open when the search is executed?
+            openWidget: true
+        },
+
+        /*
+            Symbology for drawn shapes
+        */
+        symbols: {
+            point: {
+                type: 'esriSMS',
+                style: 'esriSMSCircle',
+                size: 6,
+                color: [0, 0, 0, 64],
+                angle: 0,
+                xoffset: 0,
+                yoffset: 0,
+                outline: {
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid',
+                    color: [255, 0, 0],
+                    width: 2
+                }
+            },
+            polyline: {
+                type: 'esriSLS',
+                style: 'esriSLSSolid',
+                color: [255, 0, 0],
+                width: 2
+            },
+            polygon: {
+                type: 'esriSFS',
+                style: 'esriSFSSolid',
+                color: [0, 0, 0, 64],
+                outline: {
+                    type: 'esriSLS',
+                    style: 'esriSLSSolid',
+                    color: [255, 0, 0],
+                    width: 1
+                }
+            },
+
+            // symbology for buffer around shapes
+            buffer: {
+                type: 'esriSFS',
+                style: 'esriSFSSolid',
+                color: [255, 0, 0, 32],
+                outline: {
+                    type: 'esriSLS',
+                    style: 'esriSLSDash',
+                    color: [255, 0, 0, 255],
+                    width: 1
+                }
+            }
+        },
+
+        /*
             Override the units available for the buffer tool.
         */
         bufferUnits: [

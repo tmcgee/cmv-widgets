@@ -15,6 +15,7 @@ define([
     'dojo/dom',
     'dojo/dom-construct',
     'dijit/registry',
+    'dojo/io-query',
 
     'dijit/form/Select',
     'dijit/form/TextBox',
@@ -69,6 +70,7 @@ define([
     dom,
     domConstruct,
     registry,
+    ioQuery,
 
     Select,
     TextBox,
@@ -158,6 +160,23 @@ define([
             selectedFeatures: true,
 
             symbols: {}
+        },
+
+        defaultQueryStringOptions: {
+            // what parameter is used to pass the layer index
+            layerParameter: 'layer',
+
+            // what parameter is used to pass the attribute search index
+            searchParameter: 'search',
+
+            // what parameter is used to pass the values to be searched
+            valueParameter: 'values',
+
+            // if passing multiple values, how are they delimited
+            valueDelimiter: '|',
+
+            // Should the widget open when the search is executed?
+            openWidget: true
         },
 
         // symbology for drawn shapes
@@ -290,6 +309,9 @@ define([
                 domStyle.set(tab.domNode, 'display', 'none');
                 domStyle.set(tab.controlButton.domNode, 'display', 'none');
             }
+
+            // Search from the applications query string
+            this.checkQueryString();
         },
 
         addTopics: function () {
@@ -549,19 +571,104 @@ define([
         },
 
         // a topic subscription to listen for published topics
+        // also used to search from the queryString
         executeSearch: function (options) {
-            if (options.searchTerm) {
-                this.inputSearchTerm0.set('value', options.searchTerm);
-            }
             if (options.bufferDistance) {
                 this.inputBufferDistance.set('value', options.bufferDistance);
                 if (options.bufferUnits) {
                     this.selectBufferUnits.set('value', options.bufferUnits);
                 }
             }
-            this.search(options.geometry, options.layerIndex);
+
+            //attribute search
+            var doAttrSearch = false;
+            if (options.searchTerm) {
+                var inputId, input;
+                var layer = this.layers[options.layerIndex];
+                if (layer) {
+                    this.attributeLayer = options.layerIndex;
+                    this.onAttributeLayerChange(this.attributeLayer);
+                    var search = layer.attributeSearches[options.searchIndex];
+                    if (search) {
+                        this.onAttributeQueryChange(options.searchIndex);
+                        if (lang.isArray(options.searchTerm)) {
+                            var len = options.searchTerm.length;
+                            for (var k = 0; k < len; k++) {
+                                inputId = search.inputIds[k];
+                                if (inputId) {
+                                    input = registry.byId(inputId);
+                                    if (input) {
+                                        input.set('value', options.searchTerm[k]);
+                                        doAttrSearch = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            inputId = search.inputIds[0];
+                            input = registry.byId(inputId);
+                            if (input) {
+                                input.set('value', options.searchTerm);
+                                doAttrSearch = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (options.geometry || doAttrSearch) {
+                this.search(options.geometry, options.layerIndex);
+            }
         },
 
+        checkQueryString: function () {
+            // searching by geometry from the query string is not yet supported
+            var options = this.mixinDeep(this.defaultQueryStringOptions, this.queryStringOptions || {});
+            var uri = window.location.href;
+            var qs = uri.substring(uri.indexOf('?') + 1, uri.length);
+            var qsObj = ioQuery.queryToObject(qs);
+            var value = qsObj[options.valueParameter];
+            var layerIndex = qsObj[options.layerParameter] || 0;
+            var searchIndex = qsObj[options.searchParameter] || 0;
+            var widget;
+
+            // only continue if there is a term to search
+            if (!value) {
+                return;
+            }
+            if (value.indexOf(options.valueDelimiter) > -1) {
+                value = value.split(options.valueDelimiter);
+            }
+
+            if (options.openWidget) {
+                widget = this.parentWidget;
+                if (widget && widget.toggleable) {
+                    if (!widget.open) {
+                        widget.toggle();
+                    }
+                }
+            }
+
+            // make sure the attributesTable widget is loaded before executing
+            // check every 0.25 seconds
+            var qsTimer = window.setInterval(lang.hitch(this, function () {
+                widget = registry.byId(this.attributesContainerID + '_widget');
+                if (widget) {
+                    // no need to continue, so clear the timer
+                    window.clearInterval(qsTimer);
+
+                    // we're ready so execute the search.
+                    this.executeSearch({
+                        layerIndex: layerIndex,
+                        searchIndex: searchIndex,
+                        searchTerm: value
+                    });
+                }
+            }), 250);
+
+            // clear the timer after 30 seconds in case we are waiting that long
+            window.setTimeout(function () {
+                window.clearInterval(qsTimer);
+            }, 30000);
+        },
 
         /*******************************
         *  Form/Field Functions
