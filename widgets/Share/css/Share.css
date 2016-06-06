@@ -66,6 +66,7 @@
 }
 
 .cmvShareWidget .icon {
+    font-family: FontAwesome;
     font-size: 32px;
     float: left;
     cursor: pointer;
