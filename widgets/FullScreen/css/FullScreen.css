@@ -1,0 +1,70 @@
+div:-webkit-full-screen {
+    height: 100% !important;
+    width: 100% !important;
+}
+div:-moz-full-screen {
+    height: 100% !important;
+    width: 100% !important;
+}
+div:-o-full-screen {
+    height: 100% !important;
+    width: 100% !important;
+}
+div:full-screen {
+    height: 100% !important;
+    width: 100% !important;
+}
+div:-ms-fullscreen {
+    /* IE needs a little extra "help" with top and left */
+    top: 0 !important;
+    left: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+div:fullscreen {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.cmvFullScreenWidget .FullScreenButton {
+    height: 32px;
+    width: 32px;
+    overflow: hidden !important;
+    border: 1px solid #999;
+    font-size: 20px;
+    color: #FFF;
+    background-color: #666;
+    background-color: rgba(102, 102, 102,0.80);
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.cmvFullScreenWidget .FullScreenButton:hover {
+    background-color: #333;
+    background-color: rgba(102,102,102,0.90);
+}
+
+.cmvFullScreenWidget .FullScreenButton:active {
+    background-color: #ccc;
+    background-color: rgba(102,102,102,0.60);
+}
+
+.cmvFullScreenWidget .FullScreen {
+    margin: 6px;
+}
+
+.cmvFullScreenWidget .fa-rotate-90 {
+    position: absolute;
+}
+.cmvFullScreenWidget .FullScreen:before {
+    content: '\f0b2';
+}
+
+.cmvFullScreenWidget .FullScreenRestore:before {
+    content: '\f066';
+}
