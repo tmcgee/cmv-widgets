@@ -337,7 +337,7 @@ define([
 
             var c = 0,
                 field, val;
-            var aliases = null; //this.results.fieldAliases;
+            var aliases = (this.results && this.results.fieldAliases) ? this.results.fieldAliases : {};
             var rc = this.getRowsAndColumns();
             var rows = rc.rows;
             var columns = rc.columns;
