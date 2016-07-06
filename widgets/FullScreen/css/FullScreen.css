@@ -1,14 +1,35 @@
 /*csslint important: false, box-model: false */
-div:-webkit-full-screen,
-div:-moz-full-screen,
-div:-o-full-screen,
-div:full-screen,
-div:-ms-fullscreen,
+div:-webkit-full-screen {
+    top: 0 !important;
+    left: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+div:-moz-full-screen {
+    top: 0 !important;
+    left: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+div:-o-full-screen {
+    top: 0 !important;
+    left: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+div:full-screen {
+    top: 0 !important;
+    left: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+div:-ms-fullscreen {
+    top: 0 !important;
+    left: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
 div:fullscreen {
-    /*
-        A few browsers require tho top/left to be set
-        to ensure full screen, so do that for all browsers .
-    */
     top: 0 !important;
     left: 0 !important;
     height: 100% !important;
