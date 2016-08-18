@@ -1,0 +1,4 @@
+dir: widgets
+packageJson: package.json
+articles:
+    - Overview: README.md
