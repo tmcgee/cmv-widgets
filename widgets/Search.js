@@ -100,7 +100,8 @@ define([
         mapClickMode: null,
 
         // i18n
-        i18n: i18n,
+        defaultI18n: i18n,
+        i18n: {},
 
         title: 'Search Results',
         topicID: 'searchResults',
@@ -256,6 +257,10 @@ define([
             }
         ],
 
+        postMixInProperties: function () {
+            this.inherited(arguments);
+            this.i18n = this.mixinDeep(this.defaultI18n, this.i18n);
+        },
 
         postCreate: function () {
             this.inherited(arguments);
