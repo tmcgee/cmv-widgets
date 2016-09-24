@@ -569,7 +569,7 @@ define([
                     return null;
                 }
             }
-            if (searchTerm === '*') {
+            if (searchTerm === '*' || searchTerm === null) {
                 searchTerm = '';
             }
             return searchTerm;
@@ -745,7 +745,7 @@ define([
                     });
                     // should actually only do this for the first control
                     if ((i === 0) && (j === 0)) {
-                        this.getDistinctValues(inputId, layer.queryParameters.layerID, layer.queryParameters.sublayerID, field.name);
+                        this.getDistinctValues(inputId, layer.queryParameters, field.name, field.includeBlankValue);
                     }
                 } else if (field.values) {
                     options = [];
@@ -920,7 +920,7 @@ define([
                         for (var k = 0; k < search.searchFields.length; k++) {
                             var field = search.searchFields[k];
                             if (field.unique) {
-                                this.getDistinctValues(search.inputIds[k], layer.queryParameters.layerID, layer.queryParameters.sublayerID, field.name);
+                                this.getDistinctValues(search.inputIds[k], layer.queryParameters, field.name, field.includeBlankValue);
                             }
                         }
                         domStyle.set(search.divName, 'display', 'block');
@@ -942,16 +942,35 @@ define([
         /*
          * Retrieve the list of distinct values from ArcGIS Server using the ArcGIS API for JavaScript.
          * @param {string} inputId The Dojo id of the control to populate with unique values.
-         * @param {string} layerID The id defined for the layer in the operationalLayers setting of the viewer configuration file.
-         * @param {integer} sublayerID The id of the layer within the operational layer to query for unique values.
+         * @param {object} queryParameters Used to get the operational layer's url to be queried for unique values.
          * @param {string} fieldName The field name for which to retrieve unique values.
+         * @param {boolean} includeBlankValue Whether to add a blank (null) value to the resulting list.
          */
-        getDistinctValues: function (inputId, layerID, sublayerID, fieldName) {
-            var layer = this.map._layers[layerID];
-            var url = layer.url + '/' + sublayerID;
+        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue) {
+            var url = this.getLayerURL(queryParameters);
+            if (url) {
+                var q = new GetDistinctValues(inputId, url, fieldName, includeBlankValue);
+                q.executeQuery();
+            }
+        },
 
-            var q = new GetDistinctValues(inputId, url, fieldName);
-            q.executeQuery();
+        getLayerURL: function (qp) {
+            var url = qp.url;
+            if (!url && qp.layerID) {
+                var layer = this.map.getLayer(qp.layerID);
+                if (layer) {
+                    if (layer.declaredClass === 'esri.layers.FeatureLayer') { // Feature Layer
+                        url = layer.url;
+                    } else if (layer.declaredClass === 'esri.layers.ArcGISDynamicMapServiceLayer') { // Dynamic Layer
+                        if (qp.sublayerID !== null) {
+                            url = layer.url + '/' + qp.sublayerID;
+                        } else if (layer.visibleLayers && layer.visibleLayers.length === 1) {
+                            url = layer.url + '/' + layer.visibleLayers[0];
+                        }
+                    }
+                }
+            }
+            return url;
         },
 
         doAttributeSearch: function () {

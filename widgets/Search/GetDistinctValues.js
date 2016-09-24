@@ -31,11 +31,16 @@ define([
          * @param {string} registryId The Dojo id of the control to populate with unique values.
          * @param {string} url The URL to the ArcGIS Server REST resource that represents a map service layer.
          * @param {string} fieldName The field name for which to retrieve unique values.
+         * @param {boolean} includeBlankValue Whether to include a blank value.
          */
-        constructor: function (registryId, url, fieldName) {
+        constructor: function (registryId, url, fieldName, includeBlankValue) {
             this.registryId = registryId;
             this.url = url;
             this.fieldName = fieldName;
+            this.includeBlankValue = includeBlankValue || false;
+
+            var input = registry.byId(this.registryId);
+            input.set('disabled', true);
         },
 
         /**
@@ -54,21 +59,28 @@ define([
             queryTask.on('complete', lang.hitch(this, function (results) {
                 var featureSet = results.featureSet,
                     options = [];
+                if (this.includeBlankValue) {
+                    options.push({
+                        label: '&nbsp;',
+                        value: null,
+                        selected: false
+                    });
+                }
                 if (featureSet.features) {
                     if (featureSet.features.length > 0) {
                         arrayUtil.forEach(featureSet.features, function (feature) {
                             options.push({
-                                label: feature.attributes[this.fieldName],
-                                value: feature.attributes[this.fieldName],
+                                label: feature.attributes[this.fieldName].toString(),
+                                value: feature.attributes[this.fieldName].toString(),
                                 selected: false
                             });
                         }, this);
-                        var input = registry.byId(this.registryId);
-                        input.set('options', options);
                         if (options.length > 0) {
                             options[0].selected = true;
-                            input.set('value', 0);
                         }
+                        var input = registry.byId(this.registryId);
+                        input.set('options', options);
+                        input.set('disabled', false);
                     }
                 }
             }));
