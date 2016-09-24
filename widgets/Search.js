@@ -1036,7 +1036,7 @@ define([
             domStyle.set(this.searchFreehandPolygonButtonDijit.domNode, 'display', disp);
             disp = (opts.stopDrawing !== false) ? 'inline-block' : 'none';
             domStyle.set(this.searchStopDrawingButtonDijit.domNode, 'display', disp);
-            disp = (opts.identifiedFeatures !== false) ? 'inline-block' : 'none';
+            disp = (opts.identifiedFeature !== false) ? 'inline-block' : 'none';
             domStyle.set(this.searchIdentifyButtonDijit.domNode, 'display', disp);
             disp = (opts.selectedFeatures !== false) ? 'inline-block' : 'none';
             domStyle.set(this.searchSelectedButtonDijit.domNode, 'display', disp);
