@@ -7,22 +7,22 @@
     "homepage": "https://tmcgee.github.io/cmv-widgets/",
     "repository": "https://github.com/tmcgee/cmv-widgets",
 	"dependencies": {
-        "csslint": "0.10.x",
-        "babel-eslint": "6.0.x",
-        "eslint": "2.5.x",
-        "grunt": "0.4.x",
+        "csslint": "1.0.x",
+        "babel-eslint": "6.1.x",
+        "eslint": "3.5.x",
+        "grunt": "1.0.x",
         "grunt-postcss": "0.8.x",
         "grunt-contrib-clean": "1.0.x",
         "grunt-contrib-connect": "1.0.x",
         "grunt-contrib-copy": "1.0.x",
         "grunt-contrib-csslint": "1.0.x",
         "grunt-contrib-cssmin": "1.0.x",
-        "grunt-eslint": "18.0.x",
-        "grunt-contrib-uglify": "1.0.x",
+        "grunt-eslint": "19.0.x",
+        "grunt-contrib-uglify": "2.0.x",
         "grunt-contrib-watch": "1.0.x",
-        "grunt-newer": "1.1.x",
+        "grunt-newer": "1.2.x",
         "grunt-open": "0.2.x",
-        "grunt-contrib-compress": "1.2.x"
+        "grunt-contrib-compress": "1.3.x"
 	},
 	"engine": "node >= 4"
 }
