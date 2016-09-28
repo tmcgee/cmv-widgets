@@ -1,6 +1,6 @@
 .cmwWhat3WordsWidget .w3wText {
-    width:100%;
     margin-bottom: 15px;
+    width:100%;
 }
 .cmwWhat3WordsWidget label {
     margin-left: 5px;
@@ -8,8 +8,8 @@
 
 .cmwWhat3WordsWidget a .w3wLink {
     background-image: url('../images/what3words_logo.png');
-    background-repeat: no-repeat;
     background-position: center;
+    background-repeat: no-repeat;
     height: 52px;
     margin-bottom: 15px;
     width: 100%;

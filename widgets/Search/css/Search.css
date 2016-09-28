@@ -1,7 +1,7 @@
 .cmvSearchWidget {
-	width: 100%;
+    height: 490px;
     min-width: 225px;
-	height: 490px;
+    width: 100%;
 }
 
 .cmvSearchWidget .tabContainer {
@@ -41,12 +41,12 @@
 }
 
 .cmvSearchWidget .searchFeaturesIcon {
-	width: 40px;
-	height: 40px;
 	background-repeat: no-repeat;
-	text-align: center;
 	float: left;
+    height: 40px;
 	margin: 10px 11px 12px 11px;
+    text-align: center;
+    width: 40px;
 }
 
 .cmvSearchWidget .searchFeaturesIcon:hover {

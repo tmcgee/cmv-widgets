@@ -1,4 +1,4 @@
-/*csslint important: false, box-model: false */
+/*csslint important: false, box-model: false, order-alphabetical: false  */
 div:-webkit-full-screen {
     top: 0 !important;
     left: 0 !important;

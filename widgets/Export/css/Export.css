@@ -1,6 +1,7 @@
+/*csslint ids: false  */
 .floatingWidget .cmvExportWidget {
-    width: 275px;
     height: 140px;
+    width: 275px;
 }
 
 .cmvExportWidget .exportContainer {
@@ -8,9 +9,9 @@
 }
 
 .cmvExportWidget  .divExportButton {
-    width: 100%;
     margin-top: 15px;
     text-align: center;
+    width: 100%;
 }
 
 #export_parent_underlay {
