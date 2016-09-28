@@ -9,4 +9,6 @@ ratings:
         - "**.js"
         - "**.css"
 exclude_paths:
-    - cmv/**/*
+    - "cmv/**/*"
+    - "**/**.min.css"
+    - "**/**.min.js"
