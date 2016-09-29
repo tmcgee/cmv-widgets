@@ -631,8 +631,8 @@ define([
         *  Clearing Functions
         *******************************/
 
-        clearFeatureGraphics: function () {
-            this.clearGraphicsLayer(this.featureGraphics);
+        clearFeatureGraphics: function (specificFeatures) {
+            this.clearGraphicsLayer(this.featureGraphics, specificFeatures);
             this.hideInfoWindow();
         },
 
@@ -648,13 +648,43 @@ define([
             this.clearGraphicsLayer(this.bufferGraphics);
         },
 
-        clearGraphicsLayer: function (layer) {
+        clearGraphicsLayer: function (layer, specificFeatures) {
             if (layer) {
-                layer.clear();
+                if (specificFeatures && specificFeatures.selection && specificFeatures.idProperty) {
+                    this.clearSpecificFeatures(layer, specificFeatures);
+                } else {
+                    layer.clear();
+                }
             }
             this.setToolbarButtons();
             topic.publish(this.attributesContainerID + '/tableUpdated', this);
 
+        },
+
+        clearSpecificFeatures: function (layer, specificFeatures) {
+            var selectionFilter = [];
+            for (var key in specificFeatures.selection) {
+                if (key) {
+                    selectionFilter.push(key);
+                }
+            }
+
+            // Tried to to it with dojox.json.query, no success
+            var specificGraphics = layer.graphics.filter(function (graphic) {
+                var idProperty = graphic.attributes[specificFeatures.idProperty];
+                if (idProperty) {
+                    return selectionFilter.indexOf(idProperty.toString()) >= 0;
+                }
+                return false;
+            });
+
+            if (specificGraphics.length > 0) {
+                array.forEach(specificGraphics, function (graphic) {
+                    layer.remove(graphic);
+                });
+
+                topic.publish(this.attributesContainerID + '/recordsRemoved', layer.graphics);
+            }
         },
 
         /*******************************

@@ -104,8 +104,8 @@ define([
             return (this.features && this.features.length) ? this.features.length : 0;
         },
 
-        clearFeatures: function () {
-            this.clearFeatureGraphics();
+        clearFeatures: function (specificFeatures) {
+            this.clearFeatureGraphics(specificFeatures);
             this.clearSelectedFeatures();
             this.features = [];
             topic.publish(this.attributesContainerID + '/tableUpdated', this);

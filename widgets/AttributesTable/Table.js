@@ -302,6 +302,15 @@ define([
             this.gridOptions.sort = [];
         },
 
+        clearSelectedRecords: function () {
+            var selection = this.clearSelectedGridRecords();
+            if (!selection) {
+                return;
+            }
+
+            this.clearFeatures(selection);
+        },
+
         clearGrowl: function () {
             var growl = registry.byId(this.growlID);
             if (growl && growl.close) {
