@@ -60,7 +60,7 @@ define([
         addjsPDFModules: function () {
             var modules = [
                 // load the autotable plugin
-                'https//cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js'
+                'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js'
             ];
 
             switch (this.reportLayout.output.type) {
@@ -68,8 +68,8 @@ define([
             case 'bloburi':
             case 'bloburl':
             case 'save':
-                modules.push('https//cdn.rawgit.com/eligrey/Blob.js/master/Blob.js');
-                modules.push('https//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js');
+                modules.push('https://cdn.rawgit.com/eligrey/Blob.js/master/Blob.js');
+                modules.push('https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js');
                 break;
             default:
             }
@@ -611,7 +611,7 @@ define([
 
         getProxiedUrl: function (url) {
             var proxyRule = urlUtils.getProxyRule(url);
-            if (proxyRule.proxyUrl) {
+            if (proxyRule && proxyRule.proxyUrl) {
                 return proxyRule.proxyUrl + '?' + url;
             }
             return url;

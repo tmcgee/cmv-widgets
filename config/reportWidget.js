@@ -6,12 +6,11 @@ define([
         map: true,
 
         /*
-            printTaskURL must be on the same same as application
+            printTaskURL must be on the same server as application
             or the server must be configured for CORS
             or you can use a proxy
         */
-        printTaskURL: 'http://gis.scwa.ca.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
-        //'https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
+        printTaskURL: 'https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
 
         startup: function () {
             topic.publish('reportWidget/createReport');
@@ -81,7 +80,7 @@ define([
                     }
                 },
                 copyright: {
-                    text: 'Copyright 2015, City of Petaluma California',
+                    text: 'Copyright 2016, City of Petaluma California',
                     left: 575, // just inside the right margin
                     align: 'right',
                     font: {
@@ -101,15 +100,6 @@ define([
                 preserveScale: true,
                 border: true
             },
-            images: [
-                {
-                    top: 15,
-                    left: 15,
-                    width: 50,
-                    height: 50,
-                    url: '/proxy/proxy.ashx?https://xara1-4.cityofpetaluma.net/jsviewers/maplibrary/images/Petaluma1858verC2_graybg.bmp'
-                }
-            ],
             text: [],
             lines: [],
             shapes: [],
