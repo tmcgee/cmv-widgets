@@ -631,8 +631,8 @@ define([
         *  Clearing Functions
         *******************************/
 
-        clearFeatureGraphics: function () {
-            this.clearGraphicsLayer(this.featureGraphics);
+        clearFeatureGraphics: function (specificFeatures) {
+            this.clearGraphicsLayer(this.featureGraphics, specificFeatures);
             this.hideInfoWindow();
         },
 
@@ -648,13 +648,41 @@ define([
             this.clearGraphicsLayer(this.bufferGraphics);
         },
 
-        clearGraphicsLayer: function (layer) {
+        clearGraphicsLayer: function (layer, specificGraphics) {
             if (layer) {
-                layer.clear();
+                if (specificGraphics && specificGraphics.selection && specificGraphics.idProperty) {
+                    this.clearSpecificGraphics(layer, specificGraphics);
+                } else {
+                    layer.clear();
+                }
             }
             this.setToolbarButtons();
             topic.publish(this.attributesContainerID + '/tableUpdated', this);
 
+        },
+
+        clearSpecificGraphics: function (layer, specificGraphics) {
+            var selectionFilter = [];
+            for (var key in specificGraphics.selection) {
+                if (key) {
+                    selectionFilter.push(key);
+                }
+            }
+
+            // Tried to to it with dojox.json.query, no success
+            var specificGraphicsFound = layer.graphics.filter(function (graphic) {
+                var idProperty = graphic.attributes[specificGraphics.idProperty];
+                if (idProperty) {
+                    return selectionFilter.indexOf(idProperty.toString()) >= 0;
+                }
+                return false;
+            });
+
+            if (specificGraphicsFound.length > 0) {
+                array.forEach(specificGraphicsFound, function (graphic) {
+                    layer.remove(graphic);
+                });
+            }
         },
 
         /*******************************

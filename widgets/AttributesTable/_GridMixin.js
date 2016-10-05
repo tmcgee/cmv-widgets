@@ -419,6 +419,29 @@ define([
             }
             this.setToolbarButtons();
             topic.publish(this.attributesContainerID + '/tableUpdated', this);
+        },
+
+        clearSelectedGridRows: function () {
+            if (!this.grid) {
+                return null;
+            }
+
+            var selection = lang.clone(this.grid.get('selection'));
+            var store = this.grid.get('store');
+
+            if (!selection || !store) {
+                return null;
+            }
+
+            for (var key in selection) {
+                if (selection.hasOwnProperty(key) && selection[key] === true) {
+                    store.remove(key);
+                }
+            }
+
+            this.grid.refresh();
+
+            return {selection: selection, idProperty: this.idProperty};
         }
 
     });

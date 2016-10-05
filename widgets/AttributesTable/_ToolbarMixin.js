@@ -125,6 +125,10 @@ define([
             itemCount += (display === 'none') ? 0 : 1;
             domStyle.set(this.attributesTableClearBuffer.domNode, 'display', display);
 
+            display = (options.selected && featOptions.selected) ? 'block' : 'none';
+            itemCount += (display === 'none') ? 0 : 1;
+            domStyle.set(this.attributesTableClearSelectedRecords.domNode, 'display', display);
+
             //display = (options.show) ? 'block' : 'none';
             display = (itemCount > 1) ? 'block' : 'none';
             domStyle.set(this.attributesTableClearAll.domNode, 'display', display);
@@ -147,6 +151,7 @@ define([
             disabled = (this.selectedGraphics && this.selectedGraphics.graphics && this.selectedGraphics.graphics.length > 0) ? false : true;
             this.attributesTableClearSelected.set('disabled', disabled);
             this.attributesTableZoomToSelected.set('disabled', disabled);
+            this.attributesTableClearSelectedRecords.set('disabled', disabled);
 
             disabled = (this.sourceGraphics && this.sourceGraphics.graphics && this.sourceGraphics.graphics.length > 0) ? false : true;
             this.attributesTableClearSource.set('disabled', disabled);

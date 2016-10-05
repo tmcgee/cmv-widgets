@@ -40,7 +40,8 @@ define({
                 clearSourceGraphics: 'Clear Source Graphic(s)',
                 clearBufferGraphics: 'Clear Buffer',
                 clearGrid: 'Clear Grid',
-                clearAll: 'Clear All'
+                clearAll: 'Clear All',
+                clearSelectedRecords: 'Clear Selected Record(s)'
             },
 
             'export': {
