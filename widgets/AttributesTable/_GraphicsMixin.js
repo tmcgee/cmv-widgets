@@ -648,10 +648,10 @@ define([
             this.clearGraphicsLayer(this.bufferGraphics);
         },
 
-        clearGraphicsLayer: function (layer, specificFeatures) {
+        clearGraphicsLayer: function (layer, specificGraphics) {
             if (layer) {
-                if (specificFeatures && specificFeatures.selection && specificFeatures.idProperty) {
-                    this.clearSpecificFeatures(layer, specificFeatures);
+                if (specificGraphics && specificGraphics.selection && specificGraphics.idProperty) {
+                    this.clearSpecificGraphics(layer, specificGraphics);
                 } else {
                     layer.clear();
                 }
@@ -661,29 +661,27 @@ define([
 
         },
 
-        clearSpecificFeatures: function (layer, specificFeatures) {
+        clearSpecificGraphics: function (layer, specificGraphics) {
             var selectionFilter = [];
-            for (var key in specificFeatures.selection) {
+            for (var key in specificGraphics.selection) {
                 if (key) {
                     selectionFilter.push(key);
                 }
             }
 
             // Tried to to it with dojox.json.query, no success
-            var specificGraphics = layer.graphics.filter(function (graphic) {
-                var idProperty = graphic.attributes[specificFeatures.idProperty];
+            var specificGraphicsFound = layer.graphics.filter(function (graphic) {
+                var idProperty = graphic.attributes[specificGraphics.idProperty];
                 if (idProperty) {
                     return selectionFilter.indexOf(idProperty.toString()) >= 0;
                 }
                 return false;
             });
 
-            if (specificGraphics.length > 0) {
-                array.forEach(specificGraphics, function (graphic) {
+            if (specificGraphicsFound.length > 0) {
+                array.forEach(specificGraphicsFound, function (graphic) {
                     layer.remove(graphic);
                 });
-
-                topic.publish(this.attributesContainerID + '/recordsRemoved', layer.graphics);
             }
         },
 

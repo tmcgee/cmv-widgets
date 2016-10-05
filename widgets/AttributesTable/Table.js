@@ -302,8 +302,8 @@ define([
             this.gridOptions.sort = [];
         },
 
-        clearSelectedRecords: function () {
-            var selection = this.clearSelectedGridRecords();
+        clearSelected: function () {
+            var selection = this.clearSelectedGridRows();
             if (!selection) {
                 return;
             }

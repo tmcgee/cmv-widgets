@@ -421,7 +421,7 @@ define([
             topic.publish(this.attributesContainerID + '/tableUpdated', this);
         },
 
-        clearSelectedGridRecords: function () {
+        clearSelectedGridRows: function () {
             if (!this.grid) {
                 return null;
             }
@@ -433,8 +433,11 @@ define([
                 return null;
             }
 
+            var removedRows = [];
+
             for (var key in selection) {
                 if (selection.hasOwnProperty(key) && selection[key] === true) {
+                    removedRows.push(store.get(key));
                     store.remove(key);
                 }
             }
