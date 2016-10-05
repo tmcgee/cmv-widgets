@@ -433,11 +433,8 @@ define([
                 return null;
             }
 
-            var removedRows = [];
-
             for (var key in selection) {
                 if (selection.hasOwnProperty(key) && selection[key] === true) {
-                    removedRows.push(store.get(key));
                     store.remove(key);
                 }
             }
