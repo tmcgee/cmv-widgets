@@ -428,9 +428,14 @@ define([
             if (!url && qp.layerID) {
                 var layer = this.map.getLayer(qp.layerID);
                 if (layer) {
+                    var whereByLayerDef;
                     if (layer.declaredClass === 'esri.layers.FeatureLayer') { // Feature Layer
+                        whereByLayerDef = layer.getDefinitionExpression();
+                        
                         url = layer.url;
                     } else if (layer.declaredClass === 'esri.layers.ArcGISDynamicMapServiceLayer') { // Dynamic Layer
+                        whereByLayerDef = layer.layerDefinitions[qp.sublayerID];
+                        
                         if (qp.sublayerID !== null) {
                             url = layer.url + '/' + qp.sublayerID;
                         } else if (layer.visibleLayers && layer.visibleLayers.length === 1) {
@@ -438,15 +443,11 @@ define([
                         }
                     }
                     
-                    if (qp.includeLayerDefinitions && layer.layerDefinitions) {
-                        var whereByLayerDef = layer.layerDefinitions[qp.sublayerID];
-
-                        if (whereByLayerDef) {
-                            if (qp.where) {
-                                qp.where = '(' + whereByLayerDef + ') AND (' + qp.where + ')';
-                            } else {
-                                qp.where = whereByLayerDef;
-                            }
+                    if (whereByLayerDef && qp.includeLayerDefinitions) {
+                        if (qp.where) {
+                            qp.where = '(' + whereByLayerDef + ') AND (' + qp.where + ')';
+                        } else {
+                            qp.where = whereByLayerDef;
                         }
                     }
                 }
