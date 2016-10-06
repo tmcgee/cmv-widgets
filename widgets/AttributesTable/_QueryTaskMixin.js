@@ -60,8 +60,8 @@ define([
                 outStatistics: null,
                 pixelSize: null,
                 relationParam: null,
-                spatialRelationship: Query.SPATIAL_REL_INTERSECTS
-
+                spatialRelationship: Query.SPATIAL_REL_INTERSECTS,
+                includeLayerDefinitions: false
             },
 
             // provide the parameters if there is a spatial query linked from a table/database query
@@ -428,13 +428,26 @@ define([
             if (!url && qp.layerID) {
                 var layer = this.map.getLayer(qp.layerID);
                 if (layer) {
+                    var whereByLayerDef;
                     if (layer.declaredClass === 'esri.layers.FeatureLayer') { // Feature Layer
+                        whereByLayerDef = layer.getDefinitionExpression();
+                        
                         url = layer.url;
                     } else if (layer.declaredClass === 'esri.layers.ArcGISDynamicMapServiceLayer') { // Dynamic Layer
+                        whereByLayerDef = layer.layerDefinitions[qp.sublayerID];
+                        
                         if (qp.sublayerID !== null) {
                             url = layer.url + '/' + qp.sublayerID;
                         } else if (layer.visibleLayers && layer.visibleLayers.length === 1) {
                             url = layer.url + '/' + layer.visibleLayers[0];
+                        }
+                    }
+                    
+                    if (whereByLayerDef && qp.includeLayerDefinitions) {
+                        if (qp.where) {
+                            qp.where = '(' + whereByLayerDef + ') AND (' + qp.where + ')';
+                        } else {
+                            qp.where = whereByLayerDef;
                         }
                     }
                 }
