@@ -60,8 +60,8 @@ define([
                 outStatistics: null,
                 pixelSize: null,
                 relationParam: null,
-                spatialRelationship: Query.SPATIAL_REL_INTERSECTS
-
+                spatialRelationship: Query.SPATIAL_REL_INTERSECTS,
+                includeLayerDefinitions: false
             },
 
             // provide the parameters if there is a spatial query linked from a table/database query
@@ -435,6 +435,18 @@ define([
                             url = layer.url + '/' + qp.sublayerID;
                         } else if (layer.visibleLayers && layer.visibleLayers.length === 1) {
                             url = layer.url + '/' + layer.visibleLayers[0];
+                        }
+                    }
+                    
+                    if (qp.includeLayerDefinitions && layer.layerDefinitions) {
+                        var whereByLayerDef = layer.layerDefinitions[qp.sublayerID];
+
+                        if (whereByLayerDef) {
+                            if (qp.where) {
+                                qp.where = '(' + whereByLayerDef + ') AND (' + qp.where + ')';
+                            } else {
+                                qp.where = whereByLayerDef;
+                            }
                         }
                     }
                 }
