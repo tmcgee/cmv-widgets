@@ -1,0 +1,58 @@
+.cmvMessageBox {
+    max-width: 275px;
+}
+
+.cmvMessageBox .dijitDialogPaneContent {
+    padding: 12px;
+}
+
+.cmvMessageBox .dijitDialogPaneActionBar {
+    padding: 8px;
+}
+
+.cmvMessageBox .dijitDialogPaneActionBar .dijitIcon {
+    display: inline-block;
+    margin-top: -4px;
+}
+
+.cmvMessageBox .dijitDialogPaneActionBar .dijitIcon:before {
+    display:  block;
+    font-family: 'FontAwesome';
+}
+
+.cmvMessageBox .dijitDialogPaneActionBar .cmvOKButton .dijitIcon:before {
+    color: #090;
+    content: '\f00c';
+}
+
+.cmvMessageBox .dijitDialogPaneActionBar .cmvCancelButton .dijitIcon:before {
+    color: #B00;
+    content: '\f05e';
+}
+
+.cmvMessageBox .dijitDialogCloseIcon {
+    display: none;
+}
+
+.cmvMessageBox .dijitDialogTitle:before {
+    color: #00B;
+    font-family: 'FontAwesome';
+    margin-left: -5px;
+    margin-right: 10px;
+}
+
+.cmvMessageBox .dijitDialogPaneActionBar {
+    text-align: center;
+}
+
+.cmvConfirmDialog .dijitDialogTitle:before {
+    content: '\f059';
+}
+
+.cmvAlertDialog .dijitDialogTitle:before {
+    content: '\f05a';
+}
+
+.cmvAlertDialog .dijitDialogPaneActionBar .cmvCancelButton {
+    display: none;
+}
