@@ -135,6 +135,9 @@ define([
         getConfiguration: function (options) {
             // handle any options passed in the initial widget config
             if (!options) {
+                if (this.queryOptions && this.queryOptions.queryParameters) {
+                    this.queryOptions.queryParameters.geometry = this.geometryToJson(this.queryOptions.queryParameters.geometry);
+                }
                 options = {
                     queryOptions: lang.clone(this.queryOptions),
                     findOptions: lang.clone(this.findOptions),

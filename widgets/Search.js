@@ -411,7 +411,7 @@ define([
             var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
             queryOptions.queryParameters = lang.mixin(queryParameters, {
                 //type: search.type || layer.type || 'spatial',
-                geometry: geometry,
+                geometry: this.geometryToJson(geometry),
                 where: where,
                 addToExisting: addToExisting,
                 outSpatialReference: search.outSpatialReference || this.map.spatialReference,
@@ -1347,6 +1347,15 @@ define([
         /*******************************
         *  Miscellaneous Functions
         *******************************/
+
+        geometryToJson: function (geom) {
+            if (geom && geom.type && geom.toJson) {
+                var type = geom.type;
+                geom = geom.toJson();
+                geom.type = type;
+            }
+            return geom;
+        },
 
         hideInfoWindow: function () {
             if (this.map && this.map.infoWindow) {

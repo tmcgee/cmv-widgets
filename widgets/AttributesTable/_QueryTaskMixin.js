@@ -10,6 +10,11 @@ define([
     'esri/tasks/query',
     'esri/tasks/RelationshipQuery',
     'esri/tasks/QueryTask',
+    'esri/geometry/Point',
+    'esri/geometry/Multipoint',
+    'esri/geometry/Polyline',
+    'esri/geometry/Polygon',
+    'esri/geometry/Extent',
     'esri/geometry/geometryEngine',
     'esri/tasks/BufferParameters'
 
@@ -25,6 +30,11 @@ define([
     Query,
     RelationshipQuery,
     QueryTask,
+    Point,
+    Multipoint,
+    Polyline,
+    Polygon,
+    Extent,
     geometryEngine,
     BufferParameters
 ) {
@@ -139,6 +149,10 @@ define([
             this.clearSelectedFeatures();
             if ((qp.addToExisting !== true) && (this.isLinkedQuery !== true || this.type === 'table') && (this.bufferParameters && !this.bufferParameters.showOnly)) {
                 this.clearGrid();
+            }
+
+            if (qp.geometry) {
+                qp.geometry = this.createGeometry(qp.geometry);
             }
 
             if (this.featureOptions.buffer && this.bufferParameters && this.bufferParameters.distance) {
@@ -370,6 +384,9 @@ define([
                 this.addBufferGraphic(geometries[0]);
 
                 if (showOnly !== true) {
+                    if (this.queryParameters) {
+                        this.queryParameters.geometry = this.geometryToJson(this.queryParameters.geometry);
+                    }
                     var qParams = lang.clone(this.queryParameters);
                     qParams.bufferGeometry = geometries[0];
 
@@ -387,6 +404,39 @@ define([
                     this.addSourceGraphic(this.queryParameters.geometry);
                     this.zoomToBufferGraphics();
                 }
+            }
+        },
+
+        // convert geometry to Json to avoid issues when cloning
+        geometryToJson: function (geom) {
+            if (geom && geom.type && geom.toJson) {
+                var type = geom.type;
+                geom = geom.toJson();
+                geom.type = type;
+            }
+            return geom;
+        },
+
+        // allow geometry to come as Json or a geometry type
+        createGeometry: function (geom) {
+            var type = geom.type;
+            if (geom.toJson) {
+                geom = geom.toJson();
+            }
+            switch (type) {
+            case 'point':
+                return new Point(geom);
+            case 'multipoint':
+                return new Multipoint(geom);
+            case 'polyline':
+                return new Polyline(geom);
+            case 'polygon':
+                return new Polygon(geom);
+            case 'extent':
+                return new Extent(geom);
+            default:
+                geom.type = type;
+                return geom;
             }
         },
 
@@ -431,18 +481,18 @@ define([
                     var whereByLayerDef;
                     if (layer.declaredClass === 'esri.layers.FeatureLayer') { // Feature Layer
                         whereByLayerDef = layer.getDefinitionExpression();
-                        
+
                         url = layer.url;
                     } else if (layer.declaredClass === 'esri.layers.ArcGISDynamicMapServiceLayer') { // Dynamic Layer
                         whereByLayerDef = layer.layerDefinitions[qp.sublayerID];
-                        
+
                         if (qp.sublayerID !== null) {
                             url = layer.url + '/' + qp.sublayerID;
                         } else if (layer.visibleLayers && layer.visibleLayers.length === 1) {
                             url = layer.url + '/' + layer.visibleLayers[0];
                         }
                     }
-                    
+
                     if (whereByLayerDef && qp.includeLayerDefinitions) {
                         if (qp.where) {
                             qp.where = '(' + whereByLayerDef + ') AND (' + qp.where + ')';
