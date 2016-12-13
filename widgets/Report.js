@@ -503,9 +503,10 @@ define([
                     }
 
                     if (label && label.length > 0) {
-                        label += ': ';
-                        labelWidth = parseInt(this.doc.getStringUnitWidth(label) * this.doc.internal.getFontSize(), 10);
+                        label += ':';
                         font.style = 'bold';
+                        this.setFont(font);
+                        labelWidth = parseInt(this.doc.getStringUnitWidth(label) * this.doc.internal.getFontSize(), 10) + 5;
                         this.addText({
                             text: label,
                             left: left,
@@ -514,7 +515,7 @@ define([
                             align: field.labelAlign,
                             pageNumber: attr.pageNumber
                         });
-                        left += labelWidth + 5;
+                        left += labelWidth;
                     }
 
                     if (value && value.length > 0) {
