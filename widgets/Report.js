@@ -70,7 +70,7 @@ define([
         doc: null,
         reportLayout: {},
 
-        jspdfVersion: '1.3.2',
+        jspdfVersion: '1.2.61',
         jspdfAutoTableVersion: '2.1.0',
 
         defaultStyles: {
