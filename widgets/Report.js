@@ -151,7 +151,7 @@ define([
                 this.feature = options.feature;
             }
 
-            if (options.features) { // for multiple features. not currently implemented
+            if (options.features) {
                 this.features = options.features;
             }
 
@@ -400,6 +400,11 @@ define([
             // add any tables
             array.forEach(items.tables, lang.hitch(this, function (item) {
                 item.pageNumber = item.pageNumber || pageNumber;
+                if (item.features === true && this.features && this.features.length) {
+                    item.data = array.map(this.features, function (feat) {
+                        return feat.attributes;
+                    });
+                }
                 this.addTable(item);
             }));
 
