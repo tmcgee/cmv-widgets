@@ -564,7 +564,7 @@ define([
                     if (field.fieldName && this.feature && this.feature.attributes) {
                         value = this.feature.attributes[field.fieldName];
                     }
-                    if (!value || value.toLowerCase() === 'null') {
+                    if (!value || (typeof(value) === 'string' && value.toLowerCase() === 'null')) {
                         value = '';
                     }
                     if (typeof(value) === 'string') {
