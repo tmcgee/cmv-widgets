@@ -160,8 +160,12 @@ define([
                 this.defaultStyles = options.defaultStyles;
             }
 
-            if (options.layout) {
-                this.reportLayout = options.layout;
+            if (options.printTaskURL) {
+                this.printTaskURL = options.printTaskURL;
+            }
+
+            if (options.reportLayout) {
+                this.reportLayout = options.reportLayout;
             }
 
             this.showLoadingMask();
