@@ -1128,7 +1128,6 @@ define([
         },
 
         loadImage: function (id, url) {
-            this.images[this.imagePrefix + 'map'] = null;
             var blankPNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
             var img = new Image();
             img.crossOrigin = 'Anonymous';
