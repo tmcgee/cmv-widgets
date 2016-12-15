@@ -115,6 +115,8 @@ define([
         // to override the default tab when the widget starts
         defaultTab: 0,
 
+        defaultBufferDistance: 0,
+
         /*
             To hide specific tabs.
             This is an zero-based array so [1] would hide the second tab.
@@ -267,6 +269,7 @@ define([
             this.initAdvancedFeatures();
             this.initLayerSelect();
             this.initSpatialFilters();
+            this.inputBufferDistance.set('value', this.defaultBufferDistance || 0);
             this.selectBufferUnits.set('options', this.bufferUnits);
             this.drawToolbar = new Draw(this.map);
             this.enableDrawingButtons();
