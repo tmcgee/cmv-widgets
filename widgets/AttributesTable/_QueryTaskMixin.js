@@ -484,7 +484,8 @@ define([
 
                         url = layer.url;
                     } else if (layer.declaredClass === 'esri.layers.ArcGISDynamicMapServiceLayer') { // Dynamic Layer
-                        whereByLayerDef = layer.layerDefinitions[qp.sublayerID];
+                        whereByLayerDef = layer.layerDefinitions ? layer.layerDefinitions[qp.sublayerID] : null;
+
 
                         if (qp.sublayerID !== null) {
                             url = layer.url + '/' + qp.sublayerID;
