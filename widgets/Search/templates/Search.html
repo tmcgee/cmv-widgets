@@ -52,12 +52,8 @@
                 </table>
             </div>
             <div class="searchSelector bottomButtons">
-                <button data-dojo-attach-event="click:doAttributeSearch" data-dojo-attach-point="btnAttributeSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',showLabel:true,disabled:true" data-dojo-type="dijit/form/Button">
-                    ${i18n.Buttons.search}
-                </button>
-                <button data-dojo-attach-event="click:openQueryBuilder" data-dojo-attach-point="btnQueryBuilder" data-dojo-props="iconClass:'fa fa-wrench fa-fw',showLabel:true,disabled:true" data-dojo-type="dijit/form/Button">
-                    ${i18n.Buttons.openQueryBuilder}
-                </button>
+                <button data-dojo-attach-event="click:doAttributeSearch" data-dojo-attach-point="btnAttributeSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-attribute-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">${i18n.Buttons.search.label}</button>
+                <button data-dojo-attach-event="click:openQueryBuilder" data-dojo-attach-point="btnQueryBuilder" data-dojo-props="iconClass:'fa fa-wrench fa-fw',class:'btn-query-builder',showLabel:${i18n.Buttons.openQueryBuilder.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.openQueryBuilder.label}">${i18n.Buttons.openQueryBuilder.label}</button>
             </div>
         </div>
         <div class="searchTab" data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByShape}">
@@ -104,26 +100,16 @@
                     ${i18n.Labels.selectFeaturesBy}:
                 </label>
                 <br/>
-                <button data-dojo-attach-event="onClick:drawRectangle" data-dojo-attach-point="searchRectangleButtonDijit" data-dojo-props="iconClass:'draw-icon-rectangle',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByRectangle}">
-                </button>
-                <button data-dojo-attach-event="onClick:drawCircle" data-dojo-attach-point="searchCircleButtonDijit" data-dojo-props="iconClass:'draw-icon-circle',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByCircle}">
-                </button>
-                <button data-dojo-attach-event="onClick:drawPoint" data-dojo-attach-point="searchPointButtonDijit" data-dojo-props="iconClass:'draw-icon-point',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPoint}">
-                </button>
-                <button data-dojo-attach-event="onClick:drawPolyline" data-dojo-attach-point="searchPolylineButtonDijit" data-dojo-props="iconClass:'draw-icon-polyline',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPolyline}">
-                </button>
-                <button data-dojo-attach-event="onClick:drawFreehandPolyline" data-dojo-attach-point="searchFreehandPolylineButtonDijit" data-dojo-props="iconClass:'draw-icon-freehand-polyline',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByFreehandPolyline}">
-                </button>
-                <button data-dojo-attach-event="onClick:drawPolygon" data-dojo-attach-point="searchPolygonButtonDijit" data-dojo-props="iconClass:'draw-icon-polygon',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPolygon}">
-                </button>
-                <button data-dojo-attach-event="onClick:drawFreehandPolygon" data-dojo-attach-point="searchFreehandPolygonButtonDijit" data-dojo-props="iconClass:'draw-icon-freehand-polygon',showLabel:false" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByFreehandPolygon}">
-                </button>
-                <button data-dojo-attach-event="onClick:stopDrawing" data-dojo-attach-point="searchStopDrawingButtonDijit" data-dojo-props="iconClass:'fa fa-stop',showLabel:false" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.stopDrawing}">
-                </button>
-                <button data-dojo-attach-event="onClick:useIdentifiedFeatures" data-dojo-attach-point="searchIdentifyButtonDijit" data-dojo-props="iconClass:'fa fa-info-circle',showLabel:false,disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.selectByIdentify}">
-                </button>
-                <button data-dojo-attach-event="onClick:useSelectedFeatures" data-dojo-attach-point="searchSelectedButtonDijit" data-dojo-props="iconClass:'fa fa-binoculars',showLabel:false,disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.selectBySelected}">
-                </button>
+                <button data-dojo-attach-event="onClick:drawRectangle" data-dojo-attach-point="searchRectangleButtonDijit" data-dojo-props="iconClass:'draw-icon-rectangle',class:'btn-draw-rectangle',showLabel:${i18n.Buttons.selectByRectangle.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByRectangle.label}">${i18n.Buttons.selectByRectangle.label}</button>
+                <button data-dojo-attach-event="onClick:drawCircle" data-dojo-attach-point="searchCircleButtonDijit" data-dojo-props="iconClass:'draw-icon-circle',class:'btn-draw-circle',showLabel:${i18n.Buttons.selectByCircle.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByCircle.label}">${i18n.Buttons.selectByCircle.label}</button>
+                <button data-dojo-attach-event="onClick:drawPoint" data-dojo-attach-point="searchPointButtonDijit" data-dojo-props="iconClass:'draw-icon-point',class:'btn-draw-point',showLabel:${i18n.Buttons.selectByPoint.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPoint.label}">${i18n.Buttons.selectByPoint.label}</button>
+                <button data-dojo-attach-event="onClick:drawPolyline" data-dojo-attach-point="searchPolylineButtonDijit" data-dojo-props="iconClass:'draw-icon-polyline',class:'btn-draw-polyline',showLabel:${i18n.Buttons.selectByPolyline.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPolyline.label}">${i18n.Buttons.selectByPolyline.label}</button>
+                <button data-dojo-attach-event="onClick:drawFreehandPolyline" data-dojo-attach-point="searchFreehandPolylineButtonDijit" data-dojo-props="iconClass:'draw-icon-freehand-polyline',class:'btn-draw-freehand-polyline',showLabel:${i18n.Buttons.selectByFreehandPolyline.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByFreehandPolyline.label}">${i18n.Buttons.selectByFreehandPolyline.label}</button>
+                <button data-dojo-attach-event="onClick:drawPolygon" data-dojo-attach-point="searchPolygonButtonDijit" data-dojo-props="iconClass:'draw-icon-polygon',class:'btn-draw-polygon',showLabel:${i18n.Buttons.selectByPolygon.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPolygon.label}">${i18n.Buttons.selectByPolygon.label}</button>
+                <button data-dojo-attach-event="onClick:drawFreehandPolygon" data-dojo-attach-point="searchFreehandPolygonButtonDijit" data-dojo-props="iconClass:'draw-icon-freehand-polygon',class:'btn-draw-freehand-polygon',showLabel:${i18n.Buttons.selectByFreehandPolygon.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByFreehandPolygon.label}">${i18n.Buttons.selectByFreehandPolygon.label}</button>
+                <button data-dojo-attach-event="onClick:useIdentifiedFeatures" data-dojo-attach-point="searchIdentifyButtonDijit" data-dojo-props="iconClass:'fa fa-info-circle',class:'btn-select-by-identify',showLabel:${i18n.Buttons.selectByIdentify.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.selectByIdentify.label}">${i18n.Buttons.selectByIdentify.label}</button>
+                <button data-dojo-attach-event="onClick:useSelectedFeatures" data-dojo-attach-point="searchSelectedButtonDijit" data-dojo-props="iconClass:'fa fa-binoculars',class:'btn-select-by-selected',showLabel:${i18n.Buttons.selectBySelected.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.selectBySelected.label}">${i18n.Buttons.selectBySelected.label}</button>
+                <button data-dojo-attach-event="onClick:stopDrawing" data-dojo-attach-point="searchStopDrawingButtonDijit" data-dojo-props="iconClass:'fa fa-stop',class:'btn-stop-drawing',showLabel:${i18n.Buttons.stopDrawing.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.stopDrawing.label}">${i18n.Buttons.stopDrawing.label}</button>
             </div>
             <div class="searchSelector" data-dojo-attach-point="divSpatialAddToExisting">
                 <table>
@@ -140,9 +126,7 @@
                 </table>
             </div>
             <div class="searchSelector bottomButtons">
-                <button data-dojo-attach-event="click:doSpatialSearch" data-dojo-attach-point="btnSpatialSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',showLabel:true,disabled:true" data-dojo-type="dijit/form/Button">
-                    ${i18n.Buttons.search}
-                </button>
+                <button data-dojo-attach-event="click:doSpatialSearch" data-dojo-attach-point="btnSpatialSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-spatial-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">${i18n.Buttons.search.label}</button>
             </div>
         </div>
     </div>

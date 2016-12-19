@@ -26,18 +26,54 @@ define({
             }
         },
         Buttons: {
-            search: 'Search',
-            openQueryBuilder: 'Query Builder',
-            stopDrawing: 'Stop Drawing',
-            selectByRectangle: 'Select By Rectangle',
-            selectByCircle: 'Select By Circle',
-            selectByPoint: 'Select By Point',
-            selectByPolyline: 'Select By Line',
-            selectByFreehandPolyline: 'Select By Freehand Line',
-            selectByPolygon: 'Select By Polygon',
-            selectByFreehandPolygon: 'Select By Freehand Polygon',
-            selectByIdentify: 'Select By Identified Feature(s)',
-            selectBySelected: 'Select By Selected Feature(s)'
+            search: {
+                label: 'Search',
+                showLabel: true
+            },
+            openQueryBuilder: {
+                label: 'Query Builder',
+                showLabel: true
+            },
+            stopDrawing: {
+                label: 'Stop Drawing',
+                showLabel: true
+            },
+            selectByRectangle: {
+                label: 'Select By Rectangle',
+                showLabel: false
+            },
+            selectByCircle: {
+                label: 'Select By Circle',
+                showLabel: false
+            },
+            selectByPoint: {
+                label: 'Select By Point',
+                showLabel: false
+            },
+            selectByPolyline: {
+                label: 'Select By Line',
+                showLabel: false
+            },
+            selectByFreehandPolyline: {
+                label: 'Select By Freehand Line',
+                showLabel: false
+            },
+            selectByPolygon: {
+                label: 'Select By Polygon',
+                showLabel: false
+            },
+            selectByFreehandPolygon: {
+                label: 'Select By Freehand Polygon',
+                showLabel: false
+            },
+            selectByIdentify: {
+                label: 'Select By Identified Feature(s)',
+                showLabel: false
+            },
+            selectBySelected: {
+                label: 'Select By Selected Feature(s)',
+                showLabel: false
+            }
         }
     }
 });
