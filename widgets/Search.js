@@ -1138,6 +1138,7 @@ define([
             this.searchPolygonButtonDijit.set('checked', false);
             this.searchFreehandPolygonButtonDijit.set('checked', false);
             this.searchStopDrawingButtonDijit.set('checked', true);
+            this.searchStopDrawingButtonDijit.set('disabled', true);
             this.btnSpatialSearch.set('disabled', true);
         },
 
@@ -1157,6 +1158,7 @@ define([
 
                 if (this.enableDrawMultipleShapes) {
                     this.btnSpatialSearch.set('disabled', false);
+                    this.searchStopDrawingButtonDijit.set('disabled', false);
                 } else {
                     this.doSpatialSearch();
                 }
