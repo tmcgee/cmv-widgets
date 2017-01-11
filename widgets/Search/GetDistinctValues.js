@@ -32,12 +32,14 @@ define([
          * @param {string} url The URL to the ArcGIS Server REST resource that represents a map service layer.
          * @param {string} fieldName The field name for which to retrieve unique values.
          * @param {boolean} includeBlankValue Whether to include a blank value.
+         * @param {string} where An optional where clause to filter the results..
          */
-        constructor: function (registryId, url, fieldName, includeBlankValue) {
+        constructor: function (registryId, url, fieldName, includeBlankValue, where) {
             this.registryId = registryId;
             this.url = url;
             this.fieldName = fieldName;
             this.includeBlankValue = includeBlankValue || false;
+            this.where = where || null;
 
             var input = registry.byId(this.registryId);
             input.set('disabled', true);
@@ -54,7 +56,7 @@ define([
             query.orderByFields = [this.fieldName];
             query.returnDistinctValues = true;
             query.returnGeometry = false;
-            query.where = '1=1';
+            query.where = this.where || '1=1';
 
             queryTask.on('complete', lang.hitch(this, function (results) {
                 var featureSet = results.featureSet,

@@ -748,7 +748,9 @@ define([
                     });
                     // should actually only do this for the first control
                     if ((i === 0) && (j === 0)) {
-                        this.getDistinctValues(inputId, layer.queryParameters, field.name, field.includeBlankValue);
+                        var queryParameters = lang.clone(layer.queryParameters);
+                        queryParameters.url = field.url || layer.queryParameters.url;
+                        this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, field.where);
                     }
                 } else if (field.values) {
                     options = [];
@@ -923,7 +925,9 @@ define([
                         for (var k = 0; k < search.searchFields.length; k++) {
                             var field = search.searchFields[k];
                             if (field.unique) {
-                                this.getDistinctValues(search.inputIds[k], layer.queryParameters, field.name, field.includeBlankValue);
+                                var queryParameters = lang.clone(layer.queryParameters);
+                                queryParameters.url = field.url || layer.queryParameters.url;
+                                this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, field.where);
                             }
                         }
                         domStyle.set(search.divName, 'display', 'block');
@@ -949,10 +953,10 @@ define([
          * @param {string} fieldName The field name for which to retrieve unique values.
          * @param {boolean} includeBlankValue Whether to add a blank (null) value to the resulting list.
          */
-        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue) {
+        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue, where) {
             var url = this.getLayerURL(queryParameters);
             if (url) {
-                var q = new GetDistinctValues(inputId, url, fieldName, includeBlankValue);
+                var q = new GetDistinctValues(inputId, url, fieldName, includeBlankValue, where);
                 q.executeQuery();
             }
         },
