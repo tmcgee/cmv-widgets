@@ -1,0 +1,15 @@
+<div class="cmwOpenExternalMapWidget" >
+    <div class="formContainer">
+        <button data-dojo-type="dijit/form/ToggleButton" class="OEMapButton" data-dojo-attach-point="OEMapButtonDijit" data-dojo-props="iconClass:'fa fa-location-arrow fa-fw',showLabel:false" data-dojo-attach-event="onClick:placePoint"></button>
+        <div data-dojo-attach-point="OEMapInstructions" class="OEMapInstructions">${i18n.locationInstructions}</div>
+        <div class="OEMapCoordinates">
+            <div class="OEMapLatitudeLabel">${i18n.latitudeLabel}:</div>
+            <input type="select" data-dojo-type="dijit/form/TextBox" data-dojo-props="'class':'OEMapLatitudeInput',placeholder:'${i18n.latitudePlaceholder}'" data-dojo-attach-point="OEMapLatitudeDijit" data-dojo-attach-event="onChange:latitudeChanged,onKeyUp:latitudeChanged"/>
+            <div class="OEMapLatitudeDMSLabel" data-dojo-attach-point="OEMapLatitudeDMSDijit"></div><br/>
+            <div class="OEMapLongitudeLabel">${i18n.longitudeLabel}:</div>
+            <input type="select" data-dojo-type="dijit/form/TextBox" data-dojo-props="'class':'OEMapLongitudeInput',placeholder:'${i18n.longitudePlaceholder}'" data-dojo-attach-point="OEMapLongitudeDijit" data-dojo-attach-event="onChange:longitudeChanged,onKeyUp:longitudeChanged"/>
+            <div class="OEMapLongitudeDMSLabel" data-dojo-attach-point="OEMapLongitudeDMSDijit"></div><br/>
+        </div>
+    </div>
+    <div data-dojo-attach-point="providerContainer" class="buttonContainer"></div>
+</div>

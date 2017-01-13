@@ -1,0 +1,42 @@
+.cmwOpenExternalMapWidget .OEMapButton {
+    float: left;
+    margin: 0 10px 0 0;
+}
+.cmwOpenExternalMapWidget .OEMapInstructions {
+    margin-top: 5px;
+    min-height: 50px;
+}
+.cmwOpenExternalMapWidget .OEMapLatitudeLabel,
+.cmwOpenExternalMapWidget .OEMapLongitudeLabel {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 5px;
+    text-align: right;
+    width: 75px;
+}
+.cmwOpenExternalMapWidget .OEMapLatitudeInput,
+.cmwOpenExternalMapWidget .OEMapLongitudeInput {
+    margin-bottom: 5px;
+    width: 95px;
+}
+.cmwOpenExternalMapWidget .OEMapLatitudeDMSLabel,
+.cmwOpenExternalMapWidget .OEMapLongitudeDMSLabel {
+    display: inline-block;
+    margin-left: 5px;
+}
+.cmwOpenExternalMapWidget .buttonContainer {
+    margin-top: 20px;
+    text-align: center;
+}
+.cmwOpenExternalMapWidget .buttonContainer .mapLabel {
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+.cmwOpenExternalMapWidget .buttonContainer .mapButton {
+    margin-bottom: 5px;
+    margin-right: 20px;
+}
+.cmwOpenExternalMapWidget .buttonContainer .dijitButtonDisabled .fa {
+    opacity: 0.65;
+}

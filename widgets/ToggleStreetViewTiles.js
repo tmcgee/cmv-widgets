@@ -36,7 +36,7 @@ define([
 
         checkMapClickMode: function (mode) {
             if (this.svLayer) {
-                this.svLayer.setVisibility(mode === 'streetview');
+                this.svLayer.setVisibility(mode === 'streetview' || mode === 'externalmap');
             }
         }
     });
