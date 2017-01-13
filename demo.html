@@ -6,16 +6,21 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <meta name="application-name" content="cmv widgets">
+        <meta name="description" content="Widgets for CMV (https://cmv.io/), the Configurable Map Viewer created by Tim McGee (https://github.com/tmcgee) of MoosePoint Technology http://moosepoint.com/">
+        <meta name="author" content="Tim McGee">
+        <link rel="shortcut icon" href="cmv/favicon.png">
         <title></title>
-        <link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.15compact/esri/css/esri.css">
-        <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="./cmv/css/theme/dbootstrap/dbootstrap.css">
-        <link rel="stylesheet" type="text/css" href="./cmv/css/main.css">
+        <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.19compact/esri/css/esri.css">
+        <link rel="stylesheet" type="text/css" href="cmv/css/theme/flat/flat.css">
+        <link rel="stylesheet" type="text/css" href="cmv/css/cmv-theme-overrides.css">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="cmv/css/main.css">
     </head>
-    <body class="dbootstrap">
+    <body class="cmv flat">
         <div class="appHeader">
             <div class="headerLogo">
-                <img alt="logo" src="./cmv/images/rocket-logo.png" height="54" />
+                <img alt="logo" src="cmv/images/rocket-logo.png" height="54" />
             </div>
             <div class="headerTitle">
                 <span id="headerTitleSpan"></span>
@@ -31,48 +36,17 @@
             </div>
         </div>
         <script type="text/javascript">
-            var path = location.pathname.replace(/[^\/]+$/, '');
+            var s = window.location.search, q = s.match(/locale=([^&]*)/i);
+            var locale = (q && q.length > 0) ? q[1] : null;
             window.dojoConfig = {
-                async: true,
-                packages: [{
-                    name: 'viewer',
-                    location: path + './cmv/js/viewer'
-                }, {
-                    name: 'gis',
-                    location: path + './cmv/js/gis'
-                }, {
-                    name: 'config',
-                    location: path + './config'
-                }, {
-                    name: 'put-selector',
-                    main: 'put',
-                    location: 'https://cdn.rawgit.com/kriszyp/put-selector/v0.3.6'
-                }, {
-                    name: 'xstyle',
-                    main: 'css',
-                    location: 'https://cdn.rawgit.com/kriszyp/xstyle/v0.3.2'
-                }, {
-                    name: 'widgets',
-                    location: path + './widgets'
-                }]
+                locale: locale,
+                async: true
             };
         </script>
         <!--[if lt IE 9]>
-            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.3/es5-shim.min.js"></script>
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.3/es5-shim.min.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="//js.arcgis.com/3.15compact/"></script>
-        <script type="text/javascript">
-            // get the config file from the url if present
-            var file = 'config/viewer', s = window.location.search, q = s.match(/config=([^&]*)/i);
-            if (q && q.length > 0) {
-                file = q[1];
-                if (file.indexOf('/') < 0) {
-                    file = 'config/' + file;
-                }
-            }
-            require(['viewer/Controller', file], function (Controller, config) {
-                Controller.startup(config);
-            });
-        </script>
+        <script src="https://js.arcgis.com/3.19compact/"></script>
+        <script src="config/app.js"></script>
     </body>
 </html>

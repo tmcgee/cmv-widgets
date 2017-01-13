@@ -1,0 +1,1 @@
+{"version":3,"sources":["resource.js"],"names":["define","root","title","es","fr","pt-br","pt-pt"],"mappings":";;;;;AAAAA,QACIC,MACIC,MAAO,YAEXC,IAAM,EACNC,IAAM,EACNC,SAAS,EACTC,SAAS","file":"resource.js","sourcesContent":["define ({\r\n    root: {\r\n        title: 'Basemaps'\r\n    },\r\n    'es': true,\r\n    'fr': true,\r\n    'pt-br': true,\r\n    'pt-pt': true\r\n});"]}
