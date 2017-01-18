@@ -61,8 +61,7 @@ define([
         i18n: i18n,
         mapClickMode: null,
 
-        mapButtons: [],
-
+        // the map providers and buttons  to include
         mapProviders: [
             {
                 name: 'Google Maps',
@@ -70,7 +69,7 @@ define([
                     {
                         label: 'Hybrid Map',
                         iconClass: 'fa fa-google fa-fw',
-                        url: 'https://www.google.com/maps/@{lat},{lng},{zoom}z&map=h' //https://www.google.com/maps/@{lat},{lng},1000a,20y,0t/data=!3m1!1e3'
+                        url: 'https://www.google.com/maps/place/@{lat},{lng},{zoom}z/data=!3m1!1e3' //https://www.google.com/maps/@{lat},{lng},1000a,20y,0t/data=!3m1!1e3'
                     },
                     {
                         label: 'StreetView',
@@ -116,14 +115,23 @@ define([
                 ]
             }
         ],
+
+        // group the providers by their name, otherwise group all buttons together
         groupProviders: true,
 
+        // set the Lat/Lng from the map's center point when the map's extent is updated
+        useMapCenter: true,
+
+        // Show coordinate in Degrees, Minutes and Seconds
         showDMS: true,
+
+        // conversion factor for DMS
         unitScale: 2,
 
         // is street view available at the coordinates
         streetViewAvailable: false,
 
+        // not currently implemented
         useEmbeddedWindow: false,
 
         // in case this changes some day
@@ -138,9 +146,10 @@ define([
         // i.e., http://server/projections/102642.js
         projCustomURL: null,
 
+        _mapButtons: [],
+
         postCreate: function () {
             this.inherited(arguments);
-            this.map.on('click', lang.hitch(this, 'getMapPoint'));
 
             this.own(topic.subscribe('mapClickMode/currentSet', lang.hitch(this, 'setMapClickMode')));
 
@@ -169,6 +178,16 @@ define([
             }
 
             this.addProviders();
+
+            this.map.on('click', lang.hitch(this, 'onMapPoint'));
+            if (this.useMapCenter) {
+                this.map.on('extent-change', lang.hitch(this, 'onMapCenter'));
+                if (this.map.extent) {
+                    this.onMapCenter({
+                        extent: this.map.extent
+                    });
+                }
+            }
         },
 
         addProviders: function () {
@@ -206,9 +225,25 @@ define([
                     btn.startup();
                     btn.set('disabled', true);
                     btn.placeAt(btnContainer, 'last');
-                    this.mapButtons.push(btn);
+                    this._mapButtons.push(btn);
                 }));
             }));
+        },
+
+        onMapPoint: function (evt) {
+            if (this.mapClickMode === 'externalmap') {
+                var mapPoint = evt.mapPoint;
+                if (!mapPoint) {
+                    return;
+                }
+                this.processPoint(mapPoint);
+            }
+        },
+
+        onMapCenter: function (opts) {
+            var extent = opts.extent;
+            var centerPoint = extent.getCenter();
+            this.processPoint(centerPoint);
         },
 
         onClose: function () {
@@ -243,23 +278,15 @@ define([
             topic.publish('mapClickMode/setDefault');
         },
 
-        getMapPoint: function (evt) {
-            if (this.mapClickMode === 'externalmap') {
+        processPoint: function (point) {
+            var latLng = this.convertCoordinates(point);
+            this.checkStreetView(latLng);
 
-                var mapPoint = evt.mapPoint;
-                if (!mapPoint) {
-                    return;
-                }
+            this.OEMapLatitudeDijit.set('value', latLng[1].toFixed(6));
+            this.OEMapLongitudeDijit.set('value', latLng[0].toFixed(6));
+            window.setTimeout(lang.hitch(this, 'connectMapClick'), 100);
 
-                var latLng = this.convertCoordinates(mapPoint);
-                this.checkStreetView(latLng);
-
-                this.OEMapLatitudeDijit.set('value', latLng[1].toFixed(6));
-                this.OEMapLongitudeDijit.set('value', latLng[0].toFixed(6));
-                window.setTimeout(lang.hitch(this, 'connectMapClick'), 100);
-
-                this.checkButtons();
-            }
+            this.checkButtons();
         },
 
         openMap: function (button) {
@@ -362,7 +389,7 @@ define([
 
         checkButtons: function () {
             var valid = this.validateCoordinates();
-            array.forEach(this.mapButtons, function (button) {
+            array.forEach(this._mapButtons, function (button) {
                 button.set('disabled', !valid);
             });
         },
