@@ -1,26 +1,20 @@
-define([
-    'esri/urlUtils'
-], function (urlUtils) {
-
-    urlUtils.addProxyRule({
-        urlPrefix: 'http://server.domain',
-        proxyUrl: '/proxy/proxy.ashx'
-    });
+define([], function (ImageParameters) {
 
     return {
-        isDebug: true,
+        isDebug: false,
 
+        //default mapClick mode, mapClickMode lets widgets know what mode the map is in to avoid multipult map click actions from taking place (ie identify while drawing).
+        defaultMapClickMode: 'identify',
         mapOptions: {
             basemap: 'hybrid',
             center: [-122.6314, 38.2658],
-            // center: [-122.431297, 37.773972],
             zoom: 19,
             sliderStyle: 'small'
         },
 
         titles: {
             header: 'CMV Report Widget',
-            subHeader: 'This is an example of the Report Widget',
+            subHeader: 'Identify a parcel by clicking the map',
             pageTitle: 'CMV Report Widget'
         },
 
@@ -32,7 +26,17 @@ define([
         },
         collapseButtonsPane: 'center', //center or outer
 
-        operationalLayers: [],
+        operationalLayers: [
+            {
+                type: 'dynamic',
+                url: 'http://gis-webpub.sonoma-county.org/arcgis/rest/services/BaseMap/Parcels/MapServer',
+                title: 'Parcels',
+                options: {
+                    id: 'parcels',
+                    opacity: 1
+                }
+            }
+        ],
 
         widgets: {
             growler: {
@@ -43,12 +47,53 @@ define([
                 srcNodeRef: 'growlerDijit',
                 options: {}
             },
+            identify: {
+                include: true,
+                id: 'identify',
+                type: 'invisible',
+                path: 'gis/dijit/Identify',
+                options: {
+                    map: true,
+                    mapClickMode: true,
+                    mapRightClickMenu: true,
+                    identifyLayerInfos: true,
+                    identifyTolerance: 5,
+                    identifies: {
+                        parcels: {
+                            0: {
+                                fieldInfos: [
+                                    {
+                                        fieldName: 'APN',
+                                        visible: true
+                                    },
+                                    {
+                                        fieldName: 'Reports',
+                                        visible: true,
+                                        formatter: function () {
+                                            return '<a id="parcel-report" title="Run Parcel Report" style="cursor:pointer">Parcel Report</a>';
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
             report: {
                 include: true,
                 id: 'report',
                 type: 'invisible',
                 path: 'widgets/Report',
                 options: 'config/reportWidget'
+            },
+            reportReactor: {
+                include: true,
+                id: 'reportReactor',
+                type: 'invisible',
+                path: 'widgets/ReportReactor',
+                options: {
+                    map: true
+                }
             }
         }
     };

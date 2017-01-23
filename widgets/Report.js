@@ -584,7 +584,8 @@ define([
                         text: value,
                         format: field.format,
                         formatOptions: field.formatOptions,
-                        formatter: field.formatter
+                        formatter: field.formatter,
+                        attributes: this.feature.attributes
                     });
                     attr.data.push({
                         label: label,
@@ -989,7 +990,7 @@ define([
             var format = opts.format || '';
 
             if (opts.formatter) { // custom formatter?
-                return opts.formatter(text);
+                return opts.formatter(text, opts.attributes);
             }
 
             if (typeof(text) === 'undefined' || text === null) {
