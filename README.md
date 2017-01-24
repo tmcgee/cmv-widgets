@@ -132,7 +132,7 @@ Share your map by using Facebook, Twitter, Google+, E-Mail, Link, or embedded iF
 
 ---
 ### Toggle StreetView Tiles
-Used in conjunction with the CMV StreetView widget or the [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map). Shows a StreetView tiles layer when waiting for a map click to get coordinates for the respective widgets.
+Used in conjunction with the CMV StreetView widget or the [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map) widget. Shows a StreetView tiles layer when waiting for a map click to get coordinates for the respective widgets.
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=openexternalmap)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/openexternalmap1.jpg)
 
