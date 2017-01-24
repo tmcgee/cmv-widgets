@@ -1,4 +1,4 @@
-define([], function (ImageParameters) {
+define([], function () {
 
     return {
         isDebug: false,
