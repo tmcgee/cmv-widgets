@@ -7,9 +7,28 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 
 [See them live!](http://tmcgee.github.io/cmv-widgets/)
 
+### Widgets Available in this Repo
+- [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables)
+- [Disclaimer](https://github.com/tmcgee/cmv-widgets#disclaimer)
+- [Export](https://github.com/tmcgee/cmv-widgets#export)
+- [Full Screen](https://github.com/tmcgee/cmv-widgets#fullscreen)
+- [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
+- [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
+- [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
+- [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
+- [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
+- [Print Plus](https://github.com/tmcgee/cmv-widgets#print-plus)
+- [Report](https://github.com/tmcgee/cmv-widgets#report)
+- [Search](https://github.com/tmcgee/cmv-widgets#search)
+- [Share](https://github.com/tmcgee/cmv-widgets#share)
+- [Toggle StreeView Tiles](https://github.com/tmcgee/cmv-widgets#toggle-streetview-tiles)
+- [What3Words](https://github.com/tmcgee/cmv-widgets#what3words)
+- [Zoom to Feature](https://github.com/tmcgee/cmv-widgets#zoom-to-feature)
+
 ### Example Configurations
 Each widget in this repo has at least one configuration example in the [config folder](https://github.com/tmcgee/cmv-widgets/tree/master/config). This folder also contains additional examples for including ESRI widgets, other widgets and functionality.
 
+## Widgets
 ### Attributes Table(s)
 A highly configurable widget to display the results of one or more Query, Find or Geoprocessor Tasks.
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/AttributesTable/README.md)
@@ -50,8 +69,34 @@ An example widget demonstrating the display of results from a Geoprocessing Task
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/geoprocessor1.jpg)
 
 ---
+### Layer Labels
+A simple widget to add labels for one or more Feature Layers.
+#####Documentation - in the works
+#####[Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LayerLabels.js)
+
+---
+### Layer Toggle
+A simple widget to toggle the visibility of a set of layers. Only a single layer in the set can be visible at any time. All others are turned off when the target layer's visibility is set.
+#####Documentation - in the works
+#####[Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LayerToggle.js)
+
+---
+### MessageBox
+Show an Alert or Confirmation modal dialog box. Intended to be called from other widgets.
+#####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/MessageBox/README.md)
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=messagebox)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/messagebox1.jpg)
+
+---
 ### Multi-Field Geocoder
 Coming Soon
+
+---
+### Open External Map
+Open maps in an external window for Google Hybrid, Google StreetView, Bing Hybrid, Bing Bird's Eye, Bing Streetside, MapQuest and OpenStreetMap. The map is centered on the coordinates based on a map click or Latitude and Longitude values provided by the user. Can be combined with the [Toggle StreetView Tiles](https://github.com/tmcgee/cmv-widgets#toggle-streetview-tiles) widget to show the availability of Google StreetView while clicking on the map.
+#####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/OpenExternalMap/README.md)
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=openexternalmap)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/openexternalmap1.jpg)
 
 ---
 ### Print Plus
@@ -59,6 +104,15 @@ An updated version of the PrintPlus widget originally created by [@LarryStout](h
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/PrintPlus/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=printplus)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/printplus1.jpg)
+
+---
+### Report
+Highly configurable widget used to create a mult-page PDF report from a single feature or multiple features.
+#####Documentation - in the works
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=report)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/report1.jpg)
+
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/report2.jpg)
 
 ---
 ###Search
@@ -75,6 +129,12 @@ Share your map by using Facebook, Twitter, Google+, E-Mail, Link, or embedded iF
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Share/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=share)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/share1.jpg)
+
+---
+### Toggle StreetView Tiles
+Used in conjunction with the CMV StreetView widget or the [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map). Shows a StreetView tiles layer when waiting for a map click to get coordinates for the respective widgets.
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=openexternalmap)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/openexternalmap1.jpg)
 
 ---
 ### What3Words
