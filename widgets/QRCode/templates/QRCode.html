@@ -1,0 +1,15 @@
+<div>
+    <button data-dojo-type="dijit/form/ToggleButton" class="QRCodeButton" data-dojo-attach-point="QRCodeButtonDijit" data-dojo-props="iconClass:'fa fa-location-arrow fa-fw',showLabel:false" data-dojo-attach-event="onClick:placePoint"></button>
+    <div class="QRCodeForm">
+    	<form>
+            <input type="radio" checked data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="QRCodeGeoRadioDijit" data-dojo-attach-event="onChange:generateQr"/> <label>Google Maps, OSMAnd, Waze</label><br /><br/>
+            <input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="QRCodeAppleRadioDijit" data-dojo-attach-event="onChange:generateQr"/> <label>Apple Maps</label><br /><br/>
+    		<input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="QRCodeTrek2ThereRadioDijit" data-dojo-attach-event="onChange:generateQr"/> <label>Trek2There (ESRI Labs)</label><br /><br/>
+    		<input type="radio" data-dojo-type="dijit/form/RadioButton" data-dojo-attach-point="QRCodeNavigatorRadioDijit" data-dojo-attach-event="onChange:generateQr"/> <label>Navigator for ArcGIS</label><br /><br/>
+    	</form>
+    </div>
+    <label>Scan this QR Code with your phone/tablet:</label>
+    <div class="QRCodeCode">
+	   <div data-dojo-attach-point="qrCodeNode"></div>
+    </div>
+</div>

@@ -18,6 +18,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
 - [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
 - [Print Plus](https://github.com/tmcgee/cmv-widgets#print-plus)
+- [QR Code](https://github.com/tmcgee/cmv-widgets#qr-code)
 - [Report](https://github.com/tmcgee/cmv-widgets#report)
 - [Search](https://github.com/tmcgee/cmv-widgets#search)
 - [Share](https://github.com/tmcgee/cmv-widgets#share)
@@ -104,6 +105,13 @@ An updated version of the PrintPlus widget originally created by [@LarryStout](h
 #####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/PrintPlus/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=printplus)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/printplus1.jpg)
+
+---
+### QR Code
+Shows a QR code for the current map to open mobile applications on your phone/tablet.
+#####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/QRCode/README.md)
+#####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=qrcode)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/qrcode1.jpg)
 
 ---
 ### Report

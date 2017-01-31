@@ -1,0 +1,18 @@
+.cmvQRCodeMapWidget {
+    position: relative;
+    width: 100%;
+}
+.cmvQRCodeMapWidget .QRCodeButton {
+    position: absolute;
+    right: 5px;
+    top: 50px;
+}
+.cmvQRCodeMapWidget .QRCodeForm {
+    margin: 10px 5px;
+}
+.cmvQRCodeMapWidget .QRCodeCode {
+    margin: 15px 25%;
+    min-width: 128px;
+    text-align: center;
+    width:  100%;
+}
