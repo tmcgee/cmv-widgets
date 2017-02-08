@@ -18,7 +18,7 @@
         "grunt-contrib-csslint": "~2.0.0",
         "grunt-contrib-cssmin": "1.0.x",
         "grunt-eslint": "19.0.x",
-        "grunt-contrib-uglify": "2.0.x",
+        "grunt-contrib-uglify": "~2.1.0",
         "grunt-contrib-watch": "1.0.x",
         "grunt-newer": "1.2.x",
         "grunt-open": "0.2.x",
