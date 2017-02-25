@@ -179,7 +179,11 @@ define([
             if (this.reportLayout.map) {
                 if (this.feature && this.feature.geometry && this.feature.geometry.getExtent) {
                     this.mapExtent = this.map.extent;
-                    this.map.setExtent(this.feature.geometry.getExtent(), true).then(lang.hitch(this, 'printMap'));
+                    if (this.feature.geometry.type === 'point') {
+                        this.map.centerAndZoom(this.feature.geometry, this.map.getMaxZoom() - 5).then(lang.hitch(this, 'printMap'));
+                    } else {
+                        this.map.setExtent(this.feature.geometry.getExtent(), true).then(lang.hitch(this, 'printMap'));
+                    }
                 } else {
                     this.mapExtent = null;
                     this.printMap();
