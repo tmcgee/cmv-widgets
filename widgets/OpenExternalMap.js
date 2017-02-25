@@ -12,7 +12,6 @@ define([
     'dojo/number',
     'dojo/aspect',
 
-    'esri/geometry/webMercatorUtils',
     'esri/geometry/Point',
 
     'proj4js/proj4',
@@ -41,7 +40,6 @@ define([
     number,
     aspect,
 
-    webMercatorUtils,
     Point,
 
     proj4,
