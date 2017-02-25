@@ -206,8 +206,7 @@ define([
                 tab.destroy();
             }
             if (tabs.hasChildren()) {
-                tab = tabs.selectChild(0);
-                topic.publish(this.topicID + '/tableUpdated', tab);
+                this.selectTab(0);
             } else {
                 this.closePane();
                 topic.publish(this.topicID + '/tableUpdated', null);
