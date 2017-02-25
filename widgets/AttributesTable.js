@@ -189,6 +189,7 @@ define([
                     this.addChild(tab);
                 }
             }
+            this.resizeChildren();
             topic.publish(this.topicID + '/tableUpdated', tab);
             return tab;
         },
