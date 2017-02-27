@@ -115,8 +115,8 @@ Shows a QR code for the current map to open mobile applications on your phone/ta
 
 ---
 ### Report
-Highly configurable widget used to create a mult-page PDF report from a single feature or multiple features.
-#####Documentation - in the works
+Highly configurable widget used to create a multi-page PDF report from a single feature or multiple features.
+#####[Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Report/README.md)
 #####[Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=report)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/report1.jpg)
 
