@@ -293,11 +293,13 @@ define([
 
             this.buildSearchControls();
 
-            var parent = this.getParent();
-            if (parent) {
-                this.own(on(parent, 'show', lang.hitch(this, function () {
-                    this.tabContainer.resize();
-                })));
+            if (this.getParent) {
+                var parent = this.getParent();
+                if (parent) {
+                    this.own(on(parent, 'show', lang.hitch(this, function () {
+                        this.tabContainer.resize();
+                    })));
+                }
             }
             aspect.after(this, 'resize', lang.hitch(this, function () {
                 this.tabContainer.resize();
