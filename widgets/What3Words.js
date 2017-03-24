@@ -29,7 +29,7 @@ define([
     'dojo/i18n!./What3Words/nls/resources',
 
     // Proj4JS
-    'https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js',
+    'proj4js/proj4',
 
     //template widgets
     'dijit/form/TextBox',
