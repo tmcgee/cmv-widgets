@@ -7,6 +7,7 @@ define([
     'dojo/_base/lang',
     'dojo/_base/array',
     'dojo/on',
+    'dojo/io-query',
     'dojo/keys',
     'dojo/store/Memory',
     'esri/tasks/QueryTask',
@@ -23,7 +24,7 @@ define([
     'dijit/form/Form',
     'dijit/form/FilteringSelect',
     'xstyle/css!./ZoomToFeature/css/ZoomToFeature.css'
-], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, lang, array, on, keys, Memory, QueryTask, Query, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, graphicsUtils, template, i18n) {
+], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, lang, array, on, ioQuery, keys, Memory, QueryTask, Query, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, graphicsUtils, template, i18n) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         widgetsInTemplate: true,
         templateString: template,
@@ -207,11 +208,21 @@ define([
 
             var values = [],
                 k = 0,
-                field = this.field;
+                field = this.field,
+                idx = -1;
+            var uri = window.location.href;
+            var qs = uri.substring(uri.indexOf('?') + 1, uri.length);
+            var qsObj = ioQuery.queryToObject(qs);
+            var value = qsObj[field] || '';
+
             array.forEach(this.features, function (feature) {
+                var name = feature.attributes[field];
+                if (name === value) {
+                    idx = k;
+                }
                 values.push({
                     id: k,
-                    name: feature.attributes[field]
+                    name: name
                 });
                 k++;
             });
@@ -221,6 +232,11 @@ define([
             });
             this.featureSelectDijit.set('store', this.featureStore);
             this.featureSelectDijit.set('disabled', false);
+
+            if (idx >= 0) {
+                this.featureSelectDijit.set('value', idx);
+            }
+
         },
 
         onFeatureChange: function (featureIdx) {
