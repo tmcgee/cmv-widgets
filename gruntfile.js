@@ -50,7 +50,7 @@ module.exports = function (grunt) {
 
         eslint: {
             build: {
-                src: ['widgets/**/*.js', 'config/**/*.js'],
+                src: ['widgets/**/*.js', 'config/**/*.js', '!**/*{.,-}min.js'],
                 options: {
                     eslintrc: '.eslintrc'
                 }

@@ -13,6 +13,7 @@ define([
     'dojo/date/locale',
     'dojo/number',
     'dojo/currency',
+    'module',
 
     'esri/tasks/PrintTask',
     'esri/tasks/PrintTemplate',
@@ -45,6 +46,7 @@ define([
     locale,
     number,
     currency,
+    module,
 
     PrintTask,
     PrintTemplate,
@@ -69,9 +71,6 @@ define([
         map: null,
         doc: null,
         reportLayout: {},
-
-        jspdfVersion: '1.2.61',
-        jspdfAutoTableVersion: '2.1.0',
 
         defaultStyles: {
             font: {
@@ -121,29 +120,21 @@ define([
         },
 
         loadJSPDF: function () {
-            /*
-            /   This method works for Chrome but not Internet Explorer or Firefox.
-            /   For cross-browser compatibility, load these libraries
-            /   before the ESRi JS API in your page.
-            */
-            require({
-                packages: [
-                    {
-                        name: 'jspdf',
-                        main: 'jspdf.min',
-                        location: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/' + this.jspdfVersion
-                    }, {
-                        name: 'autoTable',
-                        main: 'jspdf.plugin.autotable',
-                        location: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/' + this.jspdfAutoTableVersion
-                    }
-                ]
-            }, [
-                'jspdf',
-                'autoTable'
-            ], function (jspdf) {
-                window.jsPDF = jspdf;
+            var modulesPath = module.uri.substring(0, module.uri.lastIndexOf('/')) + '/Report/lib';
+            window.dojoConfig.packages.push({
+                name: 'jspdf',
+                main: 'jspdf.min',
+                location: modulesPath
             });
+            window.dojoConfig.packages.push({
+                name: 'autotable',
+                main: 'jspdf.plugin.autotable.min',
+                location: modulesPath
+            });
+
+            require(window.dojoConfig, [
+                'autotable'
+            ]);
         },
 
         createReport: function (options) {
@@ -630,6 +621,7 @@ define([
                 table.options = this.mixinDeep({
                     drawRow: lang.hitch(this, function (row, data) {
                         var rowHeading = row.raw.rowHeading;
+                        var rowStyles = row.cells.label.styles;
                         if (rowHeading) {
                             var margin = rowHeading.margin || {};
                             var rowHeight = row.height + (margin.top || 0);
@@ -639,9 +631,9 @@ define([
                                     top: row.y + (margin.top || 0),
                                     width: data.table.width,
                                     height: rowHeight,
-                                    fillColor: row.styles.fillColor,
-                                    lineColor: row.styles.lineColor,
-                                    lineWidth: row.styles.lineWidth
+                                    fillColor: rowStyles.fillColor,
+                                    lineColor: rowStyles.lineColor,
+                                    lineWidth: rowStyles.lineWidth
                                 }, rowHeading.border));
                             }
                             rowHeading = this.mixinDeep({
