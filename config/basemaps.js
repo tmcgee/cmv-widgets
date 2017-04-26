@@ -1,37 +1,22 @@
-define({
-    map: true, // needs a refrence to the map
-    mode: 'agol', //must be either 'agol' or 'custom'
-    title: 'Basemaps', // tilte for widget
-    mapStartBasemap: 'streets', // must match one of the basemap keys below
-    //basemaps to show in menu. define in basemaps object below and reference by name here
+define([], function () {
 
-    basemapsToShow: ['streets', 'satellite', 'hybrid', 'topo', 'lightGray', 'gray', 'national-geographic', 'osm', 'oceans'],
-
-    // define all valid custom basemaps here. Object of Basemap objects. For custom basemaps, the key name and basemap id must match.
-    basemaps: { // agol basemaps
-        streets: {
-            title: 'Streets'
-        },
-        satellite: {
-            title: 'Satellite'
-        },
-        hybrid: {
-            title: 'Hybrid'
-        },
-        topo: {
-            title: 'Topo'
-        },
-        gray: {
-            title: 'Gray'
-        },
-        oceans: {
-            title: 'Oceans'
-        },
-        'national-geographic': {
-            title: 'Nat Geo'
-        },
-        osm: {
-            title: 'Open Street Map'
+    return {
+        map: true, // needs a reference to the map
+        // define all valid basemaps here.
+        basemaps: {
+            streets: {},
+            'streets-night-vector': {}, // requires v3.16 or higher
+            'streets-navigation-vector': {}, // requires v3.16 or higher
+            'streets-relief-vector': {}, // requires v3.16 or higher
+            satellite: {},
+            hybrid: {},
+            topo: {},
+            terrain: {},
+            'gray-vector': {}, // requires v3.16 or higher
+            'dark-gray-vector': {}, // requires v3.16 or higher
+            oceans: {},
+            'national-geographic': {},
+            osm: {}
         }
-    }
+    };
 });

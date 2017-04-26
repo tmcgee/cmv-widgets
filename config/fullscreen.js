@@ -31,6 +31,14 @@ define({
             path: 'widgets/FullScreen',
             srcNodeRef: 'homeButton',
             options: {}
+        },
+        basemaps: {
+            include: true,
+            id: 'basemaps',
+            type: 'domNode',
+            path: 'gis/dijit/Basemaps',
+            srcNodeRef: 'basemapsDijit',
+            options: 'config/basemaps'
         }
     }
 });

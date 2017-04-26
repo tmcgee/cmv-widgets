@@ -36,6 +36,14 @@ div:fullscreen {
     width: 100% !important;
 }
 
+/*
+    Ensure that popup menus (like basemap widget)
+    are above the full screen map and panes
+*/
+.cmv .dijitPopup {
+    z-index: 2147483647 !important;
+}
+
 .cmvFullScreenWidget .FullScreenButton {
     height: 32px;
     width: 32px;
