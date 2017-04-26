@@ -5,10 +5,21 @@ define([
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
     'gis/dijit/_FloatingWidgetMixin',
+
     'dojo/_base/lang',
     'dojo/topic',
     'dojo/_base/array',
     'dojo/json',
+    'dojo/string',
+    'dojo/keys',
+    'dojo/on',
+    'dojo/dom-style',
+    'module',
+
+    'esri/geometry/Point',
+    'esri/SpatialReference',
+    'esri/request',
+
     'dojo/text!./Export/templates/Export.html',
 
     //i18n
@@ -17,6 +28,7 @@ define([
     //template widgets
     'dijit/_Container',
     'dijit/form/Select',
+    'dijit/form/TextBox',
     'dijit/form/Button',
 
     'xstyle/css!./Export/css/Export.css'
@@ -27,10 +39,21 @@ define([
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
     _FloatingWidgetMixin,
+
     lang,
     topic,
     array,
     json,
+    string,
+    keys,
+    on,
+    domStyle,
+    module,
+
+    Point,
+    SpatialReference,
+    request,
+
     template,
 
     i18n
@@ -48,33 +71,88 @@ define([
 
         topicID: 'exportWidget',
 
-        excel: true,        // allow attributes to be exported to Excel
-        csv: true,          // allow attributes to be exported to CSV
-        xlsExcel: true,		// allow attributes to be exported to Excel (XLS format)
+        defaultOptions: {
+            excel: true,         // allow attributes to be exported to Excel
+            xlsExcel: false,     // allow attributes to be exported to Excel (XLS format)
+            csv: true,           // allow attributes to be exported to CSV
 
-        // spatial exports are not ready
-        //geojson: false,     // allow features to be exported to GeoJSON
-        //shapefile: false,   // allow the features to be exported to a Shape File
+            // spatial exports
+            shapefile: false,    // allow the features to be exported to a Shape File
+            kml: false,          // allow features to be exported to KML
+            kmz: false,          // allow features to be exported to KMZ
+            geojson: false,      // allow features to be exported to GeoJSON
+            topojson: false,     // allow features to be exported to TopoJSON
+            wkt: false,          // allow features to be exported to WKT
+
+            filename: 'results', // name of file for export
+
+            defaultExportType: 'excel',
+
+            geojsonOptions: {
+                'simplestyle': true // mapbox styles
+            },
+
+            kmlOptions: {
+                'name': 'name',
+                'description': 'description',
+                'documentName': 'CMV Export',
+                'documentDescription': 'KML Exported from CMV',
+                'simplestyle': true, // mapbox styles converted to KML Styles
+                'extendedData': true
+            },
+
+            shapefileOptions: {
+                'types': {
+                    'point': 'points',
+                    'polygon': 'polygons',
+                    'polyline': 'polylines'
+                }
+            },
+
+            topojsonOptions: {
+                'verbose': false,             // if truthy, informational messages will be output to stderr.
+                'coordinate-system': null,    // either "cartesian", "spherical" or null to infer the coordinate system automatically.
+                'stitch-poles': false        // if truthy and using spherical coordinates, polar antimeridian cuts will be stitched.
+                //'quantization': null,         // quantization precision; the maximum number of differentiable points per dimension.
+                //'id': null                   // a function for computing the id of each input feature.
+                //'property-transform': null    // a function for remapping properties.
+            }
+        },
 
         // featureSet to export
         featureSet: null,
+
         // query results to export
         results: null,
+
         // optional grid if you want to export only visible columns and use column names
         grid: null,
+
+        // for projecting data
+        proj4BaseURL: 'https://epsg.io/',
+        proj4Catalog: 'EPSG',
+        proj4SrcWkid: 3857,
+        proj4SrcKey: 'EPSG:3857',
+        proj4DestWkid: 4326,
+        proj4DestKey: 'EPSG:4326',
+        proj4DestWKT: null,
 
         postCreate: function () {
             this.inherited(arguments);
             this.parentWidget.draggable = this.draggable;
 
             this.addTopics();
+            this.setExportDefaults();
             this.loadXLSXParser();
-            this.loadArcGISParser();
+            this.loadFeatureParser();
             this.initExportSelect();
+            this.onWkidChange(this.inputWkid.get('value'));
+            this.own(on(this.inputWkid, 'keyup', lang.hitch(this, 'wkidOnKeyUp')));
         },
 
         addTopics: function () {
             this.own(topic.subscribe(this.topicID + '/openDialog', lang.hitch(this, 'openDialog')));
+            this.own(topic.subscribe(this.topicID + '/export', lang.hitch(this, 'export')));
         },
 
         onOpen: function () {
@@ -86,70 +164,137 @@ define([
 
         // setup the export selection dialog with the appropriate options
         initExportSelect: function () {
-            // exports to geojson and shapefile are not done yet
-            this.geojson = false;
-            this.shapefile = false;
-
             // attempt reloads in case the options have changed.
             this.loadXLSXParser();
-            this.loadArcGISParser();
+            this.loadFeatureParser();
 
             var options = [];
             var exportOptions = [
-                {value: 'excel', label: i18n.exportToExcel, type: 'attributes'},
-                {value: 'xlsExcel', label: i18n.exportToXlsExcel, type: 'attributes'},
-                {value: 'csv', label: i18n.exportToCSV, type: 'attributes'},
-                {value: 'geojson', label: i18n.exportToGeoJSON, type: 'features'},
-                {value: 'shapefile', label: i18n.exportToShapeFile, type: 'features'}
+                {'value': 'excel', 'label': i18n.exportToExcel, 'type': 'attributes'},
+                {'value': 'xlsExcel', 'label': i18n.exportToXlsExcel, 'type': 'attributes'},
+                {'value': 'csv', 'label': i18n.exportToCSV, 'type': 'attributes'},
+
+                {'value': 'shapefile', 'label': i18n.exportToShapeFile, 'type': 'features'},
+                {'value': 'kml', 'label': i18n.exportToKML, 'type': 'features'},
+                {'value': 'kmz', 'label': i18n.exportToKMZ, 'type': 'features'},
+                {'value': 'geojson', 'label': i18n.exportToGeoJSON, 'type': 'features'},
+                {'value': 'topojson', 'label': i18n.exportToTopoJSON, 'type': 'features'},
+                {'value': 'wkt', 'label': i18n.exportToWKT, 'type': 'features'}
             ];
 
             this.selectExportType.set('options', []);
 
             array.forEach(exportOptions, lang.hitch(this, function (option) {
+                // do we have attributes to export?
+                if (option.type === 'attributes') {
+                    if (!this.grid) {
+                        if (!this.featureSet || !this.featureSet.features || this.featureSet.features.length < 0) {
+                            return;
+                        }
+                    }
+                }
+
+                // do we have features to export?
                 if (option.type === 'features') {
-                    if (!this.features || this.features.length < 0) {
+                    if (!this.featureSet || !this.featureSet.features || this.featureSet.features.length < 0) {
                         return;
                     }
                 }
+
                 if (this[option.value] === true) {
                     options.push(option);
                 }
             }));
 
-            if (exportOptions.length > 0) {
+            if (options.length > 0) {
                 this.selectExportType.set('options', options);
-                this.selectExportType.set('value', options[0].value);
+                this.selectExportType.set('value', this.defaultExportType || options[0].value);
                 this.btnExport.set('disabled', false);
             }
 
         },
 
-        onExportTypeChange: function () {
+        onExportTypeChange: function (type) {
+            if (type === 'shapefile' || type === 'wkt') {
+                this.inputWkid.set('disabled', false);
+                domStyle.set(this.divWkidSection, 'display', 'block');
+            } else {
+                domStyle.set(this.divWkidSection, 'display', 'none');
+                this.inputWkid.set('disabled', true);
+            }
+            this.removeLink();
             this.btnExport.set('disabled', false);
         },
 
+        onWkidChange: function () {
+            var wkid = this.inputWkid.get('value');
+            if (wkid && !isNaN(wkid) && wkid.length > 3) {
+                wkid = parseInt(wkid, 10);
+                if (wkid === 102100) { // ESRI --> EPSG
+                    wkid = 3857;
+                }
+                require(['dojo/text!' + this.proj4BaseURL + String(wkid) + '.esriwkt'], lang.hitch(this, function (prj) {
+                    if (wkid !== 4326) {
+                        this.proj4DestWKT = prj;
+                    }
+                    this.proj4DestWkid = wkid;
+                    this.proj4DestKey = this.proj4Catalog + ':' + String(wkid);
+                    this.divWkidText.innerHTML = prj.split(',').join(', ');
+                    domStyle.set(this.divWkidTextSection, 'display', 'block');
+                    this.btnExport.set('disabled', false);
+                }));
+            }
+        },
+
+        wkidOnKeyUp: function () {
+            var wkid = this.inputWkid.get('value');
+            if (wkid && !isNaN(wkid) && wkid.length > 3) {
+                wkid = parseInt(wkid, 10);
+                if (wkid === 102100) { // ESRI --> EPSG
+                    wkid = 3857;
+                }
+                if (wkid === this.proj4DestWkid) {
+                    return;
+                }
+            }
+
+            if (this.wkidChangeTimeoutID) {
+                window.clearTimeout(this.wkidChangeTimeoutID);
+            }
+            this.proj4DestWkid = null;
+            this.proj4DestKey = null;
+            this.proj4DestWKT = null;
+
+            this.divWkidText.innerHTML = '';
+            this.btnExport.set('disabled', true);
+            domStyle.set(this.divWkidTextSection, 'display', 'none');
+
+            this.wkidChangeTimeoutID = window.setTimeout(lang.hitch(this, 'onWkidChange'), 200);
+        },
+
         openDialog: function (options) {
+            this.getExportDefaults();
             this.featureSet = options.featureSet;
             this.results = options.results;
             this.grid = options.grid;
 
-            if (typeof(options.excel) !== 'undefined') {
-                this.excel = options.excel;
-            }
-            if (typeof(options.csv) !== 'undefined') {
-                this.csv = options.csv;
-            }
-            if (typeof(options.xlsExcel) !== 'undefined') {
-                this.xlsExcel = options.xlsExcel;
-            }
-            /*
-            if (options.geojson !== undefined) {
-                this.geojson = options.geojson;
-            }
-            if (options.shapefile !== undefined) {
-                this.shapefile = options.shapefile;
-            }
-            */
+            this.filename = (typeof(options.filename) !== 'undefined') ? options.filename : this.filename;
+
+            this.excel = (typeof(options.excel) !== 'undefined') ? options.excel : this.excel;
+            this.csv = (typeof(options.csv) !== 'undefined') ? options.csv : this.csv;
+            this.xlsExcel = (typeof(options.xlsExcel) !== 'undefined') ? options.xlsExcel : this.xslExcel;
+
+            this.geojson = (typeof(options.geojson) !== 'undefined') ? options.geojson : this.geojson;
+            this.kml = (typeof(options.kml) !== 'undefined') ? options.kml : this.kml;
+            this.kmz = (typeof(options.kmz) !== 'undefined') ? options.kmz : this.kmz;
+            this.shapefile = (typeof(options.shapefile) !== 'undefined') ? options.shapefile : this.shapefile;
+            this.topojson = (typeof(options.topojson) !== 'undefined') ? options.topojson : this.topojson;
+            this.wkt = (typeof(options.wkt) !== 'undefined') ? options.wkt : this.wkt;
+
+            this.geojsonOptions = (typeof(options.geojsonOptions) !== 'undefined') ? options.geojsonOptions : this.geojsonOptions;
+            this.kmlOptions = (typeof(options.kmlOptions) !== 'undefined') ? options.kmlOptions : this.kmlOptions;
+            this.shapefileOptions = (typeof(options.shapefileOptions) !== 'undefined') ? options.shapefileOptions : this.shapefileOptions;
+            this.topojsonOptions = (typeof(options.topojsonOptions) !== 'undefined') ? options.topojsonOptions : this.topojsonOptions;
 
             this.initExportSelect();
 
@@ -158,16 +303,66 @@ define([
             }
         },
 
-        getFileName: function (extension) {
-            if (this.filename) {
-                return (typeof this.filename === 'function' ? this.filename(this) + extension : this.filename + extension);
-            }
-            return 'result' + extension;
+        getExportDefaults: function () {
+            var options = this.defaultOptions;
+
+            this.filename = options.filename;
+            this.defaultExportType = options.defaultExportType;
+
+            this.excel = options.excel;
+            this.csv = options.csv;
+            this.xlsExcel = options.xlsExcel;
+
+            this.geojson = options.geojson;
+            this.kml = options.kml;
+            this.kmz = options.kmz;
+            this.shapefile = options.shapefile;
+            this.topojson = options.topojson;
+            this.wkt = options.wkt;
+
+            this.geojsonOptions = options.geojsonOptions;
+            this.kmlOptions = options.kmlOptions;
+            this.shapefileOptions = options.shapefileOptions;
+            this.topojsonOptions = options.topojsonOptions;
+        },
+
+        setExportDefaults: function () {
+            var options = this.defaultOptions;
+
+            options.filename = this.filename || options.filename;
+            options.defaultExportType = this.defaultExportType || options.defaultExportType;
+
+            options.excel = this.excel || options.excel;
+            options.csv = this.csv || options.csv;
+            options.xslExcel = this.xlsExcel || options.xlsExcel;
+
+            options.geojson = this.geojson || options.geojson;
+            options.kml = this.kml || options.kml;
+            options.kmz = this.kmz || options.kmz;
+            options.shapefile = this.shapefile || options.shapefile;
+            options.topjson = this.topojson || options.topojson;
+            options.wkt = this.wkt || options.wkt;
+
+            options.geojsonOptions = this.mixinDeep(this.geojsonOptions || {}, options.geojsonOptions);
+            options.kmlOptions = this.mixinDeep(this.kmlOptions || {}, options.kmlOptions);
+            options.shapefileOptions = this.mixinDeep(this.shapefileOptions || {}, options.shapefileOptions);
+            options.topojsonOptions = this.mixinDeep(this.topojsonOptions || {}, options.topojsonOptions);
         },
 
         /*******************************
         *  Export Function
         *******************************/
+
+        export: function (options) {
+            if (options) {
+                this.selectExportType.set('value', options.type);
+                this.inputWkid.set('value', options.wkid);
+                this.featureSet = options.featureSet;
+                this.results = options.results;
+                this.grid = options.grid;
+                this.doExport();
+            }
+        },
 
         doExport: function () {
             var type = this.selectExportType.get('value');
@@ -178,31 +373,66 @@ define([
             case 'csv':
                 this.exportToCSV();
                 break;
+            case 'xlsExcel':
+                this.exportToXLS();
+                break;
             case 'geojson':
                 this.exportToGeoJSON();
+                break;
+            case 'kml':
+            case 'kmz':
+                this.exportToKML();
                 break;
             case 'shapefile':
                 this.exportToShapeFile();
                 break;
-            case 'xlsExcel':
-                this.exportToXLS();
+            case 'topojson':
+                this.exportToTopoJSON();
+                break;
+            case 'wkt':
+                this.exportToWKT();
                 break;
             default:
                 break;
             }
         },
 
-        /*******************************
-        *  Excel/CSV Functions
-        *******************************/
+        exportToXLSX: function () {
+            var ws = this.createXLSX();
+            if (!ws) {
+                this.reportError(i18n.errorExcel);
+                return;
+            }
+            var wb = {
+                SheetNames: ['Table'],
+                Sheets: {
+                    Table: ws
+                }
+            };
+            var wbout = window.XLSX.write(wb, {
+                bookType: 'xlsx',
+                bookSST: true,
+                type: 'binary'
+            });
+
+            this.downloadFile(this.s2ab(wbout), 'application/vnd.ms-excel;', this.getFileName('.xlsx'), true);
+        },
+
+        exportToCSV: function () {
+            var ws = this.createXLSX();
+            if (!ws) {
+                this.reportError(i18n.errorCSV);
+                return;
+            }
+            var csv = window.XLSX.utils.sheet_to_csv(ws);
+
+            this.downloadFile(csv, 'text/csv;charset=utf-8;', this.getFileName('.csv'), true);
+        },
 
         exportToXLS: function () {
             var xlsContents = this.buildXLSContents();
             if (!xlsContents) {
-                topic.publish('viewer/handleError', {
-                    widget: 'Export',
-                    error: '${i18n.errorExcel}'
-                });
+                this.reportError(i18n.errorExcel);
                 return;
             }
 
@@ -212,8 +442,138 @@ define([
                 uint8[i] = xlsContents.charCodeAt(i);
             }
 
-            this.downloadFile(uint8, 'application/vnd.ms-excel', 'results.xls', true);
+            this.downloadFile(uint8, 'application/vnd.ms-excel', this.getFileName('.xls'), true);
         },
+
+        exportToGeoJSON: function () {
+            // force export to 4326
+            this.inputWkid.set('value', 4326);
+
+            var geojson = this.createGeoJSON();
+            if (!geojson) {
+                this.reportError(i18n.errorGeoJSON);
+                return;
+            }
+
+            var str = json.stringify(geojson);
+            this.downloadFile(str, 'application/json;charset=utf-8;', this.getFileName('.geojson'), true);
+        },
+
+        exportToKML: function () {
+            // force export to 4326
+            this.inputWkid.set('value', 4326);
+
+            var geojson = this.createGeoJSON();
+            if (!geojson) {
+                this.reportError(i18n.errorKML);
+                return;
+            }
+
+            // customized version of mapbox's tokml for higher fidelity exports
+            // handles more attributes than defined in the simple-spec v1.1
+            // source: https://cdn.rawgit.com/mapbox/tokml/v0.4.0/tokml.js'
+            require([module.id + '/tokml'], lang.hitch(this, function (tokml) {
+                var kml = tokml(geojson, this.kmlOptions);
+                if (!kml) {
+                    this.reportError(i18n.errorKML);
+                    return;
+                }
+                var exportType = this.selectExportType.get('value');
+                if (exportType === 'kml') {
+                    this.downloadFile(kml, 'application/vnd.google-earth.kml+xml;charset=utf-8;', this.getFileName('.kml'), true);
+                } else {
+                    /*global JSZip */
+                    var jszip = new JSZip();
+                    jszip.file(this.getFileName('.kml'), kml);
+                    var zipFile = jszip.generate({
+                        compression: 'STORE'}
+                    );
+                    this.downloadFile(zipFile, 'application/vnd.google-earth.kmz;base64;', this.getFileName('.kmz'), false);
+                }
+
+            }));
+        },
+
+        exportToShapeFile: function () {
+            // force export to 4326 if none provided
+            var wkid = this.inputWkid.get('value');
+            if (!wkid || wkid === '') {
+                this.inputWkid.set('value', 4326);
+            }
+
+            var geojson = this.createGeoJSON();
+            if (!geojson) {
+                this.reportError(i18n.errorShapeFile);
+                return;
+            }
+
+            require([module.id + '/shpwrite'], lang.hitch(this, function (shpWrite) {
+                var options = lang.clone(this.shapefileOptions);
+                options.wkt = this.proj4DestWKT;
+                var zipFile = shpWrite.zip(geojson, options);
+                if (!zipFile) {
+                    this.reportError(i18n.errorShapeFile);
+                    return;
+                }
+                this.downloadFile(zipFile, 'application/zip;base64;', this.getFileName('.zip'), false);
+            }));
+
+        },
+
+        exportToTopoJSON: function () {
+            // force export to 4326
+            this.inputWkid.set('value', 4326);
+
+            var geojson = this.createGeoJSON();
+            if (!geojson) {
+                this.reportError(i18n.errorTopoJSON);
+                return;
+            }
+
+            require([module.id + '/topojson'], lang.hitch(this, function () {
+                var options = lang.clone(this.topojsonOptions);
+                if (options['property-transform'] === null) {
+                    //options['property-transform'] = this.allProperties;
+                }
+                var topojson = window.topojson.topology({
+                    'collection': geojson
+                }, options);
+
+                if (!topojson) {
+                    this.reportError(i18n.errorTopoJSON);
+                    return;
+                }
+                this.downloadFile(JSON.stringify(topojson), 'application/vnd.google-earth.kml+xml;charset=utf-8;', this.getFileName('.topojson'), true);
+
+            }));
+        },
+
+        exportToWKT: function () {
+            // force export to 4326 if none provided
+            var wkid = this.inputWkid.get('value');
+            if (!wkid || wkid === '') {
+                this.inputWkid.set('value', 4326);
+            }
+
+            var geojson = this.createGeoJSON();
+            if (!geojson) {
+                this.reportError(i18n.errorWKT);
+                return;
+            }
+
+            require(['https://cdn.rawgit.com/mapbox/wellknown/v0.4.2/wellknown.js'], lang.hitch(this, function (wellknown) {
+                var wkt = geojson.features.map(wellknown.stringify).join('\n');
+                if (!wkt) {
+                    this.reportError (i18n.errorWKT);
+                    return;
+                }
+                this.downloadFile(wkt, 'text/plain;charset=utf-8;', this.getFileName('.wkt'), true);
+            }));
+        },
+
+        /*******************************
+        *  Excel/CSV Functions
+        *******************************/
 
         buildXLSContents: function () {
             var separator = '\t';
@@ -258,55 +618,6 @@ define([
             return formattedColumns.join(separator) + carriageReturn + formattedRows.join(carriageReturn);
         },
 
-        exportToXLSX: function () {
-            var ws = this.createXLSX();
-            if (!ws) {
-                topic.publish('viewer/handleError', {
-                    widget: 'Export',
-                    error: '${i18n.errorExcel}'
-                });
-                return;
-            }
-            var wb = {
-                SheetNames: ['Table'],
-                Sheets: {
-                    Table: ws
-                }
-            };
-            var wbout = window.XLSX.write(wb, {
-                bookType: 'xlsx',
-                bookSST: true,
-                type: 'binary'
-            });
-
-            this.downloadFile(this.s2ab(wbout), 'application/vnd.ms-excel;', this.getFileName('.xlsx'), true);
-        },
-
-        s2ab: function (s) {
-            var buf = new ArrayBuffer(s.length);
-            var view = new Uint8Array(buf);
-            /*jslint bitwise: true */
-            for (var i = 0; i < s.length; ++i) {
-                view[i] = s.charCodeAt(i) & 0xFF;
-            }
-            /*jslint bitwise: false */
-            return buf;
-        },
-
-        exportToCSV: function () {
-            var ws = this.createXLSX();
-            if (!ws) {
-                topic.publish('viewer/handleError', {
-                    widget: 'Export',
-                    error: '${i18n.errorCSV}'
-                });
-                return;
-            }
-            var csv = window.XLSX.utils.sheet_to_csv(ws);
-
-            this.downloadFile(csv, 'text/csv;charset=utf-8;', this.getFileName('.csv'), true);
-        },
-
         createXLSX: function () {
             var xlsx = window.XLSX;
             if (!xlsx) {
@@ -337,7 +648,7 @@ define([
 
             var c = 0,
                 field, val;
-            var aliases = (this.results && this.results.fieldAliases) ? this.results.fieldAliases : {};
+            var aliases = (this.results && this.results.fieldAliases) ? this.results.fieldAliases : null;
             var rc = this.getRowsAndColumns();
             var rows = rc.rows;
             var columns = rc.columns;
@@ -427,86 +738,315 @@ define([
             return ws;
         },
 
+        /******************************
+        *  GeoJson, KML, Shapefile,
+        * TopoJSON, WKT Functions
+        *******************************/
+
+        createGeoJSON: function () {
+            var features = lang.clone(this.featureSet.features);
+            if (features.length < 1) {
+                return null;
+            }
+
+            if (!window.Terraformer || !window.Terraformer.ArcGIS) {
+                this.reportError(i18n.errorSpatialParser);
+                return null;
+            }
+
+            var geojson = {
+                type: 'FeatureCollection',
+                features: []
+            };
+
+            var exportType = this.selectExportType.get('value');
+            var includeStyle = false;
+            if ((exportType === 'kml' || exportType === 'kmz') && this.kmlOptions && this.kmlOptions.simplestyle) {
+                includeStyle = true;
+            } else if (exportType === 'geojson' && this.geojsonOptions && this.geojsonOptions.simplestyle) {
+                includeStyle = true;
+            }
+
+            array.forEach(features, lang.hitch(this, function (feature) {
+                var attr = feature.attributes;
+                if (typeof(attr.feature) === 'object') {
+                    delete attr.feature;
+                }
+                if (feature.symbol && includeStyle) {
+                    feature.attributes = this.convertSymbolToAttributes(feature);
+                }
+
+                if (feature.geometry) {
+                    if (window.proj4.defs[this.proj4SrcKey] && window.proj4.defs[this.proj4DestKey]) {
+                        feature.geometry = this.projectGeometry(feature.geometry, exportType);
+                    }
+
+                    var geoFeature = window.Terraformer.ArcGIS.parse(feature);
+                    geojson.features.push(geoFeature);
+                } else {
+                    topic.publish('viewer/handleError', 'feature has no geometry');
+                }
+
+            }));
+
+            return geojson;
+        },
+
+
+        /*******************************
+        *  Projection Functions
+        *******************************/
+
+        projectGeometry: function (geometry) {
+            var pt, newPt;
+            switch (geometry.type) {
+            case 'point':
+                newPt = this.projectPoint(geometry);
+                geometry = new Point({
+                    x: newPt.x,
+                    y: newPt.y,
+                    spatialReference: new SpatialReference(this.proj4DestWkid)
+                });
+                break;
+
+            case 'polyline':
+            case 'polygon':
+                var paths = geometry.paths || geometry.rings;
+                var len = paths.length;
+                for (var k = 0; k < len; k++) {
+                    var len2 = paths[k].length;
+                    for (var j = 0; j < len2; j++) {
+                        pt = geometry.getPoint(k, j);
+                        newPt = this.projectPoint(pt);
+                        geometry.setPoint(k, j, new Point({
+                            x: newPt.x,
+                            y: newPt.y,
+                            spatialReference: new SpatialReference(this.proj4DestWkid)
+                        }));
+                    }
+                }
+                geometry.setSpatialReference(new SpatialReference(this.proj4DestWkid));
+                break;
+
+            default:
+                break;
+            }
+
+            return geometry;
+        },
+
+        projectPoint: function (point) {
+            return window.proj4(
+                    window.proj4.defs[this.proj4SrcKey],
+                    window.proj4.defs[this.proj4DestKey]
+                ).forward(point);
+        },
+
+        allProperties: function (properties, key, value) {
+            properties[key] = value;
+            return true;
+        },
+
+        /*******************************
+        *  Symobology Functions
+        *******************************/
+
+        // convert symbol to attributes
+        // this allows for export as geojson and kml
+        // supports mapbox simple-styles for polylines and polygons
+        // only handles simple symbols
+        convertSymbolToAttributes: function (feature) {
+            var geometry = feature.geometry;
+            var symbol = feature.symbol;
+            var attributes = lang.clone(feature.attributes);
+            var outline, color;
+
+            switch (geometry.type) {
+            case 'point':
+                switch (symbol.type) {
+                case 'picturemarkersymbol':
+                    attributes.href = symbol.imageData;
+                    if (symbol.xscale) {
+                        attributes.scale = symbol.xscale;
+                    } else if (symbol.width && symbol.size) {
+                        attributes.scale = symbol.width / symbol.size;
+                    }
+
+                    attributes['marker-opacity'] = 1.0;
+                    attributes['label-scale'] = 0;
+                    break;
+
+                case 'simplemarkersymbol':
+                    color = symbol.color;
+                    if (color) {
+                        attributes['marker-color'] = color.toHex();
+                        attributes['marker-opacity'] = color.a;
+                    }
+
+                    attributes['label-scale'] = 0;
+                    break;
+
+                case 'textsymbol':
+                    attributes.href = '#';
+                    attributes.scale = 0;
+
+                    attributes['label-scale'] = symbol.font.size / 16;
+                    color = symbol.color;
+                    if (color) {
+                        attributes['label-color'] = color.toHex();
+                        attributes['label-opacity'] = color.a;
+                    }
+                    break;
+                default:
+                    break;
+                }
+
+                break;
+
+            case 'polyline':
+                color = symbol.color;
+                if (color) {
+                    attributes.stroke = color.toHex();
+                    attributes['stroke-opacity'] = color.a;
+                    attributes['stroke-width'] = symbol.width;
+                }
+
+                attributes['label-scale'] = 0;
+                break;
+
+            case 'polygon':
+                outline = symbol.outline;
+                if (outline) {
+                    color = outline.color;
+                    if (color) {
+                        attributes.stroke = color.toHex();
+                        attributes['stroke-opacity'] = color.a;
+                        attributes['stroke-width'] = outline.width;
+                    }
+                }
+
+                color = symbol.color;
+                if (color) {
+                    attributes.fill = color.toHex();
+                    attributes['fill-opacity'] = color.a;
+                }
+
+                attributes['label-scale'] = 0;
+                break;
+
+            default:
+                break;
+            }
+
+            return attributes;
+        },
+
+        /*******************************
+        *  load parsers
+        *******************************/
+
         loadXLSXParser: function () {
-            if (this.excel || this.csv) {
+            if (this.excel || this.csv || this.xlsExcel) {
                 require([
-                    // consider making this a local library
                     'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.8/xlsx.core.min.js'
                 ]);
             }
         },
 
-        /*******************************
-        *  GeoJson/Shapefile Functions
-        *******************************/
-
-        exportToGeoJSON: function () {
-            var str = this.createGeoJSON();
-            if (!str) {
-                topic.publish('viewer/handleError', {
-                    widget: 'Export',
-                    error: '${i18n.errorGeoJSON}'
-                });
-                return;
-            }
-            this.downloadFile(str, 'text/csv;charset=utf-8;', 'results.geojson', true);
-        },
-
-        exportToShapeFile: function () {
-            return;
-            /*
-            var str = this.createGeoJSON();
-            if (!str) {
-                topic.publish('viewer/handleError', {
-                    widget: 'AttributeTable/' + this.topicID,
-                    error: '${i18n.errorShapeFile}'
-                });
-                return;
-            }
-
-            //** TODO Post to http://ogre.adc4gis.com/ for
-            // converting geojson to shapefile?
-            // http://ogre.adc4gis.com/convertJson/
-            */
-        },
-
-        createGeoJSON: function () {
-            if (this.features.length < 1) {
-                return null;
-            }
-            if (!window.Terraformer || !window.Terraformer.ArcGIS) {
-                topic.publish('viewer/handleError', {
-                    widget: 'AttributeTable/' + this.topicID,
-                    error: 'Could not create GeoJSON File.'
-                });
-                return null;
-            }
-            var geojson = {
-                type: 'FeatureCollection',
-                features: []
-            };
-            array.forEach(this.features, function (feature, index) {
-                var feat = window.Terraformer.ArcGIS.parse(feature);
-                feat.id = index;
-                geojson.features.push(feat);
-            }, this);
-            var str = json.stringify(geojson);
-            return str;
-        },
-
-        loadArcGISParser: function () {
-            // arcgis parser must be loaded after the terraformer core module
-            if (this.geojson || this.shapefile) {
-                // consider making these local libraries
+        loadFeatureParser: function () {
+            if (this.geojson || this.kml || this.kmz || this.shapefile || this.topojson || this.wkt) {
                 require([
+                    'https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.14/proj4.js',
                     'https://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.5/terraformer.min.js'
-                ], function () {
+                ], lang.hitch(this, function (proj4) {
+                    if (!window.proj4) {
+                        window.proj4 = proj4;
+                    }
+                    this.loadSourceProj4();
+
+                    // arcgis parser must be loaded after the terraformer core module
                     require([
                         'https://cdn-geoweb.s3.amazonaws.com/terraformer-arcgis-parser/1.0.4/terraformer-arcgis-parser.min.js'
                     ]);
-                });
+                }));
             }
         },
+
+        loadSourceProj4: function () {
+            // which wikid are we projecting from?
+            if (window.proj4 && this.featureSet && this.featureSet.features) {
+                var features = this.featureSet.features;
+                if (features && features.length > 0) {
+                    var feature = features[0];
+                    if (feature && feature.geometry && feature.geometry.spatialReference) {
+                        var wkid = feature.geometry.spatialReference.wkid;
+                        if (wkid === 102100) { // ESRI --> EPSG
+                            wkid = 3857;
+                        }
+                        this.proj4SrcWkid = wkid;
+                        this.proj4SrcKey = this.proj4Catalog + ':' + String(wkid);
+                        if (!window.proj4.defs[this.proj4SrcKey]) {
+                            require([this.proj4BaseURL + String(wkid) + '.js']);
+                        }
+                    }
+                }
+            }
+        },
+
+        /*******************************
+        *  Download Functions
+        *******************************/
+
+        // works for chrome, firefox and IE10+
+        downloadFile: function (content, mimeType, fileName, useBlob) {
+            mimeType = mimeType || 'application/octet-stream';
+            var url;
+            var dataURI = 'data:' + mimeType + ',' + content;
+            this.removeLink();
+            this.link = document.createElement('a');
+            var blob = new Blob([content], {
+                'type': mimeType
+            });
+
+            // feature detection
+            if (typeof(this.link.download) !== 'undefined') {
+                // Browsers that support HTML5 download attribute
+                if (useBlob) {
+                    url = window.URL.createObjectURL(blob);
+                } else {
+                    url = dataURI;
+                }
+                this.link.setAttribute('href', url);
+                this.link.setAttribute('download', fileName);
+                this.link.innerHTML = i18n.download + ' ' + fileName;
+                this.divExportLink.appendChild(this.link);
+                this.link.click();
+
+                return null;
+
+             //feature detection using IE10+ routine
+            } else if (navigator.msSaveOrOpenBlob) {
+                return navigator.msSaveOrOpenBlob(blob, fileName);
+            }
+
+            // catch all. for which browsers?
+            window.open(dataURI);
+            window.focus();
+            return null;
+
+        },
+
+        removeLink: function () {
+            if (this.link) {
+                this.divExportLink.removeChild(this.link);
+                this.divExportLink.innerHTML = '&nbsp;';
+            }
+            this.link = null;
+        },
+
+        /*******************************
+        *  Miscellaneous Functions
+        *******************************/
 
         getRowsAndColumns: function () {
             var rows = [];
@@ -523,9 +1063,8 @@ define([
                             columns.push({
                                 exportable: true,
                                 hidden: false,
-                                label: this.featureSet.fieldAliases[key] || key,
-                                field: key,
-                                width: null
+                                label: (this.featureSet && this.featureSet.fieldAliases) ? this.featureSet.fieldAliases[key] : key,
+                                field: key
                             });
                         }
                     }
@@ -541,46 +1080,53 @@ define([
             };
         },
 
-        /*******************************
-        *  Download Functions
-        *******************************/
-
-        // works for chrome, firefox and IE10+
-        downloadFile: function (content, mimeType, fileName, useBlob) {
-            mimeType = mimeType || 'application/octet-stream';
-            var url;
-            var dataURI = 'data:' + mimeType + ',' + content;
-            var link = document.createElement('a');
-            var blob = new Blob([content], {
-                'type': mimeType
-            });
-
-            // feature detection
-            if (typeof(link.download) !== 'undefined') {
-                // Browsers that support HTML5 download attribute
-                if (useBlob) {
-                    url = window.URL.createObjectURL(blob);
-                } else {
-                    url = dataURI;
-                }
-                link.setAttribute('href', url);
-                link.setAttribute('download', fileName);
-                link.style = 'visibility:hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                return null;
-
-             //feature detection using IE10+ routine
-            } else if (navigator.msSaveOrOpenBlob) {
-                return navigator.msSaveOrOpenBlob(blob, fileName);
+        s2ab: function (s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            /*jslint bitwise: true */
+            for (var i = 0; i < s.length; ++i) {
+                view[i] = s.charCodeAt(i) & 0xFF;
             }
+            /*jslint bitwise: false */
+            return buf;
+        },
 
-            // catch all. for which browsers?
-            window.open(dataURI);
-            window.focus();
-            return null;
+        getFileName: function (extension) {
+            if (this.filename) {
+                return (typeof this.filename === 'function' ? this.filename(this) + extension : this.filename + extension);
+            }
+            return 'result' + extension;
+        },
 
+        reportError: function (msg) {
+            topic.publish('growler/growl', {
+                title: 'Error During Export',
+                error: msg
+            });
+            topic.publish('viewer/handleError', {
+                widget: 'Export',
+                error: msg
+            });
+        },
+
+        mixinDeep: function (dest, source) {
+            //Recursively mix the properties of two objects
+            var empty = {};
+            for (var name in source) {
+                if (!(name in dest) || (dest[name] !== source[name] && (!(name in empty) || empty[name] !== source[name]))) {
+                    try {
+                        if (source[name].constructor === Object) {
+                            dest[name] = this.mixinDeep(dest[name], source[name]);
+                        } else {
+                            dest[name] = source[name];
+                        }
+                    } catch (e) {
+                        // Property in destination object not set. Create it and set its value.
+                        dest[name] = source[name];
+                    }
+                }
+            }
+            return dest;
         }
     });
 });

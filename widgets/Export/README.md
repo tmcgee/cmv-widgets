@@ -1,7 +1,16 @@
 #Export Widget for CMV
-Export features from the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget or other widgets that have a [dgrid](http://dgrid.io).
+1. Export attributes from the [Attribute Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget or other widgets that have a [dgrid](http://dgrid.io). Formats supported: Excel (xlsx and xls) and Comma-Separated-Values (csv).
 
-File formats supported: Excel and CSV.
+2. Export features in spatial formats. Formats supported: GeoJSON, KML, Well-Known Text (wkt) and Esri Shape files. Examples of exported features:
+
+    - An Identified Feature
+    - Features from a Feature layer on the map
+    - Graphics from a Graphics layer on the map
+    - Drawn Graphic Shapes from a Draw widget
+    - Features return from a QueryTask or FindTask of a Map Service
+    - A FeatureSet returned from a Geoprocessing Task
+
+All geometries exported to GeoJSON or KML are projected to Lat/Lng using Spatial Reference 4326. When exporting to Well-Known Text or Esri Shapefile, an output Spatial Reference WKID can be provided and the geometries are projected to the selected Spatial Reference.
 
 NOTE: Downloading the export file when using Internet Explorer 9 or older is not supported.
 
@@ -44,4 +53,8 @@ The Export widget subscribes to the following topics.
 ```javascript
 // open the widget
 'exportWidget/openDialog'
+
+// export attributes or features without opening the dialog
+'exportWidget/export'
+
 ```
