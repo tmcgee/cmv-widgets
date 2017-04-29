@@ -528,7 +528,7 @@ define([
                 return;
             }
 
-            require([this.modulesPath + '/shpwrite-v0.2.6.min.js'], lang.hitch(this, function (shpWrite) {
+            require([this.modulesPath + '/shpwrite-0.2.6.min.js'], lang.hitch(this, function (shpWrite) {
                 var options = lang.clone(this.shapefileOptions);
                 options.wkt = this.proj4DestWKT;
                 var zipFile = shpWrite.zip(geojson, options);
@@ -586,7 +586,7 @@ define([
                 return;
             }
 
-            require([this.modulesPath + '/wellknown-v0.4.2.min.js'], lang.hitch(this, function (wellknown) {
+            require([this.modulesPath + '/wellknown-0.4.2.min.js'], lang.hitch(this, function (wellknown) {
                 var wkt = geojson.features.map(wellknown.stringify).join('\n');
                 if (!wkt) {
                     this.reportError (i18n.errorWKT);
@@ -1001,7 +1001,7 @@ define([
             window.dojoConfig.packages.push({
                 name: 'JSZip3',
                 location: this.modulesPath,
-                main: 'jszip-v3.1.3.min'
+                main: 'jszip-3.1.3.min'
             });
             require(window.dojoConfig, [
                 'JSZip3'
@@ -1019,7 +1019,7 @@ define([
             if (this.excel || this.csv || this.xlsExcel) {
                 //xlsx requires jszip version 2.x. version 3.x for everything else
                 require([
-                    this.modulesPath + '/xlsx.core-v0.9.12.min.js'
+                    this.modulesPath + '/xlsx.core-0.9.12.min.js'
                 ]);
             }
         },
@@ -1028,7 +1028,7 @@ define([
             if (this.geojson || this.kml || this.kmz || this.shapefile || this.topojson || this.wkt) {
                 require([
                     'proj4js/proj4',
-                    this.modulesPath + '/terraformer-v1.0.8.min.js'
+                    this.modulesPath + '/terraformer-1.0.8.min.js'
                 ], lang.hitch(this, function (proj4) {
                     if (!window.proj4) {
                         window.proj4 = proj4;
@@ -1037,7 +1037,7 @@ define([
 
                     // arcgis parser must be loaded after the terraformer core module
                     require([
-                        this.modulesPath + '/terraformer-arcgis-parser-v1.0.5.min.js'
+                        this.modulesPath + '/terraformer-arcgis-parser-1.0.5.min.js'
                     ]);
                 }));
             }
