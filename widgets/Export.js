@@ -70,6 +70,7 @@ define([
         i18n: i18n,
 
         topicID: 'exportWidget',
+        modulesPath: module.uri.substring(0, module.uri.lastIndexOf('.')) + '/lib',
 
         defaultOptions: {
             excel: true,         // allow attributes to be exported to Excel
@@ -143,11 +144,11 @@ define([
 
             this.addTopics();
             this.setExportDefaults();
-            this.loadXLSXParser();
-            this.loadFeatureParser();
             this.initExportSelect();
             this.onWkidChange(this.inputWkid.get('value'));
             this.own(on(this.inputWkid, 'keyup', lang.hitch(this, 'wkidOnKeyUp')));
+
+            window.setTimeout(lang.hitch(this, 'loadParsers'), 1000);
         },
 
         addTopics: function () {
@@ -222,17 +223,25 @@ define([
                 domStyle.set(this.divWkidSection, 'display', 'none');
                 this.inputWkid.set('disabled', true);
             }
+            this.resetWkid();
             this.removeLink();
             this.btnExport.set('disabled', false);
         },
 
         onWkidChange: function () {
             var wkid = this.inputWkid.get('value');
+            this.removeLink();
             if (wkid && !isNaN(wkid) && wkid.length > 3) {
                 wkid = parseInt(wkid, 10);
                 if (wkid === 102100) { // ESRI --> EPSG
                     wkid = 3857;
                 }
+
+                var key = this.proj4Catalog + ':' + String(wkid);
+                if (window.proj4 && !window.proj4.defs[key]) {
+                    require([this.proj4BaseURL + String(wkid) + '.js']);
+                }
+
                 require(['dojo/text!' + this.proj4BaseURL + String(wkid) + '.esriwkt'], lang.hitch(this, function (prj) {
                     if (wkid !== 4326) {
                         this.proj4DestWKT = prj;
@@ -272,6 +281,12 @@ define([
             this.wkidChangeTimeoutID = window.setTimeout(lang.hitch(this, 'onWkidChange'), 200);
         },
 
+        resetWkid: function () {
+            this.proj4DestWkid = 4326;
+            this.proj4DestKey = 'EPSG:4326';
+            this.proj4DestWKT = null;
+        },
+
         openDialog: function (options) {
             this.getExportDefaults();
             this.featureSet = options.featureSet;
@@ -297,6 +312,7 @@ define([
             this.topojsonOptions = (typeof(options.topojsonOptions) !== 'undefined') ? options.topojsonOptions : this.topojsonOptions;
 
             this.initExportSelect();
+            this.removeLink();
 
             if (options.show) {
                 this.parentWidget.show();
@@ -448,6 +464,7 @@ define([
         exportToGeoJSON: function () {
             // force export to 4326
             this.inputWkid.set('value', 4326);
+            this.resetWkid();
 
             var geojson = this.createGeoJSON();
             if (!geojson) {
@@ -462,6 +479,7 @@ define([
         exportToKML: function () {
             // force export to 4326
             this.inputWkid.set('value', 4326);
+            this.resetWkid();
 
             var geojson = this.createGeoJSON();
             if (!geojson) {
@@ -472,7 +490,7 @@ define([
             // customized version of mapbox's tokml for higher fidelity exports
             // handles more attributes than defined in the simple-spec v1.1
             // source: https://cdn.rawgit.com/mapbox/tokml/v0.4.0/tokml.js'
-            require([module.id + '/tokml'], lang.hitch(this, function (tokml) {
+            require([this.modulesPath + '/tokml.min.js'], lang.hitch(this, function (tokml) {
                 var kml = tokml(geojson, this.kmlOptions);
                 if (!kml) {
                     this.reportError(i18n.errorKML);
@@ -482,13 +500,15 @@ define([
                 if (exportType === 'kml') {
                     this.downloadFile(kml, 'application/vnd.google-earth.kml+xml;charset=utf-8;', this.getFileName('.kml'), true);
                 } else {
-                    /*global JSZip */
-                    var jszip = new JSZip();
+                    /*global JSZip3 */
+                    var jszip = new JSZip3();
                     jszip.file(this.getFileName('.kml'), kml);
-                    var zipFile = jszip.generate({
-                        compression: 'STORE'}
-                    );
-                    this.downloadFile(zipFile, 'application/vnd.google-earth.kmz;base64;', this.getFileName('.kmz'), false);
+                    jszip.generateAsync({
+                        type: 'blob',
+                        compression: 'STORE'
+                    }).then(lang.hitch(this, function (zipFile) {
+                        this.downloadFile(zipFile, 'application/vnd.google-earth.kmz;base64;', this.getFileName('.kmz'), true);
+                    }));
                 }
 
             }));
@@ -499,6 +519,7 @@ define([
             var wkid = this.inputWkid.get('value');
             if (!wkid || wkid === '') {
                 this.inputWkid.set('value', 4326);
+                this.resetWkid();
             }
 
             var geojson = this.createGeoJSON();
@@ -507,7 +528,7 @@ define([
                 return;
             }
 
-            require([module.id + '/shpwrite'], lang.hitch(this, function (shpWrite) {
+            require([this.modulesPath + '/shpwrite.min.js'], lang.hitch(this, function (shpWrite) {
                 var options = lang.clone(this.shapefileOptions);
                 options.wkt = this.proj4DestWKT;
                 var zipFile = shpWrite.zip(geojson, options);
@@ -515,7 +536,9 @@ define([
                     this.reportError(i18n.errorShapeFile);
                     return;
                 }
-                this.downloadFile(zipFile, 'application/zip;base64;', this.getFileName('.zip'), false);
+                zipFile.then(lang.hitch(this, function (content) {
+                    this.downloadFile(content, 'application/zip;base64;', this.getFileName('.zip'), true);
+                }));
             }));
 
         },
@@ -523,6 +546,7 @@ define([
         exportToTopoJSON: function () {
             // force export to 4326
             this.inputWkid.set('value', 4326);
+            this.resetWkid();
 
             var geojson = this.createGeoJSON();
             if (!geojson) {
@@ -530,7 +554,7 @@ define([
                 return;
             }
 
-            require([module.id + '/topojson'], lang.hitch(this, function () {
+            require([this.modulesPath + '/topojson.min.js'], lang.hitch(this, function () {
                 var options = lang.clone(this.topojsonOptions);
                 if (options['property-transform'] === null) {
                     //options['property-transform'] = this.allProperties;
@@ -553,6 +577,7 @@ define([
             var wkid = this.inputWkid.get('value');
             if (!wkid || wkid === '') {
                 this.inputWkid.set('value', 4326);
+                this.resetWkid();
             }
 
             var geojson = this.createGeoJSON();
@@ -561,7 +586,7 @@ define([
                 return;
             }
 
-            require(['https://cdn.rawgit.com/mapbox/wellknown/v0.4.2/wellknown.js'], lang.hitch(this, function (wellknown) {
+            require([this.modulesPath + '/wellknown-v0.4.2.min.js'], lang.hitch(this, function (wellknown) {
                 var wkt = geojson.features.map(wellknown.stringify).join('\n');
                 if (!wkt) {
                     this.reportError (i18n.errorWKT);
@@ -767,21 +792,27 @@ define([
                 includeStyle = true;
             }
 
+            var sourceProj = window.proj4.defs[this.proj4SrcKey];
+            var destProj = window.proj4.defs[this.proj4DestKey];
             array.forEach(features, lang.hitch(this, function (feature) {
                 var attr = feature.attributes;
                 if (typeof(attr.feature) === 'object') {
                     delete attr.feature;
                 }
+                var newFeature = {
+                    attributes: lang.clone(attr),
+                    geometry: lang.clone(feature.geometry)
+                };
                 if (feature.symbol && includeStyle) {
-                    feature.attributes = this.convertSymbolToAttributes(feature);
+                    newFeature.attributes = this.convertSymbolToAttributes(feature);
                 }
 
-                if (feature.geometry) {
-                    if (window.proj4.defs[this.proj4SrcKey] && window.proj4.defs[this.proj4DestKey]) {
-                        feature.geometry = this.projectGeometry(feature.geometry, exportType);
+                if (newFeature.geometry) {
+                    if (sourceProj && destProj) {
+                        newFeature.geometry = this.projectGeometry(newFeature.geometry);
                     }
 
-                    var geoFeature = window.Terraformer.ArcGIS.parse(feature);
+                    var geoFeature = window.Terraformer.ArcGIS.parse(newFeature);
                     geojson.features.push(geoFeature);
                 } else {
                     topic.publish('viewer/handleError', 'feature has no geometry');
@@ -791,7 +822,6 @@ define([
 
             return geojson;
         },
-
 
         /*******************************
         *  Projection Functions
@@ -945,10 +975,30 @@ define([
         *  load parsers
         *******************************/
 
+        loadParsers: function () {
+
+            window.dojoConfig.packages.push({
+                name: 'JSZip3',
+                location: this.modulesPath,
+                main: 'jszip-v3.1.3.min'
+            });
+            require(window.dojoConfig, [
+                'JSZip3'
+            ], lang.hitch(this, function (JSZip3) {
+                if (!window.JSZip3) {
+                    window.JSZip3 = JSZip3;
+                }
+                this.loadXLSXParser();
+                this.loadFeatureParser();
+            }));
+
+        },
+
         loadXLSXParser: function () {
             if (this.excel || this.csv || this.xlsExcel) {
+                //xlsx requires jszip version 2.x. version 3.x for everything else
                 require([
-                    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.8/xlsx.core.min.js'
+                    this.modulesPath + '/xlsx.core-v0.9.12.min.js'
                 ]);
             }
         },
@@ -956,8 +1006,8 @@ define([
         loadFeatureParser: function () {
             if (this.geojson || this.kml || this.kmz || this.shapefile || this.topojson || this.wkt) {
                 require([
-                    'https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.14/proj4.js',
-                    'https://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.5/terraformer.min.js'
+                    'proj4js/proj4',
+                    this.modulesPath + '/terraformer-v1.0.8.min.js'
                 ], lang.hitch(this, function (proj4) {
                     if (!window.proj4) {
                         window.proj4 = proj4;
@@ -966,14 +1016,14 @@ define([
 
                     // arcgis parser must be loaded after the terraformer core module
                     require([
-                        'https://cdn-geoweb.s3.amazonaws.com/terraformer-arcgis-parser/1.0.4/terraformer-arcgis-parser.min.js'
+                        this.modulesPath + '/terraformer-arcgis-parser-v1.0.5.min.js'
                     ]);
                 }));
             }
         },
 
         loadSourceProj4: function () {
-            // which wikid are we projecting from?
+            // which wkid are we projecting from?
             if (window.proj4 && this.featureSet && this.featureSet.features) {
                 var features = this.featureSet.features;
                 if (features && features.length > 0) {
@@ -1037,7 +1087,7 @@ define([
         },
 
         removeLink: function () {
-            if (this.link) {
+            if (this.link && this.divExportLink) {
                 this.divExportLink.removeChild(this.link);
                 this.divExportLink.innerHTML = '&nbsp;';
             }

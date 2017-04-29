@@ -9786,7 +9786,7 @@ var write = require('./write'),
 
 module.exports = function(gj, options) {
 
-    var zip = new JSZip(),
+    var zip = new JSZip3(),
         wkt = (options && options.wkt) ? options.wkt : prj;
 
     [geojson.point(gj), geojson.line(gj), geojson.polygon(gj)]
@@ -9809,13 +9809,12 @@ module.exports = function(gj, options) {
         }
     });
 
-    var generateOptions = { compression:'STORE' };
+    var generateOptions = {
+        type: 'blob',
+        compression: 'STORE'
+    };
 
-    if (!process.browser) {
-      generateOptions.type = 'nodebuffer';
-    }
-
-    return zip.generate(generateOptions);
+    return zip.generateAsync(generateOptions);
 };
 
 }).call(this,require('_process'))
