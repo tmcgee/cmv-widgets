@@ -80,8 +80,20 @@ define({
             id: 'export',
             type: 'floating',
             path: 'widgets/Export',
-            title: 'Export',
+            title: '<i class="fa fa-fw fa-download"></i> Export',
             options: {
+                excel: true,
+                xlsExcel: false,
+                csv: true,
+
+                shapefile: true,
+                kml: true,
+                kmz: true,
+                geojson: true,
+                topojson: true,
+                wkt: true,
+
+                defaultExportType: 'shapefile',
                 // this option can be a string or a function that returns
                 // a string.
                 //

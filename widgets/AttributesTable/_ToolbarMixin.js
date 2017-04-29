@@ -15,7 +15,7 @@ define([
 
     return declare(null, {
 
-        exportWidgetID: 'export',
+        exportWidgetID: 'exportWidget',
 
         toolbarOptions: {},
 
@@ -41,7 +41,8 @@ define([
             },
 
             'export': {
-                show: !has('ie') || has('ie') > 9
+                show: !has('ie') || has('ie') > 9,
+                options: {}
             }
         },
 
@@ -163,11 +164,12 @@ define([
         },
 
         openExport: function () {
-            topic.publish('exportWidget/openDialog', {
+            topic.publish(this.exportWidgetID + '/openDialog', lang.mixin({
                 results: this.results,
+                featureSet: this.featureSet || this.results,
                 grid: this.grid,
                 show: true
-            });
+            }, this.toolbarOptions.export.options));
         }
     });
 });
