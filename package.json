@@ -1,9 +1,9 @@
 {
 	"name": "cmv-widgets",
-	"version": "v1.7.0",
+	"version": "v1.10.0",
 	"author": "Tim McGee, MoosePoint Technology",
 	"license": "MIT",
-	"year": "2016",
+	"year": "2017",
     "homepage": "https://tmcgee.github.io/cmv-widgets/",
     "repository": "https://github.com/tmcgee/cmv-widgets",
 	"dependencies": {
