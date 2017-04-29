@@ -769,6 +769,7 @@ define([
         *******************************/
 
         createGeoJSON: function () {
+            var type = this.selectExportType.get('value');
             var features = lang.clone(this.featureSet.features);
             if (features.length < 1) {
                 return null;
@@ -794,26 +795,46 @@ define([
 
             var sourceProj = window.proj4.defs[this.proj4SrcKey];
             var destProj = window.proj4.defs[this.proj4DestKey];
+            var featureID = 1;
             array.forEach(features, lang.hitch(this, function (feature) {
                 var attr = feature.attributes;
                 if (typeof(attr.feature) === 'object') {
                     delete attr.feature;
                 }
-                var newFeature = {
-                    attributes: lang.clone(attr),
-                    geometry: lang.clone(feature.geometry)
-                };
                 if (feature.symbol && includeStyle) {
-                    newFeature.attributes = this.convertSymbolToAttributes(feature);
+                    feature.attributes = this.convertSymbolToAttributes(feature);
                 }
 
-                if (newFeature.geometry) {
+                if (feature.geometry) {
                     if (sourceProj && destProj) {
-                        newFeature.geometry = this.projectGeometry(newFeature.geometry);
+                        feature.geometry = this.projectGeometry(feature.geometry);
                     }
 
-                    var geoFeature = window.Terraformer.ArcGIS.parse(newFeature);
-                    geojson.features.push(geoFeature);
+                    var geoFeature = window.Terraformer.ArcGIS.parse(feature);
+                    var geom = geoFeature.geometry;
+
+                    // split multi-polygon/linestrings geojson into multiple single polygons/linstrings
+                    if ((type === 'shapefile') && (geom.type === 'MultiPolygon' || geom.type === 'MultiLineString')) {
+                        var props = geoFeature.properties;
+                        for (var i = 0, len = geom.coordinates.length; i < len; i++) {
+                            var feat = {
+                                geometry: {
+                                    type: geom.type.replace('Multi', ''),
+                                    coordinates: geom.coordinates[i]
+                                },
+                                id: featureID++,
+                                properties: props,
+                                type: 'Feature'
+                            };
+                            geojson.features.push(feat);
+                        }
+
+                    // not a multi-polygon, so just push it
+                    } else {
+                        geoFeature.id = featureID++;
+                        geojson.features.push(geoFeature);
+                    }
+
                 } else {
                     topic.publish('viewer/handleError', 'feature has no geometry');
                 }
