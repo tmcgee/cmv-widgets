@@ -123,12 +123,12 @@ define([
             var modulesPath = module.uri.substring(0, module.uri.lastIndexOf('/')) + '/Report/lib';
             window.dojoConfig.packages.push({
                 name: 'jspdf',
-                main: 'jspdf.min',
+                main: 'jspdf-1.3.4.min',
                 location: modulesPath
             });
             window.dojoConfig.packages.push({
                 name: 'autotable',
-                main: 'jspdf.plugin.autotable.min',
+                main: 'jspdf.plugin.autotable-2.3.1.min',
                 location: modulesPath
             });
 
