@@ -528,7 +528,7 @@ define([
                 return;
             }
 
-            require([this.modulesPath + '/shpwrite.min.js'], lang.hitch(this, function (shpWrite) {
+            require([this.modulesPath + '/shpwrite-v0.2.6.min.js'], lang.hitch(this, function (shpWrite) {
                 var options = lang.clone(this.shapefileOptions);
                 options.wkt = this.proj4DestWKT;
                 var zipFile = shpWrite.zip(geojson, options);
