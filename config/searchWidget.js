@@ -2,8 +2,10 @@
 define([
     'dojo/on',
     'dojo/_base/lang',
-    'dojo/date/locale'
-], function (on, lang, locale) {
+    'dojo/date/locale',
+    'dojo/number',
+    'esri/geometry/geometryEngine'
+], function (on, lang, locale, number, geometryEngine) {
 
     function formatDateTime (value) {
         if (value instanceof Date) {
@@ -49,6 +51,19 @@ define([
                     layerID: 'DamageAssessment', // from operational layers
                     sublayerID: 0,
                     outFields: ['*']
+                },
+                infoTemplates: {
+                    buffer: {
+                        title: 'Search Buffer',
+                        content: function (feature) {
+                            if (feature.geometry) {
+                                return number.format(geometryEngine.geodesicArea(feature.geometry, 'acres'), {
+                                    places: 2
+                                }) + ' Acres';
+                            }
+                            return '';
+                        }
+                    }
                 },
                 attributeSearches: [
                     {
