@@ -363,7 +363,7 @@ define([
                 featureOptions: lang.clone(search.featureOptions || layer.featureOptions || {}),
                 symbolOptions: lang.clone(search.symbolOptions || layer.symbolOptions || {}),
                 toolbarOptions: lang.clone(search.toolbarOptions || layer.toolbarOptions || {}),
-                infoTemplate: search.infoTemplate || layer.infoTemplate
+                infoTemplates: search.infoTemplates || layer.infoTemplates
             };
 
             if (layer.findOptions) { // It is a FindTask
