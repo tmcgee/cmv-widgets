@@ -253,15 +253,20 @@ define([
         },
 
         togglePane: function (show) {
+            var paneID = this.sidebarID;
             this.getSidebarPane();
             if (this.sidebarPane) {
-                var paneID = this.sidebarPane.id.toLowerCase().replace('sidebar', '');
+                paneID = this.sidebarPane.id.toLowerCase().replace('sidebar', '');
+            }
+
+            if (paneID) {
                 topic.publish('viewer/togglePane', {
                     pane: paneID,
                     show: show
                 });
             }
         },
+
         // this will resize all the children when the container is
         // is resized. This works when container is in the bottom pane.
         // Would it work with other panes? Is there a better way?
