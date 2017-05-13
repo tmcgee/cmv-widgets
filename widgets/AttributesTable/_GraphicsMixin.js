@@ -5,6 +5,7 @@ define([
     'dojo/_base/array',
     'dojo/sniff',
 
+    'esri/InfoTemplate',
     'esri/layers/GraphicsLayer',
     'esri/graphic',
     'esri/symbols/SimpleMarkerSymbol',
@@ -19,6 +20,7 @@ define([
     array,
     has,
 
+    InfoTemplate,
     GraphicsLayer,
     Graphic,
     SimpleMarkerSymbol,
@@ -199,6 +201,20 @@ define([
             }
         },
 
+        infoTemplates: {
+            // infoTemplate when feature graphics are clicked
+            features: null,
+
+            // infoTemplate when selected feature graphics are clicked
+            selected: null,
+
+            // infoTemplate when source graphics are clicked
+            source: null,
+
+            // infoTemplate when buffer graphics are clicked
+            buffer: null
+        },
+
         getGraphicsConfiguration: function (options) {
             this.symbolOptions = this.mixinDeep(lang.clone(this.defaultSymbolOptions), options);
 
@@ -241,18 +257,27 @@ define([
                 id: this.topicID + '_SourceGraphics',
                 title: 'Attribute Source Graphics'
             });
+            if (this.infoTemplates.source) {
+                this.sourceGraphics.setInfoTemplate(new InfoTemplate(this.infoTemplates.source));
+            }
             this.map.addLayer(this.sourceGraphics);
 
             this.bufferGraphics = new GraphicsLayer({
                 id: this.topicID + '_BufferGraphics',
                 title: 'Attribute Buffer Graphics'
             });
+            if (this.infoTemplates.buffer) {
+                this.bufferGraphics.setInfoTemplate(new InfoTemplate(this.infoTemplates.buffer));
+            }
             this.map.addLayer(this.bufferGraphics);
 
             this.featureGraphics = new GraphicsLayer({
                 id: this.topicID + '_FeatureGraphics',
                 title: 'Attribute Feature Graphics'
             });
+            if (this.infoTemplates.features) {
+                this.featureGraphics.setInfoTemplate(new InfoTemplate(this.infoTemplates.features));
+            }
             if (this.featureOptions && this.featureOptions.selected !== false) {
                 this.featureGraphics.on('click', lang.hitch(this, 'selectFeatureFromMap'));
 
@@ -274,6 +299,9 @@ define([
                 id: this.topicID + '_SelectedGraphics',
                 title: 'Attribute Selected Graphics'
             });
+            if (this.infoTemplates.selected) {
+                this.selectedGraphics.setInfoTemplate(new InfoTemplate(this.infoTemplates.selected));
+            }
             this.selectedGraphics.on('click', lang.hitch(this, 'selectFeatureFromMap'));
 
             this.map.addLayer(this.selectedGraphics);
