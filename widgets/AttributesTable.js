@@ -264,6 +264,7 @@ define([
                     pane: paneID,
                     show: show
                 });
+                this.resizeChildren();
             }
         },
 
