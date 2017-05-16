@@ -114,6 +114,8 @@ define([
             });
 
             topic.publish(this.topicID + '/findResults', this.results);
+            topic.publish(this.attributesContainerID + '/openPane');
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
         },
 
         getFindParams: function () {
