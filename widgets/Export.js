@@ -13,6 +13,7 @@ define([
     'dojo/string',
     'dojo/keys',
     'dojo/on',
+    'dojo/query',
     'dojo/dom-style',
     'module',
 
@@ -47,6 +48,7 @@ define([
     string,
     keys,
     on,
+    domQuery,
     domStyle,
     module,
 
@@ -314,8 +316,14 @@ define([
             this.initExportSelect();
             this.removeLink();
 
-            if (options.show) {
-                this.parentWidget.show();
+            if (options.show && this.parentWidget) {
+                //dojo modal dialog
+                if (typeof(this.parentWidget.show) === 'function') {
+                    this.parentWidget.show();
+                // dojo-boostrap modal dialog
+                } else if (typeof(this.parentWidget.containerNode) === 'string') {
+                    domQuery('#' + this.parentWidget.containerNode).closest('.modal').modal('show');
+                }
             }
         },
 
