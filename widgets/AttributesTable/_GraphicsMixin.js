@@ -40,6 +40,8 @@ define([
         spatialReference: null,
         pointExtentSize: null,
 
+        addToLayerControl: true,
+
         symbolOptions: {},
 
         // Default symbology for features
@@ -305,6 +307,10 @@ define([
             this.selectedGraphics.on('click', lang.hitch(this, 'selectFeatureFromMap'));
 
             this.map.addLayer(this.selectedGraphics);
+
+            if (this.addToLayerControl) {
+                this.addLayerToLayerControl();
+            }
 
         },
 
@@ -662,6 +668,9 @@ define([
         clearFeatureGraphics: function (specificFeatures) {
             this.clearGraphicsLayer(this.featureGraphics, specificFeatures);
             this.hideInfoWindow();
+            if (this.addToLayerControl && (this.featureGraphics.graphics.length === 0)) {
+                this.removeLayerFromLayerControl();
+            }
         },
 
         clearSelectedGraphics: function () {
@@ -718,6 +727,10 @@ define([
          *******************************/
 
         removeGraphicLayers: function () {
+            if (this.addToLayerControl) {
+                this.removeLayerFromLayerControl();
+            }
+
             this.map.removeLayer(this.featureGraphics);
             this.featureGraphics = null;
 
@@ -729,6 +742,43 @@ define([
 
             this.map.removeLayer(this.bufferGraphics);
             this.bufferGraphics = null;
+        },
+
+        /*******************************
+         *  Add/Remove layer from Layer Control widget
+         *******************************/
+
+        addLayerToLayerControl: function () {
+            var layerControlInfo = {
+                controlOptions: {
+                    expanded: false,
+                    noLegend: true,
+                    metadataUrl: false,
+                    swipe: false
+                },
+                layer: this.featureGraphics,
+                title: 'Search Results - ' + this.title,
+                type: 'feature'
+            };
+            topic.publish('layerControl/addLayerControls', [layerControlInfo]);
+
+            this.layerControlToggleTopic = topic.subscribe('layerControl/layerToggle', lang.hitch(this, function (r) {
+                if (r.id === this.featureGraphics.id) {
+                    var viz = this.featureGraphics.visible;
+                    this.sourceGraphics.setVisibility(viz);
+                    this.bufferGraphics.setVisibility(viz);
+                    this.featureGraphics.setVisibility(viz);
+                    this.selectedGraphics.setVisibility(viz);
+                }
+            }));
+        },
+
+        removeLayerFromLayerControl: function () {
+            topic.publish('layerControl/removeLayerControls', [this.featureGraphics]);
+            if (this.layerControlToggleTopic) {
+                this.layerControlToggleTopic.remove();
+                this.layerControlToggleTopic = null;
+            }
         }
     });
 });
