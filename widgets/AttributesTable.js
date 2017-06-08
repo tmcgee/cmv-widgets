@@ -52,6 +52,7 @@ define([
             if (this.useTabs) {
                 this.tabContainer = new TabContainer({
                     className: 'attributesTabContainer',
+                    id: 'attributesTabContainer',
                     useSlider: true
                 });
                 this.addChild(this.tabContainer);
