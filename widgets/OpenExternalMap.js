@@ -272,8 +272,10 @@ define([
 
         connectMapClick: function () {
             this.OEMapButtonDijit.set('checked', false);
-            this.map.setMapCursor('auto');
-            topic.publish('mapClickMode/setDefault');
+            if (this.mapClickMode === 'externalmap') {
+                this.map.setMapCursor('auto');
+                topic.publish('mapClickMode/setDefault');
+            }
         },
 
         processPoint: function (point) {
