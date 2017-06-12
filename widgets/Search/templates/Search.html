@@ -1,6 +1,6 @@
 <div>
     <div class="tabContainer" data-dojo-attach-point="tabContainer" data-dojo-props="region:'center'" data-dojo-type="dijit/layout/TabContainer" tabstrip="true">
-        <div class="searchTab" data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" selected="true" title="${i18n.Labels.tabTitleByAttribute}">
+        <div class="searchTab searchByAttribute" data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" selected="true" title="${i18n.Labels.tabTitleByAttribute}">
             <div class="selectALayer">
                 <label>
                     ${i18n.Labels.selectALayer}:
@@ -22,7 +22,7 @@
             <div class="searchSelector searchFields" data-dojo-attach-point="divAttributeQueryFields">
                 <!-- Search dijits are injected here -->
             </div>
-            <div data-dojo-attach-point="queryContainsDom">
+            <div class="searchSelector searchContains" data-dojo-attach-point="queryContainsDom">
                 <input data-dojo-attach-point="containsSearchText" data-dojo-props="'class':'optionsCheckBox'" data-dojo-type="dijit/form/CheckBox" type="checkbox"/>
                 <label>
                     ${i18n.Labels.exactMatches}
@@ -56,7 +56,7 @@
                 <button data-dojo-attach-event="click:openQueryBuilder" data-dojo-attach-point="btnQueryBuilder" data-dojo-props="iconClass:'fa fa-wrench fa-fw',class:'btn-query-builder',showLabel:${i18n.Buttons.openQueryBuilder.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.openQueryBuilder.label}">${i18n.Buttons.openQueryBuilder.label}</button>
             </div>
         </div>
-        <div class="searchTab" data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByShape}">
+        <div class="searchTab searchByShape" data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByShape}">
             <div class="selectALayer">
                 <label>
                     ${i18n.Labels.selectALayer}:

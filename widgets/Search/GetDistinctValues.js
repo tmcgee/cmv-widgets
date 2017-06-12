@@ -58,6 +58,9 @@ define([
             query.returnGeometry = false;
             query.where = this.where || '1=1';
 
+            // exclude null values
+            query.where += ' AND (' + this.fieldName + ' IS NOT NULL)';
+
             queryTask.on('complete', lang.hitch(this, function (results) {
                 var featureSet = results.featureSet,
                     options = [];

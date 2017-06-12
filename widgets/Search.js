@@ -19,6 +19,12 @@ define([
 
     'dijit/form/Select',
     'dijit/form/TextBox',
+    'dijit/form/SimpleTextarea',
+    'dijit/form/DateTextBox',
+    'dijit/form/TimeTextBox',
+    'dijit/form/NumberTextBox',
+    'dijit/form/CurrencyTextBox',
+    'dijit/form/NumberSpinner',
 
     'esri/toolbars/draw',
     'esri/tasks/query',
@@ -43,9 +49,6 @@ define([
     'dijit/layout/LayoutContainer',
     'dijit/layout/ContentPane',
     'dijit/layout/TabContainer',
-    'dijit/form/Select',
-    'dijit/form/TextBox',
-    'dijit/form/NumberTextBox',
     'dijit/form/Button',
     'dijit/form/CheckBox',
     'dijit/form/ToggleButton',
@@ -74,6 +77,12 @@ define([
 
     Select,
     TextBox,
+    SimpleTextarea,
+    DateTextBox,
+    TimeTextBox,
+    NumberTextBox,
+    CurrencyTextBox,
+    NumberSpinner,
 
     Draw,
     Query,
@@ -345,27 +354,13 @@ define([
         },
 
         search: function (geometry, layerIndex) {
-            if (!this.layers) {
-                return;
-            }
-            if (this.layers.length === 0) {
+            if (!this.layers || this.layers.length === 0) {
                 return;
             }
 
             var layer = this.layers[layerIndex];
             var search = layer.attributeSearches[this.searchIndex] || {};
-            var searchOptions = {
-                title: search.title || layer.title || this.title,
-                topicID: search.topicID || layer.topicID || this.topicID,
-                findOptions: null,
-                queryOptions: null,
-                gridOptions: lang.clone(search.gridOptions || layer.gridOptions || {}),
-                featureOptions: lang.clone(search.featureOptions || layer.featureOptions || {}),
-                symbolOptions: lang.clone(search.symbolOptions || layer.symbolOptions || {}),
-                toolbarOptions: lang.clone(search.toolbarOptions || layer.toolbarOptions || {}),
-                infoTemplates: lang.clone(search.infoTemplates || layer.infoTemplates || {})
-            };
-
+            var searchOptions = this.buildSearchOptions(layer, search);
             if (layer.findOptions) { // It is a FindTask
                 searchOptions.findOptions = this.buildFindOptions(layer, search);
             } else {
@@ -379,6 +374,26 @@ define([
                 topic.publish(this.attributesContainerID + '/addTable', searchOptions);
             }
 
+        },
+
+        buildSearchOptions: function (layer, search) {
+            var gridOptions = lang.clone(search.gridOptions || layer.gridOptions || {});
+            var featureOptions = lang.clone(search.featureOptions || layer.featureOptions || {});
+            var symbolOptions = lang.clone(search.symbolOptions || layer.symbolOptions || {});
+            var toolbarOptions = lang.clone(search.toolbarOptions || layer.toolbarOptions || {});
+            var infoTemplates = lang.clone(search.infoTemplates || layer.infoTemplates || {});
+
+            return {
+                title: search.title || layer.title || this.title,
+                topicID: search.topicID || layer.topicID || this.topicID,
+                findOptions: null,
+                queryOptions: null,
+                gridOptions: gridOptions,
+                featureOptions: featureOptions,
+                symbolOptions: symbolOptions,
+                toolbarOptions: toolbarOptions,
+                infoTemplates: infoTemplates
+            };
         },
 
         buildQueryOptions: function (layer, search, geometry) {
@@ -456,11 +471,26 @@ define([
             var fields = search.searchFields;
             var searchTerm = null;
 
+            if (search.expression) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where += '(' + search.expression + ')';
+            }
+
             var len = fields.length;
             for (var k = 0; k < len; k++) {
                 var field = fields[k];
                 var inputId = search.inputIds[k];
                 var input = registry.byId(inputId);
+
+                if (field.where) {
+                    if (where !== '') {
+                        where += ' AND ';
+                    }
+                    where += '(' + field.where + ')';
+                }
+
                 searchTerm = this.getSearchTerm(input, field);
                 if (searchTerm === null) {
                     return null;
@@ -476,6 +506,10 @@ define([
                     where += attrWhere;
                 }
             }
+            if (where.length === 0) {
+                where = '1=1';
+            }
+
             return where;
         },
 
@@ -548,10 +582,43 @@ define([
         },
 
         getSearchTerm: function (input, field) {
-            //var searchTerm = this['inputSearchTerm' + idx].get('value');
-            var searchTerm = input.get('value');
-            if (!searchTerm && field.required) {
-                //this['inputSearchTerm' + idx].domNode.focus();
+            if (input.isValid && !input.isValid()) {
+                topic.publish('growler/growl', {
+                    title: 'Search',
+                    message: 'Invalid value for ' + field.name + '.',
+                    level: 'error',
+                    timeout: 3000
+                });
+                return null;
+            }
+
+            var value = input.get('value'), searchTerm = '';
+            switch (field.type) {
+            case 'date':
+            case 'time':
+            case 'number':
+            case 'currency':
+            case 'numberspinner':
+                value = input.toString();
+                if (field.format) {
+                    searchTerm = input.format(value);
+                } else {
+                    searchTerm = value;
+                }
+                break;
+
+            default:
+                if (lang.isArray(value)) {
+                    searchTerm = value.join('\', \'');
+                }
+                searchTerm = value;
+                if (searchTerm === '*' || searchTerm === null) {
+                    searchTerm = '';
+                }
+                break;
+            }
+
+            if (searchTerm === '' && field.required) {
                 input.domNode.focus();
 
                 topic.publish('growler/growl', {
@@ -574,9 +641,7 @@ define([
                     return null;
                 }
             }
-            if (searchTerm === '*' || searchTerm === null) {
-                searchTerm = '';
-            }
+
             return searchTerm;
         },
 
@@ -697,6 +762,7 @@ define([
                             for (var j = 0; j < searches.length; j++) {
                                 var search = searches[j];
                                 if (search) {
+                                    var firstSearch = ((i === 0) && (j === 0));
                                     // add the div for the search
                                     var id = '_' + i.toString() + '_' + j.toString();
                                     var divName = 'divSearch' + id;
@@ -706,8 +772,8 @@ define([
                                             display: 'none'
                                         }
                                     }, domNode, 'last');
-                                    // display the first search
-                                    if ((i === 0) && (j === 0)) {
+                                    // display the first search for the first layer
+                                    if (firstSearch) {
                                         domStyle.set(divName, 'display', 'block');
                                     }
                                     search.divName = divName;
@@ -715,7 +781,7 @@ define([
 
                                     // add the controls for the search
                                     for (var k = 0; k < search.searchFields.length; k++) {
-                                        this.buildSearchControl(search, layer, divNode, id, i, j, k);
+                                        this.buildSearchControl(search, layer, divNode, id, k, firstSearch);
                                     }
                                     //this.initialized = true;
                                 }
@@ -726,74 +792,159 @@ define([
             }
         },
 
-        buildSearchControl: function (search, layer, divNode, id, i, j, k) {
+        buildSearchControl: function (search, layer, divNode, id, k, firstSearch) {
             var field = search.searchFields[k];
-            var options = [], input = null;
+            var inputId = 'inputSearch_' + id + '_' + k.toString();
+
             if (field) {
-                var txt = field.label + ':';
-                if (field.minChars) {
-                    txt += ' (at least ' + field.minChars + ' chars)';
-                }
-                domConstruct.create('label', {
-                    innerHTML: txt
+                var fieldNode = domConstruct.create('div', {
+                    className: 'searchField'
                 }, divNode, 'last');
 
-                var inputId = 'inputSearch_' + id + '_' + k.toString();
-                if (field.unique) {
-                    options = [];
-                    input = new Select({
-                        id: inputId,
-                        options: options,
-                        style: {
-                            width: '100%'
-                        }
-                    });
-                    // should actually only do this for the first control
-                    if ((i === 0) && (j === 0)) {
-                        var queryParameters = lang.clone(layer.queryParameters);
-                        queryParameters.url = field.url || layer.queryParameters.url;
-                        this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, field.where);
-                    }
-                } else if (field.values) {
-                    options = [];
-                    arrayUtil.forEach(field.values, function (item) {
-                        options.push({
-                            label: item,
-                            value: item,
-                            selected: false
-                        });
-                    });
-                    if (options.length > 0) {
-                        options[0].selected = true;
-                    }
-                    input = new Select({
-                        id: inputId,
-                        options: options,
-                        style: {
-                            width: '100%'
-                        }
-                    });
-                } else {
-                    input = new TextBox({
-                        id: inputId,
-                        type: 'text',
-                        style: {
-                            width: '100%'
-                        }
-                    });
-                    input.set('value', '');
-                    input.set('placeHolder', field.placeholder);
-                }
+                this.buildSearchControlLabel(field, search, layer, fieldNode);
 
-                if (input) {
-                    input.placeAt(divNode, 'last');
-                    this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+                if (field.unique || field.values) {
+                    this.buildSearchControlSelect(field, search, layer, fieldNode, inputId, firstSearch);
+                } else {
+                    this.buildSearchControlInput(field, search, layer, fieldNode, inputId);
                 }
 
                 // the first input field is for focus
                 search.inputIds.push(inputId);
             }
 
+        },
+
+        buildSearchControlLabel: function (field, search, layer, fieldNode) {
+            var labelWidth = field.labelWidth || layer.labelWidth || null;
+            if (typeof(labelWidth) === 'number') {
+                labelWidth += 'px';
+            }
+
+            var txt = field.label + ':';
+            var title = field.label;
+            if (field.minChars) {
+                title = 'Enter at least ' + field.minChars + ' characters';
+            }
+
+            domConstruct.create('div', {
+                innerHTML: txt,
+                className: 'searchFieldLabel',
+                title: title,
+                style: {
+                    width: labelWidth
+                }
+
+            }, fieldNode, 'last');
+
+        },
+
+        buildSearchControlSelect: function (field, search, layer, fieldNode, inputId, firstSearch) {
+            var input,
+                style = field.style || layer.style || null,
+                fieldWidth = field.width || layer.fieldWidth || '99%',
+                fieldHeight = field.height || layer.fieldHeight || 'inherit',
+                options = [];
+
+            if (typeof(fieldWidth) === 'number') {
+                fieldWidth += 'px';
+            }
+            if (typeof(fieldHeight) === 'number') {
+                fieldHeight += 'px';
+            }
+
+            if (field.values) {
+                arrayUtil.forEach(field.values, function (item) {
+                    if (typeof(item) === 'string') {
+                        options.push({
+                            label: item,
+                            value: item,
+                            selected: false
+                        });
+                    } else {
+                        options.push(item);
+                    }
+                });
+                if (options.length > 0) {
+                    options[0].selected = true;
+                }
+            }
+
+            input = new Select({
+                id: inputId,
+                options: options,
+                style: style || {
+                    height: fieldHeight,
+                    width: fieldWidth
+                }
+            });
+
+            if (input) {
+                input.placeAt(fieldNode, 'last');
+            }
+
+            // only do this for the first search for the first layer
+            if (field.type === 'unique' && firstSearch) {
+                var queryParameters = lang.clone(layer.queryParameters);
+                queryParameters.url = field.url || layer.queryParameters.url;
+                var where = this.getWhereClauseForDistinctValues(field, search, layer);
+                this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, where);
+            }
+        },
+
+        buildSearchControlInput: function (field, search, layer, fieldNode, inputId) {
+            var input,
+                style = field.style || layer.style || null,
+                fieldWidth = field.width || layer.fieldWidth || '99%',
+                fieldHeight = field.height || layer.fieldHeight || 'inherit';
+
+            if (typeof(fieldWidth) === 'number') {
+                fieldWidth += 'px';
+            }
+            if (typeof(fieldHeight) === 'number') {
+                fieldHeight += 'px';
+            }
+
+            var options = {
+                id: inputId,
+                constraints: field.constraints || {},
+                value: field.defaultValue,
+                placeHolder: field.placeholder,
+                style: style || {
+                    height: fieldHeight,
+                    width: fieldWidth
+                }
+            };
+
+            switch (field.type) {
+            case 'date':
+                input = new DateTextBox(options);
+                break;
+            case 'time':
+                input = new TimeTextBox(options);
+                break;
+            case 'number':
+                input = new NumberTextBox(options);
+                break;
+            case 'currency':
+                input = new CurrencyTextBox(options);
+                break;
+            case 'numberspinner':
+                options.smallDelta = field.smallDelta || 1;
+                input = new NumberSpinner(options);
+                break;
+            case 'textarea':
+                input = new SimpleTextarea(options);
+                break;
+            default:
+                input = new TextBox(options);
+                break;
+            }
+
+            if (input) {
+                input.placeAt(fieldNode, 'last');
+                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+            }
         },
 
         initLayerSelect: function () {
@@ -929,7 +1080,8 @@ define([
                             if (field.unique) {
                                 var queryParameters = lang.clone(layer.queryParameters);
                                 queryParameters.url = field.url || layer.queryParameters.url;
-                                this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, field.where);
+                                var where = this.getWhereClauseForDistinctValues(field, search, layer);
+                                this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
                             }
                         }
                         domStyle.set(search.divName, 'display', 'block');
@@ -946,6 +1098,23 @@ define([
                     }
                 }
             }
+        },
+
+        getWhereClauseForDistinctValues: function (field, search, layer) {
+            var where = layer.expression || '';
+            if (search.expression) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where += '(' + search.expression + ')';
+            }
+            if (field.where) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where += '(' + field.where + ')';
+            }
+            return where;
         },
 
         /*

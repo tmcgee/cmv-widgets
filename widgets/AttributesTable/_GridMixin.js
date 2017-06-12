@@ -7,14 +7,19 @@ define([
     'dojo/date/locale',
     'dojo/number',
 
-    'dojo/store/Memory',
-    'dgrid/Grid', // http://dojofoundation.org/packages/dgrid/
-    'dgrid/Selection',
-    'dgrid/Keyboard',
-    'dgrid/extensions/ColumnHider',
-    'dgrid/extensions/ColumnReorder',
-    'dgrid/extensions/ColumnResizer',
-    'dgrid/extensions/Pagination'
+    'dstore/Memory',
+
+    'dgrid1/Grid', // http://dojofoundation.org/packages/dgrid/
+    'dgrid1/Selector',
+    'dgrid1/Keyboard',
+    'dgrid1/Editor',
+    'dgrid1/extensions/ColumnHider',
+    'dgrid1/extensions/ColumnReorder',
+    'dgrid1/extensions/ColumnResizer',
+    'dgrid1/extensions/Pagination',
+
+    'xstyle/css!dgrid1/css/dgrid.css'
+
 ], function (
     declare,
     lang,
@@ -25,9 +30,11 @@ define([
     number,
 
     Memory,
+
     Grid,
-    Selection,
+    Selector,
     Keyboard,
+    Editor,
     ColumnHider,
     ColumnReorder,
     ColumnResizer,
@@ -47,6 +54,9 @@ define([
 
             // no sort
             sort: [],
+
+            // Allow the user to use column sets in grid
+            editor: true,
 
             // Allow the user to use column sets in grid
             columnSet: false,
@@ -84,8 +94,8 @@ define([
                     cellNavigation: false,
                     showHeader: true,
                     showFooter: true,
-                    adjustLastColumn: true,
-                    store: new Memory(),
+                    addUiClasses: false,
+                    collection: new Memory(),
                     columns: [],
                     sort: []
                 };
@@ -95,7 +105,7 @@ define([
                 // grid and mixins
                 var req = [Grid, Keyboard];
                 if (this.featureOptions.selected !== false) {
-                    req.push(Selection);
+                    req.push(Selector);
                     gridOptions.selectionMode = has('touch') ? 'toggle' : 'extended';
                     gridOptions.allowFeatureSelectionAll = true;
                 }
@@ -106,6 +116,10 @@ define([
                 }
                 req.push(Pagination);
                 lang.mixin(gridOptions, options.paginationOptions);
+
+                if (options.editor !== false) {
+                    req.push(Editor);
+                }
 
                 // grid extensions
                 if (options.columnHide !== false) {
@@ -185,10 +199,11 @@ define([
             this.getColumnsAndSort(results, options);
 
             if (rows && rows.length > 0) {
-                this.grid.set('store', new Memory({
+                var store = new Memory({
                     idProperty: this.idProperty,
                     data: rows
-                }));
+                });
+                this.grid.set('collection', store);
             }
 
             // refresh only needs with IE?
@@ -251,7 +266,6 @@ define([
         },
 
         getColumnsAndSort: function (results, options) {
-
             if (options) {
                 // reset the columns?
                 if (options.columns) {
@@ -288,10 +302,19 @@ define([
             if (sort.length < 1 && columns && columns.length > 0) {
                 sort = [
                     {
-                        attribute: columns[0].field,
+                        property: columns[0].field,
                         descending: false
                     }
                 ];
+            } else {
+                // replace 'attribute' with 'property'.
+                // needed to handle old configurations with new dgrid 1.x
+                array.forEach(sort, function (item) {
+                    if (item.attribute && !item.property) {
+                        item.property = item.attribute;
+                        delete item.attribute;
+                    }
+                });
             }
             this.grid.set('sort', sort);
         },
@@ -397,10 +420,10 @@ define([
         },
 
         getFeatureFromStore: function (key) {
-            var store = this.grid.get('store'),
+            var collection = this.grid.get('collection'),
                 rec = null,
                 feature = null;
-            rec = store.get(key);
+            rec = collection.getSync(key);
             if (rec) {
                 feature = rec.feature;
             }
@@ -414,7 +437,7 @@ define([
                     this.grid.clearSelection();
                 }
                 this.grid.set('columns', []);
-                this.grid.set('store', new Memory());
+                this.grid.set('collection', new Memory());
                 this.grid.refresh();
             }
             this.setToolbarButtons();

@@ -1,5 +1,5 @@
 .cmvSearchWidget {
-    height: 490px;
+    height: 500px;
     min-width: 225px;
 }
 
@@ -9,49 +9,65 @@
 }
 
 .cmvSearchWidget .searchTab {
+    max-height: 445px;
+    overflow-y: hidden;
     padding: 10px;
 }
 
-.cmvSearchWidget label {
-	font-weight: bold;
-	margin-left: 3px;
+.cmvSearchWidget label,
+.cmvSearchWidget .searchFieldLabel {
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
 }
-.cmvSearchWidget .dijitTextBox {
-	margin-bottom: 10px;
+
+.cmvSearchWidget .searchFieldLabel {
+    display: inline-block;
+    margin-top: 5px;
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
 }
 
 .cmvSearchWidget .searchSelector {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .cmvSearchWidget .searchFields {
-    max-height: 220px;
+    height: 210px;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.cmvSearchWidget .searchFields .dijitTextBox{
-    width: 98% !important;
+.cmvSearchWidget .searchFields,
+.cmvSearchWidget .searchContains {
+    border-bottom: 1px solid #CCC;
 }
 
+.cmvSearchWidget .searchField {
+    margin-bottom: 10px;
+}
+.cmvSearchWidget .searchContains {
+    padding: 0 0 10px 20px;
+}
 .cmvSearchWidget .bottomButtons {
     text-align: center;
 }
 
 .cmvSearchWidget .dijitSelect {
-	height: 30px;
-	width: 100%;
+    height: 30px;
+    width: 100%;
 }
 
 .cmvSearchWidget .searchFeaturesIcon {
-	background-repeat: no-repeat;
-	float: left;
+    background-repeat: no-repeat;
+    float: left;
     height: 40px;
-	margin: 10px 11px 12px 11px;
+    margin: 10px 11px 12px 11px;
     text-align: center;
     width: 40px;
 }
 
 .cmvSearchWidget .searchFeaturesIcon:hover {
-	background-color: #C0C0C0;
+    background-color: #C0C0C0;
 }

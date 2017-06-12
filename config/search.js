@@ -89,15 +89,30 @@ define([
                     identifyTolerance: 10
                 }
             },
+            layerControl: {
+                include: true,
+                id: 'layerControl',
+                type: 'titlePane',
+                path: 'gis/dijit/LayerControl',
+                title: 'Layers',
+                iconClass: 'fa-th-list',
+                open: false,
+                position: 0,
+                options: {
+                    map: true,
+                    layerControlLayerInfos: true,
+                    separated: true
+                }
+            },
             search: {
                 include: true,
                 id: 'search',
                 type: 'titlePane',
+                iconClass: 'fa-search',
                 path: 'widgets/Search',
-                canFloat: true,
                 title: 'Search',
                 open: true,
-                position: 0,
+                position: 1,
                 options: 'config/searchWidget'
             },
             attributesTable: {
