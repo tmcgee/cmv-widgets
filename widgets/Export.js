@@ -809,6 +809,14 @@ define([
                 if (typeof(attr.feature) === 'object') {
                     delete attr.feature;
                 }
+
+                // remove any attributes that have null values
+                for (var key in attr) {
+                    if (!attr[key]) {
+                        delete attr[key];
+                    }
+                }
+
                 if (feature.symbol && includeStyle) {
                     feature.attributes = this.convertSymbolToAttributes(feature);
                 }
