@@ -1,0 +1,20 @@
+<div data-dojo-attach-point="containerNode" class="cmvMapillaryWidget">
+    <div class="mapillary-container">
+        <button data-dojo-type="dijit/form/ToggleButton" class="mapillary-button" data-dojo-attach-point="mapillaryButtonDijit" data-dojo-props="iconClass:'fa fa-fw fa-location-arrow fa-rotate-90',showLabel:false" data-dojo-attach-event="onClick:placePoint"></button>
+        <span data-dojo-attach-point="mapillaryInstructions" class="mapillary-instructions">
+            <div class="mapillary-instructions-text">
+                ${i18n.messages.instructions}
+            </div>
+        </span>
+        <span data-dojo-attach-point="noMapillaryResults" class="mapillary-no-results">
+            <div class="mapillary-no-results-text">
+                ${i18n.messages.notAvailable}
+            </div>
+        </span>
+        <span data-dojo-attach-point="mapillaryNode" id="mapillary-node"></span>
+    </div>
+    <div class="mapillary-checkbox">
+        <input data-dojo-type="dijit/form/CheckBox" data-dojo-attach-point="checkLayerVisible" type="checkbox"/>
+        <label>View Mapillary Coverage</label>
+    </div>
+</div>

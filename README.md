@@ -15,6 +15,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
 - [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
 - [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
+- [Mapillary](https://github.com/tmcgee/cmv-widgets#mapillary)
 - [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
 - [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
 - [Print Plus](https://github.com/tmcgee/cmv-widgets#print-plus)
@@ -80,6 +81,13 @@ A simple widget to add labels for one or more Feature Layers.
 A simple widget to toggle the visibility of a set of layers. Only a single layer in the set can be visible at any time. All others are turned off when the target layer's visibility is set.
 ##### Documentation - in the works
 ##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LayerToggle.js)
+
+---
+### Mapillary
+A replacement for the CMV Google StreetView widget that display street level imagery from [Mapillary](https://www.mapillary.com/) using [MapillaryJS](https://github.com/mapillary/mapillary-js).
+##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Mapillary/README.md)
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=mapillary)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/mapillary1.jpg)
 
 ---
 ### MessageBox

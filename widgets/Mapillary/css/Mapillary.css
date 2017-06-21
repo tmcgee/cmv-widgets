@@ -1,0 +1,72 @@
+.cmvMapillaryWidget {
+    min-height: 275px;
+    position: relative;
+    width: 100%;
+}
+
+.cmvMapillaryWidget .mapillary-button {
+    left: 4px;
+    position: absolute;
+    top: 4px;
+    z-index: 9;
+}
+
+.cmvMapillaryWidget .mapillary-button .dijitButtonNode {
+    color: #36AF6D;
+    font-size: 1.5em;
+    padding: 6px 6px 6px 6px;
+}
+
+.cmvMapillaryWidget .mapillary-container {
+    background-color: #202020;
+    height: calc(100% - 40px);
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.floatingWidget .cmvMapillaryWidget .mapillary-container {
+    height: 275px;
+    width: 400px;
+}
+
+.cmvMapillaryWidget .mapillary-checkbox {
+    bottom: 0;
+    height: 20px;
+    margin: 10px;
+    position: absolute;
+}
+
+.cmvMapillaryWidget .mapillary-instructions, .cmvMapillaryWidget .mapillary-no-results {
+    background-color: #202020;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
+
+.cmvMapillaryWidget .mapillary-no-results {
+    display: none;
+}
+
+.cmvMapillaryWidget .mapillary-instructions-text, .cmvMapillaryWidget .mapillary-no-results-text {
+    color: white;
+    padding: 10px;
+    position: absolute;
+    top: 50px;
+    z-index: 2;
+}
+
+.cmvMapillaryWidget .mapillary-js {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.cmvMapillaryWidget .mapillary-js canvas {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
