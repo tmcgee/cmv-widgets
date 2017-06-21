@@ -624,7 +624,7 @@ define([
                         var rowStyles = row.cells.label.styles;
                         if (rowHeading) {
                             var margin = rowHeading.margin || {};
-                            var rowHeight = row.height + (margin.top || 0);
+                            var rowHeight = (rowHeading.height || row.height) + (margin.top || 0);
                             if (rowHeading.border) {
                                 this.addBorder(this.mixinDeep({
                                     left: data.settings.margin.left,
