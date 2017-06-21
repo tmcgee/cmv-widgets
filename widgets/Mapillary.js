@@ -119,7 +119,7 @@ define([
 
         layerOptions: {},
         defaultLayerOptions: {
-            url: require.toUrl('./widgets/Mapillary/mapillary-style.js'),
+            url: require.toUrl('./widgets/Mapillary/mapillary-style.json'),
             id: 'mapillary',
             opacity: 0.6,
             visible: false
