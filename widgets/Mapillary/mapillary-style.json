@@ -3,7 +3,7 @@
     "sources": {
         "mapillary-source": {
             "tiles": [
-                "https//d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt"
+                "https://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt"
             ],
             "type": "vector",
             "minzoom": 0,
