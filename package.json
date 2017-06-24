@@ -9,7 +9,7 @@
 	"dependencies": {
         "csslint": "1.0.x",
         "babel-eslint": "~7.2.0",
-        "eslint": "~3.19.0",
+        "eslint": "~4.1.0",
         "grunt": "1.0.x",
         "grunt-postcss": "0.8.x",
         "grunt-contrib-clean": "~1.1.0",
