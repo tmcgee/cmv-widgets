@@ -1,5 +1,5 @@
 .cmvSearchWidget {
-    height: 535px;
+    height: 585px;
 }
 
 .cmvSearchWidget .tabContainer {
@@ -8,7 +8,7 @@
 }
 
 .cmvSearchWidget .searchTab {
-    max-height: 480px;
+    max-height: 530px;
     width: 100%;
     overflow-y: hidden;
     padding: 10px;

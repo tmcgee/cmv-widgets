@@ -9,6 +9,15 @@
                 <select data-dojo-attach-event="onChange:onAttributeLayerChange" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" style="width:100%;">
                 </select>
             </div>
+            <div class="searchSelector" data-dojo-attach-point="divAttributeQuerySelect">
+                <label>
+                    ${i18n.Labels.selectAQuery}:
+                </label>
+                <br>
+                    <select data-dojo-attach-event="onChange:onAttributeQueryChange" data-dojo-attach-point="selectAttributeQuery" data-dojo-props="disabled:true" data-dojo-type="dijit/form/Select" style="width:100%;">
+                    </select>
+                </br>
+            </div>
             <div data-dojo-attach-point="divLoadingSpinner" class="widgetLoader">
                 <i class="fa fa-spinner fa-pulse fa-fw"></i>
             </div>
@@ -18,15 +27,6 @@
                     <button class="searchAdvancedToggle" data-dojo-attach-point="btnBasicSwitch" data-dojo-attach-event="onClick:toggleAdvancedSearch" data-dojo-props="class:'btn-search-advanced-toggle',style:'display:none;',showLabel:${i18n.Buttons.switchToBasic.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.switchToBasic.label}"><i class="fa fa-chevron-left"></i> ${i18n.Buttons.switchToBasic.label}</button>
                 </div>
                 <div data-dojo-attach-point="divBasicSearchBody">
-                    <div class="searchSelector" data-dojo-attach-point="divAttributeQuerySelect">
-                        <label>
-                            ${i18n.Labels.selectAQuery}:
-                        </label>
-                        <br>
-                            <select data-dojo-attach-event="onChange:onAttributeQueryChange" data-dojo-attach-point="selectAttributeQuery" data-dojo-props="disabled:true" data-dojo-type="dijit/form/Select" style="width:100%;">
-                            </select>
-                        </br>
-                    </div>
                     <div class="searchSelector searchFields" data-dojo-attach-point="divAttributeQueryFields">
                         <!-- Search dijits are injected here -->
                     </div>

@@ -138,18 +138,18 @@ define([
                 ]
             },
             {
-                name: 'Hospitals',
+                name: 'Public Safety',
                 expression: '', // additional where expression applied to all queries
                 idProperty: 'OBJECTID',
-                queryParameters: {
-                    type: 'table', // spatial, relationship, table or database
-                    layerID: 'louisvillePubSafety', // from operational layers
-                    sublayerID: 5,
-                    outFields: ['*']
-                },
                 attributeSearches: [
                     {
-                        name: 'Search For Hospital',
+                        name: 'Hospitals',
+                        queryParameters: {
+                            type: 'table', // spatial, relationship, table or database
+                            layerID: 'louisvillePubSafety', // from operational layers
+                            sublayerID: 5,
+                            outFields: ['*']
+                        },
                         searchFields: [
                             {
                                 name: 'Hospital Name',
@@ -244,21 +244,14 @@ define([
                                 }
                             ]
                         }
-                    }
-                ]
-            },
-            {
-                name: 'Police Stations',
-                expression: '', // additional where expression applied to all queries
-                queryParameters: {
-                    type: 'table', // spatial, relationship, table or database
-                    url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer/2',
-                    outFields: ['*']
-                },
-                idProperty: 'OBJECTID',
-                attributeSearches: [
+                    },
                     {
-                        name: 'Search For Police Station By Name',
+                        name: 'Police Stations',
+                        queryParameters: {
+                            type: 'table', // spatial, relationship, table or database
+                            url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer/2',
+                            outFields: ['*']
+                        },
                         searchFields: [
                             {
                                 name: 'PDNAME',

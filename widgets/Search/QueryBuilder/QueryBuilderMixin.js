@@ -77,9 +77,8 @@ define([
                 _queryBuilderDOM: null,
                 _queryBuilder: null,
 
-                layer: null,
-                mapLayer: null,
-                layerURL: null,
+                search: null,
+                url: null,
 
                 _fields: {},
 
@@ -103,14 +102,14 @@ define([
                     lang.mixin(this.options, options);
                 },
 
-                setLayer: function (layer) {
-                    if (!layer || !layer.queryParameters) {
+                setSearch: function (search) {
+                    if (!search || !search.queryParameters) {
                         return when(null);
                     }
 
-                    this.layer = layer;
-                    this.layerURL = this.getLayerURL(layer.queryParameters);
-                    if (!this.layerURL) {
+                    this.search = search;
+                    this.url = this.getLayerURL(search.queryParameters);
+                    if (!this.url) {
                         return when(null);
                     }
 
@@ -124,12 +123,13 @@ define([
                     this._fields = {};
 
                     var defaultToCaseInsensitive = false;
-                    if (this.layer.advancedSearchOptions) {
-                        if (this.layer.advancedSearchOptions.defaultToCaseInsensitive) {
+                    var advancedSearchOptions = search.advancedSearchOptions;
+                    if (advancedSearchOptions) {
+                        if (advancedSearchOptions.defaultToCaseInsensitive) {
                             defaultToCaseInsensitive = true;
                         }
-                        if (this.layer.advancedSearchOptions.fields && this.layer.advancedSearchOptions.fields.length) {
-                            array.forEach(this.layer.advancedSearchOptions.fields, function (field) {
+                        if (advancedSearchOptions.fields && advancedSearchOptions.fields.length) {
+                            array.forEach(advancedSearchOptions.fields, function (field) {
                                 if (field.id) {
                                     this._fields[field.id] = lang.clone(field);
                                 }
@@ -137,9 +137,9 @@ define([
                         }
                     }
 
-                    if (!this.layer.advancedSearchOptions ||
-                        !this.layer.advancedSearchOptions.fields ||
-                        this.layer.advancedSearchOptions.fetchAllFields
+                    if (!advancedSearchOptions ||
+                        !advancedSearchOptions.fields ||
+                        advancedSearchOptions.fetchAllFields
                        ) {
                         return this._fetchAllFields().then(lang.hitch(this, function (esriFields) {
                             array.forEach(esriFields, function (f) {
@@ -220,7 +220,7 @@ define([
                             useProxy: false
                         };
                     esriRequest({
-                        url: this.layerURL,
+                        url: this.url,
                         callbackParamName: 'callback',
                         content: content
                     }, options).then(
@@ -235,7 +235,7 @@ define([
                 },
 
                 _fetchSelectOptions: function (field) {
-                    var distinct = new GetDistinctValues(this.layerURL, field.id, this.layer.expression);
+                    var distinct = new GetDistinctValues(this.url, field.id, this.search.where);
                     return distinct.executeQuery()
                         .then(lang.hitch(this, function (fieldID, results) {
                             this._fields[fieldID].options = array.map(results, function (result) {
@@ -275,8 +275,8 @@ define([
                         return 0;
                     });
                     var filterableFields = null;
-                    if (this.layer.advancedSearchOptions) {
-                        filterableFields = this.layer.advancedSearchOptions.filterableFields;
+                    if (this.search.advancedSearchOptions) {
+                        filterableFields = this.search.advancedSearchOptions.filterableFields;
                     }
 
                     array.forEach(fieldNames, function (fname) {
@@ -577,7 +577,26 @@ define([
                 targetDOM: this.divAdvancedQueryBuilder,
                 map: this.map
             });
-            return this.queryBuilder.setLayer(this.layers[this.attributeLayer]);
+            return this.getQueryBuilder();
+        },
+
+        getQueryBuilder: function () {
+            var layer = this.layers[this.attributeLayer];
+            var searchIndex = this.searchIndex || 0;
+            if (!layer || !layer.attributeSearches || !layer.attributeSearches[searchIndex]) {
+                return when(null);
+            }
+
+            var search = layer.attributeSearches[searchIndex];
+            var advancedSearchOptions = lang.clone(search.advancedSearchOptions || layer.advancedSearchOptions || {});
+            var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
+            var where = this.getWhereClauseForDistinctValues(layer, search);
+            return this.queryBuilder ? this.queryBuilder.setSearch({
+                where: where,
+                queryParameters: queryParameters,
+                advancedSearchOptions: advancedSearchOptions
+            }) : when(null);
+
         }
     });
 });

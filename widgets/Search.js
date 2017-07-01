@@ -131,6 +131,7 @@ define([
 
         shapeLayer: 0,
         attributeLayer: 0,
+        searchIndex: 0,
         drawToolbar: null,
 
         isAdvancedSearch: false,
@@ -484,23 +485,15 @@ define([
         },
 
         buildWhereClause: function (layer, search, advancedQuery) {
-            var where = layer.expression || '';
             var fields = search.searchFields;
             var searchTerm = null;
-
-            if (advancedQuery.where) {
+            var where = this.getWhereClauseForDistinctValues(layer, search);
+            if (advancedQuery && advancedQuery.where) {
                 if (where !== '') {
                     where += ' AND ';
                 }
                 where = where + '(' + advancedQuery.where + ')';
                 return where;
-            }
-
-            if (search.expression) {
-                if (where !== '') {
-                    where += ' AND ';
-                }
-                where += '(' + search.expression + ')';
             }
 
             var len = fields.length;
@@ -912,7 +905,7 @@ define([
             if (field.type === 'unique' && firstSearch) {
                 var queryParameters = lang.clone(layer.queryParameters);
                 queryParameters.url = field.url || layer.queryParameters.url;
-                var where = this.getWhereClauseForDistinctValues(field, search, layer);
+                var where = this.getWhereClauseForDistinctValues(layer, search, field);
                 this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, where);
             }
         },
@@ -1031,10 +1024,7 @@ define([
             this.attributeLayer = newValue;
             this.selectAttributeQuery.set('disabled', true);
 
-            var queryBuilderPromise = this.queryBuilder ? this.queryBuilder.setLayer(this.layers[this.attributeLayer]) : when(null);
-
             this.showLoadingSpinnerWhile(allPromise([
-                queryBuilderPromise,
                 this.loadBasicAttributeQuerySelect()
             ]));
         },
@@ -1121,17 +1111,24 @@ define([
                 return when(null);
             }
 
-            // refresh the controls if any require unique values
+            var queryBuilderPromise = this.getQueryBuilder(newValue);
 
-            return allPromise(search.searchFields.map(lang.hitch(this, function (field, k) {
-                if (field.unique) {
-                    var queryParameters = lang.clone(layer.queryParameters);
-                    queryParameters.url = field.url || layer.queryParameters.url;
-                    var where = this.getWhereClauseForDistinctValues(field, search, layer);
-                    return this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
+            // refresh the controls if any require unique values
+            return allPromise(
+                queryBuilderPromise,
+                search.searchFields.map(lang.hitch(this, function (field, k) {
+
+                    if (field.unique) {
+                        var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
+                        var where = this.getWhereClauseForDistinctValues(layer, search, field);
+                        if (field.url) {
+                            queryParameters.url = field.url;
+                        }
+                        return this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
+                    }
+                    return when(null);
                 }
-                return when(null);
-            }))).then(lang.hitch(this, function () {
+            ))).then(lang.hitch(this, function () {
                 domStyle.set(search.divName, 'display', 'block');
 
                 // only show "Contains" checkbox for FindTasks
@@ -1242,15 +1239,15 @@ define([
         },
         */
 
-        getWhereClauseForDistinctValues: function (field, search, layer) {
+        getWhereClauseForDistinctValues: function (layer, search, field) {
             var where = layer.expression || '';
-            if (search.expression) {
+            if (search && search.expression) {
                 if (where !== '') {
                     where += ' AND ';
                 }
                 where += '(' + search.expression + ')';
             }
-            if (field.where) {
+            if (field && field.where) {
                 if (where !== '') {
                     where += ' AND ';
                 }
