@@ -1136,6 +1136,9 @@ define([
 
                 // hide Advanced Search for FindTasks
                 domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', ((layer.findOptions) ? 'none' : 'block'));
+                if (layer.findOptions) {
+                    this.toggleAdvancedSearch(false);
+                }
 
                 // put focus on the first input field
                 var input = registry.byId(search.inputIds[0]);
