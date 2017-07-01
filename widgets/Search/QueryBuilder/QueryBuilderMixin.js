@@ -590,7 +590,7 @@ define([
             var search = layer.attributeSearches[searchIndex];
             var advancedSearchOptions = lang.clone(search.advancedSearchOptions || layer.advancedSearchOptions || {});
             var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
-            var where = this.getWhereClauseForDistinctValues(layer, search);
+            var where = this.getDefaultWhereClause(layer, search);
             return this.queryBuilder ? this.queryBuilder.setSearch({
                 where: where,
                 queryParameters: queryParameters,

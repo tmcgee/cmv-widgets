@@ -487,7 +487,7 @@ define([
         buildWhereClause: function (layer, search, advancedQuery) {
             var fields = search.searchFields;
             var searchTerm = null;
-            var where = this.getWhereClauseForDistinctValues(layer, search);
+            var where = this.getDefaultWhereClause(layer, search);
             if (advancedQuery && advancedQuery.where) {
                 if (where !== '') {
                     where += ' AND ';
@@ -905,7 +905,7 @@ define([
             if (field.type === 'unique' && firstSearch) {
                 var queryParameters = lang.clone(layer.queryParameters);
                 queryParameters.url = field.url || layer.queryParameters.url;
-                var where = this.getWhereClauseForDistinctValues(layer, search, field);
+                var where = this.getDefaultWhereClause(layer, search, field);
                 this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, where);
             }
         },
@@ -1120,7 +1120,7 @@ define([
 
                     if (field.unique) {
                         var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
-                        var where = this.getWhereClauseForDistinctValues(layer, search, field);
+                        var where = this.getDefaultWhereClause(layer, search, field);
                         if (field.url) {
                             queryParameters.url = field.url;
                         }
@@ -1149,100 +1149,7 @@ define([
             }));
         },
 
-        /*
-        onAttributeLayerChange: function (newValue) {
-            this.attributeLayer = newValue;
-            this.selectAttributeQuery.set('disabled', true);
-            var layer = this.layers[this.attributeLayer];
-            if (layer) {
-                this.selectAttributeQuery.set('value', null);
-                this.selectAttributeQuery.set('options', null);
-                var searches = layer.attributeSearches;
-                var options = [];
-                var len = searches.length;
-                for (var i = 0; i < len; i++) {
-                    var option = {
-                        value: i,
-                        label: searches[i].name
-                    };
-                    options.push(option);
-                    if (i === 0) {
-                        options[i].selected = true;
-                    }
-                }
-                if (len) {
-                    this.selectAttributeQuery.set('options', options);
-                    this.selectAttributeQuery.set('disabled', false);
-                    this.selectAttributeQuery.set('value', 0);
-                    this.onAttributeQueryChange(0);
-
-                    domStyle.set(this.divAttributeQuerySelect, 'display', (len > 1) ? 'block' : 'none');
-                }
-            }
-        },
-
-        onAttributeQueryChange: function (newValue) {
-            // 'none' all of the query divs
-            var domNode = this.divAttributeQueryFields,
-                searches, search, layer, divNode;
-            if (domNode) {
-                for (var i = 0; i < this.layers.length; i++) {
-                    layer = this.layers[i];
-                    if (layer) {
-                        searches = layer.attributeSearches;
-                        if (searches) {
-                            for (var j = 0; j < searches.length; j++) {
-                                search = searches[j];
-                                divNode = dom.byId(search.divName);
-                                if (divNode) {
-                                    domStyle.set(search.divName, 'display', 'none');
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 'block' the query div and set the focus to the first widget
-            this.searchIndex = newValue;
-            layer = this.layers[this.attributeLayer];
-            if (layer) {
-                searches = layer.attributeSearches;
-                if (searches) {
-                    search = searches[newValue];
-                    if (search) {
-                        divNode = dom.byId(search.divName);
-                        if (!divNode) {
-                            return;
-                        }
-                        // refresh the controls if any require unique values
-                        for (var k = 0; k < search.searchFields.length; k++) {
-                            var field = search.searchFields[k];
-                            if (field.unique) {
-                                var queryParameters = lang.clone(layer.queryParameters);
-                                queryParameters.url = field.url || layer.queryParameters.url;
-                                var where = this.getWhereClauseForDistinctValues(field, search, layer);
-                                this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
-                            }
-                        }
-                        domStyle.set(search.divName, 'display', 'block');
-
-                        // only show "Contains" checkbox for FindTasks
-                        domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
-
-                        // put focus on the first input field
-                        var input = registry.byId(search.inputIds[0]);
-                        if (input && input.domNode) {
-                            input.domNode.focus();
-                            this.btnAttributeSearch.set('disabled', false);
-                        }
-                    }
-                }
-            }
-        },
-        */
-
-        getWhereClauseForDistinctValues: function (layer, search, field) {
+        getDefaultWhereClause: function (layer, search, field) {
             var where = layer.expression || '';
             if (search && search.expression) {
                 if (where !== '') {
