@@ -252,8 +252,7 @@ define([
                 expression: '', // additional where expression applied to all queries
                 queryParameters: {
                     type: 'table', // spatial, relationship, table or database
-                    layerID: 'louisvillePubSafety', // from operational layers
-                    sublayerID: 2,
+                    url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer/2',
                     outFields: ['*']
                 },
                 idProperty: 'OBJECTID',

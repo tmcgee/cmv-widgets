@@ -27,6 +27,9 @@ define([
         },
 
         panes: {
+            left: {
+                style: 'width:350px'
+            },
             bottom: {
                 id: 'sidebarBottom',
                 placeAt: 'outer',

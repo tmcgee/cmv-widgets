@@ -1,15 +1,15 @@
 .cmvSearchWidget {
-    height: 500px;
-    min-width: 225px;
+    height: 535px;
 }
 
 .cmvSearchWidget .tabContainer {
     height: 100%;
-    width: 98%;
+    width: 100%;
 }
 
 .cmvSearchWidget .searchTab {
-    max-height: 445px;
+    max-height: 480px;
+    width: 100%;
     overflow-y: hidden;
     padding: 10px;
 }
@@ -34,40 +34,80 @@
 }
 
 .cmvSearchWidget .searchFields {
-    height: 210px;
+    border: 1px solid #BBB;
+    border-radius: 4px;
+    height: 235px;
     overflow-x: hidden;
     overflow-y: auto;
+    padding-top: 5px;
 }
 
-.cmvSearchWidget .searchFields,
 .cmvSearchWidget .searchContains {
     border-bottom: 1px solid #CCC;
 }
 
 .cmvSearchWidget .searchField {
-    margin-bottom: 10px;
+    margin: 0 5px 10px 5px;
 }
+
 .cmvSearchWidget .searchContains {
     padding: 0 0 10px 20px;
 }
-.cmvSearchWidget .bottomButtons {
+
+.cmvSearchWidget .centeredButtons {
     text-align: center;
 }
 
 .cmvSearchWidget .dijitSelect {
-    height: 30px;
-    width: 100%;
+	height: 30px;
+	width: 100%;
 }
 
 .cmvSearchWidget .searchFeaturesIcon {
-    background-repeat: no-repeat;
-    float: left;
+	background-repeat: no-repeat;
+	float: left;
     height: 40px;
-    margin: 10px 11px 12px 11px;
+	margin: 10px 11px 12px 11px;
     text-align: center;
     width: 40px;
 }
 
 .cmvSearchWidget .searchFeaturesIcon:hover {
-    background-color: #C0C0C0;
+	background-color: #C0C0C0;
 }
+
+.cmvSearchWidget .query-builder .rules-group-container {
+    background-color: #F9F9F9;
+    border: 1px solid #BBB;
+    padding: 5px;
+}
+
+.cmvSearchWidget .query-builder > .rules-group-container {
+    background-color: inherit;
+    border-width: 0;
+    margin-top: 0;
+}
+
+.cmvSearchWidget .query-builder .rule-placeholder {
+    background-color: inherit;
+    padding: 0;
+}
+
+/*
+.cmvSearchWidget .advancedSearchImportExport {
+    float: right;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog {
+    text-align: center;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog textarea {
+    min-width: 300px;
+    width: auto;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog div[data-dojo-attach-point="searchAdvancedImportDialogBtn"] {
+    margin-top: 5px;
+}
+*/

@@ -6,54 +6,78 @@
                     ${i18n.Labels.selectALayer}:
                 </label>
                 <br>
-                    <select data-dojo-attach-event="onChange:onAttributeLayerChange" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" style="width:100%;">
-                    </select>
-                </br>
+                <select data-dojo-attach-event="onChange:onAttributeLayerChange" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" style="width:100%;">
+                </select>
             </div>
-            <div class="searchSelector" data-dojo-attach-point="divAttributeQuerySelect">
-                <label>
-                    ${i18n.Labels.selectAQuery}:
-                </label>
-                <br>
-                    <select data-dojo-attach-event="onChange:onAttributeQueryChange" data-dojo-attach-point="selectAttributeQuery" data-dojo-props="disabled:true" data-dojo-type="dijit/form/Select" style="width:100%;">
-                    </select>
-                </br>
+            <div data-dojo-attach-point="divLoadingSpinner" class="widgetLoader">
+                <i class="fa fa-spinner fa-pulse fa-fw"></i>
             </div>
-            <div class="searchSelector searchFields" data-dojo-attach-point="divAttributeQueryFields">
-                <!-- Search dijits are injected here -->
-            </div>
-            <div class="searchSelector searchContains" data-dojo-attach-point="queryContainsDom">
-                <input data-dojo-attach-point="containsSearchText" data-dojo-props="'class':'optionsCheckBox'" data-dojo-type="dijit/form/CheckBox" type="checkbox"/>
-                <label>
-                    ${i18n.Labels.exactMatches}
-                </label>
-            </div>
-            <div class="searchSelector" data-dojo-attach-point="divAttributeSpatialFilter">
-                <label>
-                    ${i18n.Labels.spatialFilter}:
-                </label>
-                <br>
-                    <select data-dojo-attach-point="selectAttributeSpatialFilter" data-dojo-type="dijit/form/Select" style="width:100%;">
-                    </select>
-                </br>
-            </div>
-            <div class="searchSelector" data-dojo-attach-point="divAttributeAddToExisting">
-                <table>
-                    <tr valign="top">
-                        <td>
-                            <label style="margin-left:10px;margin-right:5px;">
-                                ${i18n.Labels.attributeAddToExisting}:
-                            </label>
-                        </td>
-                        <td>
-                            <input data-dojo-attach-point="checkAttributeAddToExisting" data-dojo-type="dijit/form/CheckBox" type="checkbox"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="searchSelector bottomButtons">
-                <button data-dojo-attach-event="click:doAttributeSearch" data-dojo-attach-point="btnAttributeSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-attribute-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">${i18n.Buttons.search.label}</button>
-                <button data-dojo-attach-event="click:openQueryBuilder" data-dojo-attach-point="btnQueryBuilder" data-dojo-props="iconClass:'fa fa-wrench fa-fw',class:'btn-query-builder',showLabel:${i18n.Buttons.openQueryBuilder.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.openQueryBuilder.label}">${i18n.Buttons.openQueryBuilder.label}</button>
+            <div data-dojo-attach-point="divSearchBody">
+                <div class="searchSelector centeredButtons" data-dojo-attach-point="queryAdvancedSearchButtonsDom">
+                    <button data-dojo-attach-point="btnAdvancedSwitch" data-dojo-attach-event="onClick:toggleAdvancedSearch" data-dojo-props="class:'btn-search-advanced-toggle',showLabel:${i18n.Buttons.switchToAdvanced.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.switchToAdvanced.label}">${i18n.Buttons.switchToAdvanced.label} <i class="fa fa-chevron-right"></i></button>
+                    <button class="searchAdvancedToggle" data-dojo-attach-point="btnBasicSwitch" data-dojo-attach-event="onClick:toggleAdvancedSearch" data-dojo-props="class:'btn-search-advanced-toggle',style:'display:none;',showLabel:${i18n.Buttons.switchToBasic.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.switchToBasic.label}"><i class="fa fa-chevron-left"></i> ${i18n.Buttons.switchToBasic.label}</button>
+                </div>
+                <div data-dojo-attach-point="divBasicSearchBody">
+                    <div class="searchSelector" data-dojo-attach-point="divAttributeQuerySelect">
+                        <label>
+                            ${i18n.Labels.selectAQuery}:
+                        </label>
+                        <br>
+                            <select data-dojo-attach-event="onChange:onAttributeQueryChange" data-dojo-attach-point="selectAttributeQuery" data-dojo-props="disabled:true" data-dojo-type="dijit/form/Select" style="width:100%;">
+                            </select>
+                        </br>
+                    </div>
+                    <div class="searchSelector searchFields" data-dojo-attach-point="divAttributeQueryFields">
+                        <!-- Search dijits are injected here -->
+                    </div>
+                </div>
+                <div class="searchSelector searchFields" data-dojo-attach-point="divAdvancedSearchBody">
+                    <div data-dojo-attach-point="divAdvancedQueryBuilder">
+
+                    </div>
+                    <!-- <div data-dojo-attach-point="divAdvancedSearchImportExport" class="advancedSearchImportExport">
+                        <button data-dojo-attach-event="onClick:doExportSQL" data-dojo-attach-point="searchAdvancedExportBtn" data-dojo-props="iconClass:'fa fa-download fa-fw',showLabel:i18n.Buttons.exportSQL.showLabel,disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.exportSQL.label}">
+                            ${i18n.Buttons.exportSQL.label}
+                        </button>
+                        <button data-dojo-attach-event="onClick:doShowImportSQLDialog" data-dojo-attach-point="searchAdvancedImportBtn" data-dojo-props="iconClass:'fa fa-upload fa-fw',showLabel:i18n.Buttons.importSQL.showLabel,disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.importSQL.label}">
+                            ${i18n.Buttons.importSQL.label}
+                        </button>
+                    </div> -->
+                </div>
+                <div class="searchSelector searchContains" data-dojo-attach-point="queryContainsDom">
+                    <input data-dojo-attach-point="containsSearchText" data-dojo-props="'class':'optionsCheckBox'" data-dojo-type="dijit/form/CheckBox" type="checkbox"/>
+                    <label>
+                        ${i18n.Labels.exactMatches}
+                    </label>
+                </div>
+                <div class="searchSelector" data-dojo-attach-point="divAttributeSpatialFilter">
+                    <label>
+                        ${i18n.Labels.spatialFilter}:
+                    </label>
+                    <br>
+                        <select data-dojo-attach-point="selectAttributeSpatialFilter" data-dojo-type="dijit/form/Select" style="width:100%;">
+                        </select>
+                    </br>
+                </div>
+                <div class="searchSelector" data-dojo-attach-point="divAttributeAddToExisting">
+                    <table>
+                        <tr valign="top">
+                            <td>
+                                <label style="margin-left:10px;margin-right:5px;">
+                                    ${i18n.Labels.attributeAddToExisting}:
+                                </label>
+                            </td>
+                            <td>
+                                <input data-dojo-attach-point="checkAttributeAddToExisting" data-dojo-type="dijit/form/CheckBox" type="checkbox"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="searchSelector centeredButtons">
+                    <button data-dojo-attach-event="click:doAttributeSearch" data-dojo-attach-point="btnAttributeSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-attribute-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">
+                        ${i18n.Buttons.search.label}
+                    </button>
+                </div>
             </div>
         </div>
         <div class="searchTab searchByShape" data-dojo-attach-point="tabByShape" data-dojo-type="dijit/layout/ContentPane" title="${i18n.Labels.tabTitleByShape}">
@@ -125,7 +149,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="searchSelector bottomButtons">
+            <div class="searchSelector centeredButtons">
                 <button data-dojo-attach-event="click:doSpatialSearch" data-dojo-attach-point="btnSpatialSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-spatial-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">${i18n.Buttons.search.label}</button>
             </div>
         </div>

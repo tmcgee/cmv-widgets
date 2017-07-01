@@ -5,6 +5,8 @@ define([
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
 
+    './Search/QueryBuilder/QueryBuilderMixin',
+
     'dojo/_base/lang',
     'dojo/on',
     'dojo/dom-style',
@@ -14,8 +16,12 @@ define([
     'dojo/_base/array',
     'dojo/dom',
     'dojo/dom-construct',
+    'dojo/dom-attr',
     'dijit/registry',
     'dojo/io-query',
+
+    'dojo/when',
+    'dojo/promise/all',
 
     'dijit/form/Select',
     'dijit/form/TextBox',
@@ -63,17 +69,23 @@ define([
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
 
+    _QueryBuilderMixin,
+
     lang,
     on,
     domStyle,
     aspect,
     topic,
     keys,
-    arrayUtil,
+    array,
     dom,
     domConstruct,
+    domAttr,
     registry,
     ioQuery,
+
+    when,
+    allPromise,
 
     Select,
     TextBox,
@@ -101,7 +113,7 @@ define([
     i18n
 ) {
 
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _QueryBuilderMixin], {
         name: 'Search',
         baseClass: 'cmvSearchWidget',
         widgetsInTemplate: true,
@@ -120,6 +132,9 @@ define([
         shapeLayer: 0,
         attributeLayer: 0,
         drawToolbar: null,
+
+        isAdvancedSearch: false,
+        loadingCount: 0,
 
         // to override the default tab when the widget starts
         defaultTab: 0,
@@ -331,6 +346,8 @@ define([
 
             // Search from the applications query string
             this.checkQueryString();
+
+            this.setAdvancedSearch(false);
         },
 
         addTopics: function () {
@@ -353,18 +370,18 @@ define([
             }
         },
 
-        search: function (geometry, layerIndex) {
+        search: function (geometry, layerIndex, advancedQuery) {
             if (!this.layers || this.layers.length === 0) {
                 return;
             }
 
             var layer = this.layers[layerIndex];
             var search = layer.attributeSearches[this.searchIndex] || {};
-            var searchOptions = this.buildSearchOptions(layer, search);
+            var searchOptions = this.buildSearchOptions(layer, search, advancedQuery);
             if (layer.findOptions) { // It is a FindTask
                 searchOptions.findOptions = this.buildFindOptions(layer, search);
             } else {
-                searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry);
+                searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry, advancedQuery);
             }
 
             this.hideInfoWindow();
@@ -376,7 +393,7 @@ define([
 
         },
 
-        buildSearchOptions: function (layer, search) {
+        buildSearchOptions: function (layer, search, advancedQuery) {
             var gridOptions = lang.clone(search.gridOptions || layer.gridOptions || {});
             var featureOptions = lang.clone(search.featureOptions || layer.featureOptions || {});
             var symbolOptions = lang.clone(search.symbolOptions || layer.symbolOptions || {});
@@ -387,7 +404,7 @@ define([
                 title: search.title || layer.title || this.title,
                 topicID: search.topicID || layer.topicID || this.topicID,
                 findOptions: null,
-                queryOptions: null,
+                queryOptions: advancedQuery || null,
                 gridOptions: gridOptions,
                 featureOptions: featureOptions,
                 symbolOptions: symbolOptions,
@@ -396,7 +413,7 @@ define([
             };
         },
 
-        buildQueryOptions: function (layer, search, geometry) {
+        buildQueryOptions: function (layer, search, geometry, advancedQuery) {
             var where, distance, unit, showOnly = false, addToExisting = false;
             var queryOptions = {
                 idProperty: search.idProperty || layer.idProperty || 'FID',
@@ -420,7 +437,7 @@ define([
                 addToExisting = this.checkSpatialAddToExisting.get('checked');
 
             } else {
-                where = this.buildWhereClause(layer, search);
+                where = this.buildWhereClause(layer, search, advancedQuery);
                 if (where === null) {
                     return null;
                 }
@@ -466,10 +483,18 @@ define([
             });
         },
 
-        buildWhereClause: function (layer, search) {
+        buildWhereClause: function (layer, search, advancedQuery) {
             var where = layer.expression || '';
             var fields = search.searchFields;
             var searchTerm = null;
+
+            if (advancedQuery.where) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where = where + '(' + advancedQuery.where + ')';
+                return where;
+            }
 
             if (search.expression) {
                 if (where !== '') {
@@ -854,7 +879,7 @@ define([
             }
 
             if (field.values) {
-                arrayUtil.forEach(field.values, function (item) {
+                array.forEach(field.values, function (item) {
                     if (typeof(item) === 'string') {
                         options.push({
                             label: item,
@@ -979,13 +1004,6 @@ define([
         },
 
         initAdvancedFeatures: function () {
-            // show the queryBuilder button
-            if (this.enableQueryBuilder) {
-                this.btnQueryBuilder.set('disabled', false);
-            } else {
-                domStyle.set(this.btnQueryBuilder.domNode, 'display', 'none');
-            }
-
             // allow or not the drawing multiple shapes before searching
             if (!this.enableDrawMultipleShapes) {
                 domStyle.set(this.btnSpatialSearch.domNode, 'display', 'none');
@@ -1009,6 +1027,129 @@ define([
             this.shapeLayer = newValue;
         },
 
+        onAttributeLayerChange: function (newValue) {
+            this.attributeLayer = newValue;
+            this.selectAttributeQuery.set('disabled', true);
+
+            var queryBuilderPromise = this.queryBuilder ? this.queryBuilder.setLayer(this.layers[this.attributeLayer]) : when(null);
+
+            this.showLoadingSpinnerWhile(allPromise([
+                queryBuilderPromise,
+                this.loadBasicAttributeQuerySelect()
+            ]));
+        },
+
+        loadBasicAttributeQuerySelect: function () {
+            var layer = this.layers[this.attributeLayer];
+            if (!layer || !layer.attributeSearches) {
+                return when(null);
+            }
+
+            domStyle.set(this.divAttributeQuerySelect, 'display', 'none');
+            this.selectAttributeQuery.set('value', null);
+            this.selectAttributeQuery.set('options', null);
+
+            if (!layer.attributeSearches || layer.attributeSearches.length === 0) {
+                return when(null);
+            }
+
+            var options = layer.attributeSearches.map(function (search, i) {
+                var option = {
+                    value: i,
+                    label: search.name
+                };
+                if (i === 0) {
+                    option.selected = true;
+                }
+                return option;
+            });
+
+            this.selectAttributeQuery.set('options', options);
+            this.selectAttributeQuery.set('disabled', false);
+            this.selectAttributeQuery.set('value', 0);
+            return this.onAttributeQueryChange(0).then(lang.hitch(this, function () {
+                if (options.length > 1) {
+                    domStyle.set(this.divAttributeQuerySelect, 'display', 'block');
+                }
+            }));
+        },
+
+        showLoadingSpinnerWhile: function (fn) {
+            this.loadingCount += 1;
+            domStyle.set(this.divLoadingSpinner, 'display', 'block');
+            domStyle.set(this.divSearchBody, 'display', 'none');
+
+            if (typeof(fn) === 'function') {
+                fn = fn();
+            }
+            return when(fn).then(lang.hitch(this, function () {
+                this.loadingCount -= 1;
+
+                if (this.loadingCount === 0) {
+                    domStyle.set(this.divLoadingSpinner, 'display', 'none');
+                    domStyle.set(this.divSearchBody, 'display', 'block');
+                }
+            }));
+        },
+
+        onAttributeQueryChange: function (newValue) {
+            // 'none' all of the query divs
+            var domNode = this.divAttributeQueryFields;
+            if (domNode) {
+                array.forEach(this.layers, function (layer) {
+                    if (!layer.attributeSearches) {
+                        return;
+                    }
+                    array.forEach(layer.attributeSearches, function (search) {
+                        var divNode = dom.byId(search.divName);
+                        if (divNode) {
+                            domStyle.set(search.divName, 'display', 'none');
+                        }
+                    });
+                });
+            }
+
+            // 'block' the query div and set the focus to the first widget
+            this.searchIndex = newValue;
+            var layer = this.layers[this.attributeLayer];
+            if (!layer || !layer.attributeSearches || !layer.attributeSearches[newValue]) {
+                return when(null);
+            }
+
+            var search = layer.attributeSearches[newValue];
+            if (!dom.byId(search.divName)) {
+                return when(null);
+            }
+
+            // refresh the controls if any require unique values
+
+            return allPromise(search.searchFields.map(lang.hitch(this, function (field, k) {
+                if (field.unique) {
+                    var queryParameters = lang.clone(layer.queryParameters);
+                    queryParameters.url = field.url || layer.queryParameters.url;
+                    var where = this.getWhereClauseForDistinctValues(field, search, layer);
+                    return this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
+                }
+                return when(null);
+            }))).then(lang.hitch(this, function () {
+                domStyle.set(search.divName, 'display', 'block');
+
+                // only show "Contains" checkbox for FindTasks
+                domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
+
+                // hide Advanced Search for FindTasks
+                domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', ((layer.findOptions) ? 'none' : 'block'));
+
+                // put focus on the first input field
+                var input = registry.byId(search.inputIds[0]);
+                if (input && input.domNode) {
+                    input.domNode.focus();
+                    this.btnAttributeSearch.set('disabled', false);
+                }
+            }));
+        },
+
+        /*
         onAttributeLayerChange: function (newValue) {
             this.attributeLayer = newValue;
             this.selectAttributeQuery.set('disabled', true);
@@ -1099,6 +1240,7 @@ define([
                 }
             }
         },
+        */
 
         getWhereClauseForDistinctValues: function (field, search, layer) {
             var where = layer.expression || '';
@@ -1123,15 +1265,37 @@ define([
          * @param {object} queryParameters Used to get the operational layer's url to be queried for unique values.
          * @param {string} fieldName The field name for which to retrieve unique values.
          * @param {boolean} includeBlankValue Whether to add a blank (null) value to the resulting list.
+         * @param {string} expression The where expression with which to filter the query.
          */
-        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue, where) {
+        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue, expression) {
             var url = this.getLayerURL(queryParameters);
-            if (url) {
-                var q = new GetDistinctValues(inputId, url, fieldName, includeBlankValue, where);
-                q.executeQuery();
-            }
-        },
 
+            var q = new GetDistinctValues(url, fieldName, expression);
+            q.executeQuery()
+            .then(function (results) {
+                var options = [];
+                if (includeBlankValue) {
+                    options.push({
+                        label: '&nbsp;',
+                        value: null,
+                        selected: false
+                    });
+                }
+                options = options.concat(array.map(results, function (value) {
+                    return {
+                        label: value,
+                        value: value,
+                        selected: false
+                    };
+                }));
+                var input = registry.byId(inputId);
+                input.set('options', options);
+                if (options.length > 0) {
+                    options[0].selected = true;
+                    input.set('value', 0);
+                }
+            });
+        },
         getLayerURL: function (qp) {
             var url = qp.url;
             if (!url && qp.layerID) {
@@ -1152,7 +1316,21 @@ define([
         },
 
         doAttributeSearch: function () {
-            this.search(null, this.attributeLayer);
+            if (this.isAdvancedSearch) {
+                this.doAdvancedSearch();
+            } else {
+                this.search(null, this.attributeLayer);
+            }
+        },
+
+        doAdvancedSearch: function () {
+            var where = this.queryBuilder.toSQL();
+            if (!where) {
+                return;
+            }
+            this.search(null, this.attributeLayer, {
+                where: where.sql
+            });
         },
 
         initSpatialFilters: function () {
@@ -1214,6 +1392,44 @@ define([
 
         onSpatialBufferChange: function () {
             this.addBufferGraphic();
+        },
+
+        /*******************************
+        *  Advanced Search Functions
+        *******************************/
+
+        setAdvancedSearch: function (advanced) {
+            this.isAdvancedSearch = advanced;
+
+            domStyle.set(this.btnAdvancedSwitch.domNode, 'display', this.isAdvancedSearch ? 'none' : 'block');
+            domStyle.set(this.divBasicSearchBody, 'display', this.isAdvancedSearch ? 'none' : 'block');
+
+            domStyle.set(this.btnBasicSwitch.domNode, 'display', this.isAdvancedSearch ? 'block' : 'none');
+            domStyle.set(this.divAdvancedSearchBody, 'display', this.isAdvancedSearch ? 'block' : 'none');
+        },
+
+        toggleAdvancedSearch: function () {
+            this.setAdvancedSearch(!this.isAdvancedSearch);
+        },
+
+        doExportSQL: function () {
+            domAttr.set(this.sqlImportExportDialogTitle, 'textContent', this.i18n.Labels.exportDialogTitle);
+            this.sqlImportExportTextbox.set('disabled', true);
+            this.sqlImportExportTextbox.set('value', this.queryBuilder.toSQL().sql);
+            this.sqlImportExportDialog.show();
+            domStyle.set(this.searchAdvancedImportDialogBtn, 'display', 'none');
+        },
+
+        doShowImportSQLDialog: function () {
+            domAttr.set(this.sqlImportExportDialogTitle, 'textContent', this.i18n.Labels.importDialogTitle);
+            this.sqlImportExportTextbox.set('disabled', false);
+            this.sqlImportExportTextbox.set('value', '');
+            this.sqlImportExportDialog.show();
+            domStyle.set(this.searchAdvancedImportDialogBtn, 'display', 'block');
+        },
+        doImportSQL: function () {
+            this.queryBuilder.fromSQL(this.sqlImportExportTextbox.get('value'));
+            this.sqlImportExportDialog.hide();
         },
 
         /*******************************

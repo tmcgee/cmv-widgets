@@ -2,9 +2,9 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
-    'dijit/registry',
     'dojo/_base/array',
     'dojo/topic',
+    'dojo/Deferred',
 
     'esri/tasks/query',
     'esri/tasks/QueryTask'
@@ -12,9 +12,9 @@ define([
 ], function (
     declare,
     lang,
-    registry,
     arrayUtil,
     topic,
+    Deferred,
 
     Query,
     QueryTask
@@ -22,27 +22,22 @@ define([
 
     return declare(null, {
 
-        registryId: null,
         url: null,
         fieldName: null,
 
         /**
          * @constructor
-         * @param {string} registryId The Dojo id of the control to populate with unique values.
          * @param {string} url The URL to the ArcGIS Server REST resource that represents a map service layer.
          * @param {string} fieldName The field name for which to retrieve unique values.
-         * @param {boolean} includeBlankValue Whether to include a blank value.
-         * @param {string} where An optional where clause to filter the results..
+         * @param {string} where The where expression with which to filter the query.
          */
-        constructor: function (registryId, url, fieldName, includeBlankValue, where) {
-            this.registryId = registryId;
+        constructor: function (url, fieldName, where) {
             this.url = url;
             this.fieldName = fieldName;
-            this.includeBlankValue = includeBlankValue || false;
-            this.where = where || null;
-
-            var input = registry.byId(this.registryId);
-            input.set('disabled', true);
+            if (!where) {
+                where = '1=1';
+            }
+            this.where = where;
         },
 
         /**
@@ -50,42 +45,25 @@ define([
          * @return {void}
          */
         executeQuery: function () {
+            var deferred = new Deferred();
+
             var queryTask = new QueryTask(this.url);
             var query = new Query();
             query.outFields = [this.fieldName];
             query.orderByFields = [this.fieldName];
             query.returnDistinctValues = true;
             query.returnGeometry = false;
-            query.where = this.where || '1=1';
+            query.where = this.where;
 
-            // exclude null values
-            query.where += ' AND (' + this.fieldName + ' IS NOT NULL)';
-
-            queryTask.on('complete', lang.hitch(this, function (results) {
-                var featureSet = results.featureSet,
-                    options = [];
-                if (this.includeBlankValue) {
-                    options.push({
-                        label: '&nbsp;',
-                        value: null,
-                        selected: false
-                    });
-                }
+            queryTask.on('complete', lang.hitch(this, function (records) {
+                var featureSet = records.featureSet,
+                    results = [];
                 if (featureSet.features) {
                     if (featureSet.features.length > 0) {
-                        arrayUtil.forEach(featureSet.features, function (feature) {
-                            options.push({
-                                label: feature.attributes[this.fieldName].toString(),
-                                value: feature.attributes[this.fieldName].toString(),
-                                selected: false
-                            });
+                        results = arrayUtil.map(featureSet.features, function (feature) {
+                            return feature.attributes[this.fieldName];
                         }, this);
-                        if (options.length > 0) {
-                            options[0].selected = true;
-                        }
-                        var input = registry.byId(this.registryId);
-                        input.set('options', options);
-                        input.set('disabled', false);
+                        deferred.resolve(results);
                     }
                 }
             }));
@@ -95,9 +73,11 @@ define([
                 topic.publish('viewer/handleError', {
                     error: error
                 });
+                deferred.reject(error);
             }));
 
             queryTask.execute(query);
+            return deferred;
         }
     });
 });
