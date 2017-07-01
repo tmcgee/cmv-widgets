@@ -124,23 +124,18 @@ define([
 
                     var defaultToCaseInsensitive = false;
                     var advancedSearchOptions = search.advancedSearchOptions;
-                    if (advancedSearchOptions) {
-                        if (advancedSearchOptions.defaultToCaseInsensitive) {
-                            defaultToCaseInsensitive = true;
-                        }
-                        if (advancedSearchOptions.fields && advancedSearchOptions.fields.length) {
-                            array.forEach(advancedSearchOptions.fields, function (field) {
-                                if (field.id) {
-                                    this._fields[field.id] = lang.clone(field);
-                                }
-                            }, this);
-                        }
+                    if (advancedSearchOptions.defaultToCaseInsensitive) {
+                        defaultToCaseInsensitive = true;
+                    }
+                    if (advancedSearchOptions.fields && advancedSearchOptions.fields.length) {
+                        array.forEach(advancedSearchOptions.fields, function (field) {
+                            if (field.id) {
+                                this._fields[field.id] = lang.clone(field);
+                            }
+                        }, this);
                     }
 
-                    if (!advancedSearchOptions ||
-                        !advancedSearchOptions.fields ||
-                        advancedSearchOptions.fetchAllFields
-                       ) {
+                    if (!advancedSearchOptions.fields || advancedSearchOptions.fetchAllFields) {
                         return this._fetchAllFields().then(lang.hitch(this, function (esriFields) {
                             array.forEach(esriFields, function (f) {
                                 var parsed = this._parseESRIField(f);
@@ -588,6 +583,11 @@ define([
             }
 
             var search = layer.attributeSearches[searchIndex];
+
+            if (!this.checkAdvancedSearchEnabled(layer, search)) {
+                return when(null);
+            }
+
             var advancedSearchOptions = lang.clone(search.advancedSearchOptions || layer.advancedSearchOptions || {});
             var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
             var where = this.getDefaultWhereClause(layer, search);

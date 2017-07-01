@@ -127,7 +127,6 @@ define([
         title: 'Search Results',
         topicID: 'searchResults',
         attributesContainerID: 'attributesContainer',
-        queryBuilderTopicID: 'queryBuilderWidget',
 
         shapeLayer: 0,
         attributeLayer: 0,
@@ -159,7 +158,7 @@ define([
             Search capabilities that can be enabled/disabled
             individually in the configuration file.
         */
-        enableQueryBuilder: false, //Query Builder widget not yet released
+        enableAdvancedSearch: false,
         enableDrawMultipleShapes: true,
         enableAddToExistingResults: true,
         enableSpatialFilters: true,
@@ -997,6 +996,10 @@ define([
         },
 
         initAdvancedFeatures: function () {
+
+            // allow or not the Advanced Attributes Search
+            this.checkAdvancedSearchEnabled();
+
             // allow or not the drawing multiple shapes before searching
             if (!this.enableDrawMultipleShapes) {
                 domStyle.set(this.btnSpatialSearch.domNode, 'display', 'none');
@@ -1111,7 +1114,7 @@ define([
                 return when(null);
             }
 
-            var queryBuilderPromise = this.getQueryBuilder(newValue);
+            var queryBuilderPromise = this.getQueryBuilder();
 
             // refresh the controls if any require unique values
             return allPromise(
@@ -1134,11 +1137,7 @@ define([
                 // only show "Contains" checkbox for FindTasks
                 domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
 
-                // hide Advanced Search for FindTasks
-                domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', ((layer.findOptions) ? 'none' : 'block'));
-                if (layer.findOptions) {
-                    this.toggleAdvancedSearch(false);
-                }
+                this.checkAdvancedSearchEnabled(layer, search);
 
                 // put focus on the first input field
                 var input = registry.byId(search.inputIds[0]);
@@ -1223,7 +1222,7 @@ define([
         },
 
         doAttributeSearch: function () {
-            if (this.isAdvancedSearch) {
+            if (this.enableAdvancedSearch && this.isAdvancedSearch) {
                 this.doAdvancedSearch();
             } else {
                 this.search(null, this.attributeLayer);
@@ -1317,6 +1316,39 @@ define([
 
         toggleAdvancedSearch: function () {
             this.setAdvancedSearch(!this.isAdvancedSearch);
+        },
+
+        checkAdvancedSearchEnabled: function (layer, search) {
+            var enabled = this.enableAdvancedSearch;
+            if (layer && layer.enableAdvancedSearch === false) {
+                enabled = false;
+            } else if (layer && layer.findOptions) {
+                enabled = false;
+            } else if (search && search.enableAdvancedSearch === false) {
+                enabled = false;
+            } else if (layer && search) {
+                var advancedSearchOptions = search.advancedSearchOptions || layer.advancedSearchOptions || {};
+                if (advancedSearchOptions.enabled === false) {
+                    enabled = false;
+                }
+            }
+            if (enabled) {
+                this.showAdvancedSearch();
+            } else {
+                this.hideAdvancedSearch();
+            }
+            return enabled;
+        },
+
+        showAdvancedSearch: function () {
+            if (this.enableAdvancedSearch) {
+                domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', 'block');
+            }
+        },
+
+        hideAdvancedSearch: function () {
+            domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', 'none');
+            this.setAdvancedSearch(false);
         },
 
         doExportSQL: function () {

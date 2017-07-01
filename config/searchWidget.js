@@ -41,6 +41,8 @@ define([
             valueParameter: 'NAME'
         },
 
+        enableAdvancedSearch: true,
+
         layers: [
             {
                 name: 'Damage Assessment',
@@ -252,6 +254,8 @@ define([
                             url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer/2',
                             outFields: ['*']
                         },
+                        enableAdvancedSearch: false,
+
                         searchFields: [
                             {
                                 name: 'PDNAME',
