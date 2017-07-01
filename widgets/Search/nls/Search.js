@@ -14,6 +14,9 @@ define({
             tabTitleByShape: 'By Shape',
             exactMatches: 'Find exact matches only',
 
+            importDialogTitle: 'Import Query',
+            exportDialogTitle: 'Export Query',
+
             // used for "Spatial Filters"
             spatialFilters: {
                 entireMap: 'Entire Map (No Filter)',
@@ -28,10 +31,6 @@ define({
         Buttons: {
             search: {
                 label: 'Search',
-                showLabel: true
-            },
-            openQueryBuilder: {
-                label: 'Query Builder',
                 showLabel: true
             },
             stopDrawing: {
@@ -72,6 +71,22 @@ define({
             },
             selectBySelected: {
                 label: 'Select By Selected Feature(s)',
+                showLabel: false
+            },
+            switchToBasic: {
+                label: 'Switch to Basic Search',
+                showLabel: true
+            },
+            switchToAdvanced: {
+                label: 'Switch to Advanced Search',
+                showLabel: true
+            },
+            importSQL: {
+                label: 'Import',
+                showLabel: false
+            },
+            exportSQL: {
+                label: 'Export',
                 showLabel: false
             }
         }

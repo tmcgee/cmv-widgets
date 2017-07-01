@@ -18,7 +18,15 @@
             }, {
                 name: 'proj4js',
                 location: '//cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15'
+            },
+
+            // jquery is only required for the Advanced Search in Search widget
+            {
+                name: 'jquery',
+                location: '//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1',
+                main: 'jquery.slim.min'
             }
+            // end jquery
         ]
     };
 

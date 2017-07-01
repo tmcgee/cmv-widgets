@@ -138,9 +138,9 @@ define([
         // enable/disable menu options based on the current result features available
         enableMenuItems: function () {
             var feat = this.features;
-            var store = this.grid.get('store');
+            var coll = this.grid.get('collection');
 
-            var disabled = ((feat && feat.length > 0) || (store.data && store.data.length > 0)) ? false : true;
+            var disabled = ((feat && feat.length > 0) || (coll.data && coll.data.length > 0)) ? false : true;
             this.attributesTableExportButton.set('disabled', disabled);
             this.attributesTableZoomDropDownButton.set('disabled', disabled);
             this.attributesTableClearDropDownButton.set('disabled', disabled);

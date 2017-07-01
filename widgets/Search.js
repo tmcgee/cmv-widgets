@@ -5,6 +5,8 @@ define([
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
 
+    './Search/QueryBuilder/QueryBuilderMixin',
+
     'dojo/_base/lang',
     'dojo/on',
     'dojo/dom-style',
@@ -14,11 +16,21 @@ define([
     'dojo/_base/array',
     'dojo/dom',
     'dojo/dom-construct',
+    'dojo/dom-attr',
     'dijit/registry',
     'dojo/io-query',
 
+    'dojo/when',
+    'dojo/promise/all',
+
     'dijit/form/Select',
     'dijit/form/TextBox',
+    'dijit/form/SimpleTextarea',
+    'dijit/form/DateTextBox',
+    'dijit/form/TimeTextBox',
+    'dijit/form/NumberTextBox',
+    'dijit/form/CurrencyTextBox',
+    'dijit/form/NumberSpinner',
 
     'esri/toolbars/draw',
     'esri/tasks/query',
@@ -43,9 +55,6 @@ define([
     'dijit/layout/LayoutContainer',
     'dijit/layout/ContentPane',
     'dijit/layout/TabContainer',
-    'dijit/form/Select',
-    'dijit/form/TextBox',
-    'dijit/form/NumberTextBox',
     'dijit/form/Button',
     'dijit/form/CheckBox',
     'dijit/form/ToggleButton',
@@ -60,20 +69,32 @@ define([
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
 
+    _QueryBuilderMixin,
+
     lang,
     on,
     domStyle,
     aspect,
     topic,
     keys,
-    arrayUtil,
+    array,
     dom,
     domConstruct,
+    domAttr,
     registry,
     ioQuery,
 
+    when,
+    allPromise,
+
     Select,
     TextBox,
+    SimpleTextarea,
+    DateTextBox,
+    TimeTextBox,
+    NumberTextBox,
+    CurrencyTextBox,
+    NumberSpinner,
 
     Draw,
     Query,
@@ -92,7 +113,7 @@ define([
     i18n
 ) {
 
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, _QueryBuilderMixin], {
         name: 'Search',
         baseClass: 'cmvSearchWidget',
         widgetsInTemplate: true,
@@ -106,11 +127,14 @@ define([
         title: 'Search Results',
         topicID: 'searchResults',
         attributesContainerID: 'attributesContainer',
-        queryBuilderTopicID: 'queryBuilderWidget',
 
         shapeLayer: 0,
         attributeLayer: 0,
+        searchIndex: 0,
         drawToolbar: null,
+
+        isAdvancedSearch: false,
+        loadingCount: 0,
 
         // to override the default tab when the widget starts
         defaultTab: 0,
@@ -134,7 +158,7 @@ define([
             Search capabilities that can be enabled/disabled
             individually in the configuration file.
         */
-        enableQueryBuilder: false, //Query Builder widget not yet released
+        enableAdvancedSearch: false,
         enableDrawMultipleShapes: true,
         enableAddToExistingResults: true,
         enableSpatialFilters: true,
@@ -322,6 +346,8 @@ define([
 
             // Search from the applications query string
             this.checkQueryString();
+
+            this.setAdvancedSearch(false);
         },
 
         addTopics: function () {
@@ -344,32 +370,18 @@ define([
             }
         },
 
-        search: function (geometry, layerIndex) {
-            if (!this.layers) {
-                return;
-            }
-            if (this.layers.length === 0) {
+        search: function (geometry, layerIndex, advancedQuery) {
+            if (!this.layers || this.layers.length === 0) {
                 return;
             }
 
             var layer = this.layers[layerIndex];
             var search = layer.attributeSearches[this.searchIndex] || {};
-            var searchOptions = {
-                title: search.title || layer.title || this.title,
-                topicID: search.topicID || layer.topicID || this.topicID,
-                findOptions: null,
-                queryOptions: null,
-                gridOptions: lang.clone(search.gridOptions || layer.gridOptions || {}),
-                featureOptions: lang.clone(search.featureOptions || layer.featureOptions || {}),
-                symbolOptions: lang.clone(search.symbolOptions || layer.symbolOptions || {}),
-                toolbarOptions: lang.clone(search.toolbarOptions || layer.toolbarOptions || {}),
-                infoTemplates: lang.clone(search.infoTemplates || layer.infoTemplates || {})
-            };
-
+            var searchOptions = this.buildSearchOptions(layer, search, advancedQuery);
             if (layer.findOptions) { // It is a FindTask
                 searchOptions.findOptions = this.buildFindOptions(layer, search);
             } else {
-                searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry);
+                searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry, advancedQuery);
             }
 
             this.hideInfoWindow();
@@ -381,7 +393,27 @@ define([
 
         },
 
-        buildQueryOptions: function (layer, search, geometry) {
+        buildSearchOptions: function (layer, search, advancedQuery) {
+            var gridOptions = lang.clone(search.gridOptions || layer.gridOptions || {});
+            var featureOptions = lang.clone(search.featureOptions || layer.featureOptions || {});
+            var symbolOptions = lang.clone(search.symbolOptions || layer.symbolOptions || {});
+            var toolbarOptions = lang.clone(search.toolbarOptions || layer.toolbarOptions || {});
+            var infoTemplates = lang.clone(search.infoTemplates || layer.infoTemplates || {});
+
+            return {
+                title: search.title || layer.title || this.title,
+                topicID: search.topicID || layer.topicID || this.topicID,
+                findOptions: null,
+                queryOptions: advancedQuery || null,
+                gridOptions: gridOptions,
+                featureOptions: featureOptions,
+                symbolOptions: symbolOptions,
+                toolbarOptions: toolbarOptions,
+                infoTemplates: infoTemplates
+            };
+        },
+
+        buildQueryOptions: function (layer, search, geometry, advancedQuery) {
             var where, distance, unit, showOnly = false, addToExisting = false;
             var queryOptions = {
                 idProperty: search.idProperty || layer.idProperty || 'FID',
@@ -405,7 +437,7 @@ define([
                 addToExisting = this.checkSpatialAddToExisting.get('checked');
 
             } else {
-                where = this.buildWhereClause(layer, search);
+                where = this.buildWhereClause(layer, search, advancedQuery);
                 if (where === null) {
                     return null;
                 }
@@ -451,16 +483,31 @@ define([
             });
         },
 
-        buildWhereClause: function (layer, search) {
-            var where = layer.expression || '';
+        buildWhereClause: function (layer, search, advancedQuery) {
             var fields = search.searchFields;
             var searchTerm = null;
+            var where = this.getDefaultWhereClause(layer, search);
+            if (advancedQuery && advancedQuery.where) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where = where + '(' + advancedQuery.where + ')';
+                return where;
+            }
 
             var len = fields.length;
             for (var k = 0; k < len; k++) {
                 var field = fields[k];
                 var inputId = search.inputIds[k];
                 var input = registry.byId(inputId);
+
+                if (field.where) {
+                    if (where !== '') {
+                        where += ' AND ';
+                    }
+                    where += '(' + field.where + ')';
+                }
+
                 searchTerm = this.getSearchTerm(input, field);
                 if (searchTerm === null) {
                     return null;
@@ -476,6 +523,10 @@ define([
                     where += attrWhere;
                 }
             }
+            if (where.length === 0) {
+                where = '1=1';
+            }
+
             return where;
         },
 
@@ -548,10 +599,43 @@ define([
         },
 
         getSearchTerm: function (input, field) {
-            //var searchTerm = this['inputSearchTerm' + idx].get('value');
-            var searchTerm = input.get('value');
-            if (!searchTerm && field.required) {
-                //this['inputSearchTerm' + idx].domNode.focus();
+            if (input.isValid && !input.isValid()) {
+                topic.publish('growler/growl', {
+                    title: 'Search',
+                    message: 'Invalid value for ' + field.name + '.',
+                    level: 'error',
+                    timeout: 3000
+                });
+                return null;
+            }
+
+            var value = input.get('value'), searchTerm = '';
+            switch (field.type) {
+            case 'date':
+            case 'time':
+            case 'number':
+            case 'currency':
+            case 'numberspinner':
+                value = input.toString();
+                if (field.format) {
+                    searchTerm = input.format(value);
+                } else {
+                    searchTerm = value;
+                }
+                break;
+
+            default:
+                if (lang.isArray(value)) {
+                    searchTerm = value.join('\', \'');
+                }
+                searchTerm = value;
+                if (searchTerm === '*' || searchTerm === null) {
+                    searchTerm = '';
+                }
+                break;
+            }
+
+            if (searchTerm === '' && field.required) {
                 input.domNode.focus();
 
                 topic.publish('growler/growl', {
@@ -574,9 +658,7 @@ define([
                     return null;
                 }
             }
-            if (searchTerm === '*' || searchTerm === null) {
-                searchTerm = '';
-            }
+
             return searchTerm;
         },
 
@@ -697,6 +779,7 @@ define([
                             for (var j = 0; j < searches.length; j++) {
                                 var search = searches[j];
                                 if (search) {
+                                    var firstSearch = ((i === 0) && (j === 0));
                                     // add the div for the search
                                     var id = '_' + i.toString() + '_' + j.toString();
                                     var divName = 'divSearch' + id;
@@ -706,8 +789,8 @@ define([
                                             display: 'none'
                                         }
                                     }, domNode, 'last');
-                                    // display the first search
-                                    if ((i === 0) && (j === 0)) {
+                                    // display the first search for the first layer
+                                    if (firstSearch) {
                                         domStyle.set(divName, 'display', 'block');
                                     }
                                     search.divName = divName;
@@ -715,7 +798,7 @@ define([
 
                                     // add the controls for the search
                                     for (var k = 0; k < search.searchFields.length; k++) {
-                                        this.buildSearchControl(search, layer, divNode, id, i, j, k);
+                                        this.buildSearchControl(search, layer, divNode, id, k, firstSearch);
                                     }
                                     //this.initialized = true;
                                 }
@@ -726,74 +809,159 @@ define([
             }
         },
 
-        buildSearchControl: function (search, layer, divNode, id, i, j, k) {
+        buildSearchControl: function (search, layer, divNode, id, k, firstSearch) {
             var field = search.searchFields[k];
-            var options = [], input = null;
+            var inputId = 'inputSearch_' + id + '_' + k.toString();
+
             if (field) {
-                var txt = field.label + ':';
-                if (field.minChars) {
-                    txt += ' (at least ' + field.minChars + ' chars)';
-                }
-                domConstruct.create('label', {
-                    innerHTML: txt
+                var fieldNode = domConstruct.create('div', {
+                    className: 'searchField'
                 }, divNode, 'last');
 
-                var inputId = 'inputSearch_' + id + '_' + k.toString();
-                if (field.unique) {
-                    options = [];
-                    input = new Select({
-                        id: inputId,
-                        options: options,
-                        style: {
-                            width: '100%'
-                        }
-                    });
-                    // should actually only do this for the first control
-                    if ((i === 0) && (j === 0)) {
-                        var queryParameters = lang.clone(layer.queryParameters);
-                        queryParameters.url = field.url || layer.queryParameters.url;
-                        this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, field.where);
-                    }
-                } else if (field.values) {
-                    options = [];
-                    arrayUtil.forEach(field.values, function (item) {
-                        options.push({
-                            label: item,
-                            value: item,
-                            selected: false
-                        });
-                    });
-                    if (options.length > 0) {
-                        options[0].selected = true;
-                    }
-                    input = new Select({
-                        id: inputId,
-                        options: options,
-                        style: {
-                            width: '100%'
-                        }
-                    });
-                } else {
-                    input = new TextBox({
-                        id: inputId,
-                        type: 'text',
-                        style: {
-                            width: '100%'
-                        }
-                    });
-                    input.set('value', '');
-                    input.set('placeHolder', field.placeholder);
-                }
+                this.buildSearchControlLabel(field, search, layer, fieldNode);
 
-                if (input) {
-                    input.placeAt(divNode, 'last');
-                    this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+                if (field.unique || field.values) {
+                    this.buildSearchControlSelect(field, search, layer, fieldNode, inputId, firstSearch);
+                } else {
+                    this.buildSearchControlInput(field, search, layer, fieldNode, inputId);
                 }
 
                 // the first input field is for focus
                 search.inputIds.push(inputId);
             }
 
+        },
+
+        buildSearchControlLabel: function (field, search, layer, fieldNode) {
+            var labelWidth = field.labelWidth || layer.labelWidth || null;
+            if (typeof(labelWidth) === 'number') {
+                labelWidth += 'px';
+            }
+
+            var txt = field.label + ':';
+            var title = field.label;
+            if (field.minChars) {
+                title = 'Enter at least ' + field.minChars + ' characters';
+            }
+
+            domConstruct.create('div', {
+                innerHTML: txt,
+                className: 'searchFieldLabel',
+                title: title,
+                style: {
+                    width: labelWidth
+                }
+
+            }, fieldNode, 'last');
+
+        },
+
+        buildSearchControlSelect: function (field, search, layer, fieldNode, inputId, firstSearch) {
+            var input,
+                style = field.style || layer.style || null,
+                fieldWidth = field.width || layer.fieldWidth || '99%',
+                fieldHeight = field.height || layer.fieldHeight || 'inherit',
+                options = [];
+
+            if (typeof(fieldWidth) === 'number') {
+                fieldWidth += 'px';
+            }
+            if (typeof(fieldHeight) === 'number') {
+                fieldHeight += 'px';
+            }
+
+            if (field.values) {
+                array.forEach(field.values, function (item) {
+                    if (typeof(item) === 'string') {
+                        options.push({
+                            label: item,
+                            value: item,
+                            selected: false
+                        });
+                    } else {
+                        options.push(item);
+                    }
+                });
+                if (options.length > 0) {
+                    options[0].selected = true;
+                }
+            }
+
+            input = new Select({
+                id: inputId,
+                options: options,
+                style: style || {
+                    height: fieldHeight,
+                    width: fieldWidth
+                }
+            });
+
+            if (input) {
+                input.placeAt(fieldNode, 'last');
+            }
+
+            // only do this for the first search for the first layer
+            if (field.type === 'unique' && firstSearch) {
+                var queryParameters = lang.clone(layer.queryParameters);
+                queryParameters.url = field.url || layer.queryParameters.url;
+                var where = this.getDefaultWhereClause(layer, search, field);
+                this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, where);
+            }
+        },
+
+        buildSearchControlInput: function (field, search, layer, fieldNode, inputId) {
+            var input,
+                style = field.style || layer.style || null,
+                fieldWidth = field.width || layer.fieldWidth || '99%',
+                fieldHeight = field.height || layer.fieldHeight || 'inherit';
+
+            if (typeof(fieldWidth) === 'number') {
+                fieldWidth += 'px';
+            }
+            if (typeof(fieldHeight) === 'number') {
+                fieldHeight += 'px';
+            }
+
+            var options = {
+                id: inputId,
+                constraints: field.constraints || {},
+                value: field.defaultValue,
+                placeHolder: field.placeholder,
+                style: style || {
+                    height: fieldHeight,
+                    width: fieldWidth
+                }
+            };
+
+            switch (field.type) {
+            case 'date':
+                input = new DateTextBox(options);
+                break;
+            case 'time':
+                input = new TimeTextBox(options);
+                break;
+            case 'number':
+                input = new NumberTextBox(options);
+                break;
+            case 'currency':
+                input = new CurrencyTextBox(options);
+                break;
+            case 'numberspinner':
+                options.smallDelta = field.smallDelta || 1;
+                input = new NumberSpinner(options);
+                break;
+            case 'textarea':
+                input = new SimpleTextarea(options);
+                break;
+            default:
+                input = new TextBox(options);
+                break;
+            }
+
+            if (input) {
+                input.placeAt(fieldNode, 'last');
+                this.own(on(input, 'keyup', lang.hitch(this, 'executeSearchWithReturn')));
+            }
         },
 
         initLayerSelect: function () {
@@ -828,12 +996,9 @@ define([
         },
 
         initAdvancedFeatures: function () {
-            // show the queryBuilder button
-            if (this.enableQueryBuilder) {
-                this.btnQueryBuilder.set('disabled', false);
-            } else {
-                domStyle.set(this.btnQueryBuilder.domNode, 'display', 'none');
-            }
+
+            // allow or not the Advanced Attributes Search
+            this.checkAdvancedSearchEnabled();
 
             // allow or not the drawing multiple shapes before searching
             if (!this.enableDrawMultipleShapes) {
@@ -861,91 +1026,143 @@ define([
         onAttributeLayerChange: function (newValue) {
             this.attributeLayer = newValue;
             this.selectAttributeQuery.set('disabled', true);
-            var layer = this.layers[this.attributeLayer];
-            if (layer) {
-                this.selectAttributeQuery.set('value', null);
-                this.selectAttributeQuery.set('options', null);
-                var searches = layer.attributeSearches;
-                var options = [];
-                var len = searches.length;
-                for (var i = 0; i < len; i++) {
-                    var option = {
-                        value: i,
-                        label: searches[i].name
-                    };
-                    options.push(option);
-                    if (i === 0) {
-                        options[i].selected = true;
-                    }
-                }
-                if (len) {
-                    this.selectAttributeQuery.set('options', options);
-                    this.selectAttributeQuery.set('disabled', false);
-                    this.selectAttributeQuery.set('value', 0);
-                    this.onAttributeQueryChange(0);
 
-                    domStyle.set(this.divAttributeQuerySelect, 'display', (len > 1) ? 'block' : 'none');
-                }
+            this.showLoadingSpinnerWhile(allPromise([
+                this.loadBasicAttributeQuerySelect()
+            ]));
+        },
+
+        loadBasicAttributeQuerySelect: function () {
+            var layer = this.layers[this.attributeLayer];
+            if (!layer || !layer.attributeSearches) {
+                return when(null);
             }
+
+            domStyle.set(this.divAttributeQuerySelect, 'display', 'none');
+            this.selectAttributeQuery.set('value', null);
+            this.selectAttributeQuery.set('options', null);
+
+            if (!layer.attributeSearches || layer.attributeSearches.length === 0) {
+                return when(null);
+            }
+
+            var options = layer.attributeSearches.map(function (search, i) {
+                var option = {
+                    value: i,
+                    label: search.name
+                };
+                if (i === 0) {
+                    option.selected = true;
+                }
+                return option;
+            });
+
+            this.selectAttributeQuery.set('options', options);
+            this.selectAttributeQuery.set('disabled', false);
+            this.selectAttributeQuery.set('value', 0);
+            return this.onAttributeQueryChange(0).then(lang.hitch(this, function () {
+                if (options.length > 1) {
+                    domStyle.set(this.divAttributeQuerySelect, 'display', 'block');
+                }
+            }));
+        },
+
+        showLoadingSpinnerWhile: function (fn) {
+            this.loadingCount += 1;
+            domStyle.set(this.divLoadingSpinner, 'display', 'block');
+            domStyle.set(this.divSearchBody, 'display', 'none');
+
+            if (typeof(fn) === 'function') {
+                fn = fn();
+            }
+            return when(fn).then(lang.hitch(this, function () {
+                this.loadingCount -= 1;
+
+                if (this.loadingCount === 0) {
+                    domStyle.set(this.divLoadingSpinner, 'display', 'none');
+                    domStyle.set(this.divSearchBody, 'display', 'block');
+                }
+            }));
         },
 
         onAttributeQueryChange: function (newValue) {
             // 'none' all of the query divs
-            var domNode = this.divAttributeQueryFields,
-                searches, search, layer, divNode;
+            var domNode = this.divAttributeQueryFields;
             if (domNode) {
-                for (var i = 0; i < this.layers.length; i++) {
-                    layer = this.layers[i];
-                    if (layer) {
-                        searches = layer.attributeSearches;
-                        if (searches) {
-                            for (var j = 0; j < searches.length; j++) {
-                                search = searches[j];
-                                divNode = dom.byId(search.divName);
-                                if (divNode) {
-                                    domStyle.set(search.divName, 'display', 'none');
-                                }
-                            }
-                        }
+                array.forEach(this.layers, function (layer) {
+                    if (!layer.attributeSearches) {
+                        return;
                     }
-                }
+                    array.forEach(layer.attributeSearches, function (search) {
+                        var divNode = dom.byId(search.divName);
+                        if (divNode) {
+                            domStyle.set(search.divName, 'display', 'none');
+                        }
+                    });
+                });
             }
 
             // 'block' the query div and set the focus to the first widget
             this.searchIndex = newValue;
-            layer = this.layers[this.attributeLayer];
-            if (layer) {
-                searches = layer.attributeSearches;
-                if (searches) {
-                    search = searches[newValue];
-                    if (search) {
-                        divNode = dom.byId(search.divName);
-                        if (!divNode) {
-                            return;
-                        }
-                        // refresh the controls if any require unique values
-                        for (var k = 0; k < search.searchFields.length; k++) {
-                            var field = search.searchFields[k];
-                            if (field.unique) {
-                                var queryParameters = lang.clone(layer.queryParameters);
-                                queryParameters.url = field.url || layer.queryParameters.url;
-                                this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, field.where);
-                            }
-                        }
-                        domStyle.set(search.divName, 'display', 'block');
-
-                        // only show "Contains" checkbox for FindTasks
-                        domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
-
-                        // put focus on the first input field
-                        var input = registry.byId(search.inputIds[0]);
-                        if (input && input.domNode) {
-                            input.domNode.focus();
-                            this.btnAttributeSearch.set('disabled', false);
-                        }
-                    }
-                }
+            var layer = this.layers[this.attributeLayer];
+            if (!layer || !layer.attributeSearches || !layer.attributeSearches[newValue]) {
+                return when(null);
             }
+
+            var search = layer.attributeSearches[newValue];
+            if (!dom.byId(search.divName)) {
+                return when(null);
+            }
+
+            var queryBuilderPromise = this.getQueryBuilder();
+
+            // refresh the controls if any require unique values
+            return allPromise(
+                queryBuilderPromise,
+                search.searchFields.map(lang.hitch(this, function (field, k) {
+
+                    if (field.unique) {
+                        var queryParameters = lang.clone(search.queryParameters || layer.queryParameters || {});
+                        var where = this.getDefaultWhereClause(layer, search, field);
+                        if (field.url) {
+                            queryParameters.url = field.url;
+                        }
+                        return this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
+                    }
+                    return when(null);
+                }
+            ))).then(lang.hitch(this, function () {
+                domStyle.set(search.divName, 'display', 'block');
+
+                // only show "Contains" checkbox for FindTasks
+                domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
+
+                this.checkAdvancedSearchEnabled(layer, search);
+
+                // put focus on the first input field
+                var input = registry.byId(search.inputIds[0]);
+                if (input && input.domNode) {
+                    input.domNode.focus();
+                    this.btnAttributeSearch.set('disabled', false);
+                }
+            }));
+        },
+
+        getDefaultWhereClause: function (layer, search, field) {
+            var where = layer.expression || '';
+            if (search && search.expression) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where += '(' + search.expression + ')';
+            }
+            if (field && field.where) {
+                if (where !== '') {
+                    where += ' AND ';
+                }
+                where += '(' + field.where + ')';
+            }
+            return where;
         },
 
         /*
@@ -954,15 +1171,37 @@ define([
          * @param {object} queryParameters Used to get the operational layer's url to be queried for unique values.
          * @param {string} fieldName The field name for which to retrieve unique values.
          * @param {boolean} includeBlankValue Whether to add a blank (null) value to the resulting list.
+         * @param {string} expression The where expression with which to filter the query.
          */
-        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue, where) {
+        getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue, expression) {
             var url = this.getLayerURL(queryParameters);
-            if (url) {
-                var q = new GetDistinctValues(inputId, url, fieldName, includeBlankValue, where);
-                q.executeQuery();
-            }
-        },
 
+            var q = new GetDistinctValues(url, fieldName, expression);
+            q.executeQuery()
+            .then(function (results) {
+                var options = [];
+                if (includeBlankValue) {
+                    options.push({
+                        label: '&nbsp;',
+                        value: null,
+                        selected: false
+                    });
+                }
+                options = options.concat(array.map(results, function (value) {
+                    return {
+                        label: value,
+                        value: value,
+                        selected: false
+                    };
+                }));
+                var input = registry.byId(inputId);
+                input.set('options', options);
+                if (options.length > 0) {
+                    options[0].selected = true;
+                    input.set('value', 0);
+                }
+            });
+        },
         getLayerURL: function (qp) {
             var url = qp.url;
             if (!url && qp.layerID) {
@@ -983,7 +1222,21 @@ define([
         },
 
         doAttributeSearch: function () {
-            this.search(null, this.attributeLayer);
+            if (this.enableAdvancedSearch && this.isAdvancedSearch) {
+                this.doAdvancedSearch();
+            } else {
+                this.search(null, this.attributeLayer);
+            }
+        },
+
+        doAdvancedSearch: function () {
+            var where = this.queryBuilder.toSQL();
+            if (!where) {
+                return;
+            }
+            this.search(null, this.attributeLayer, {
+                where: where.sql
+            });
         },
 
         initSpatialFilters: function () {
@@ -1045,6 +1298,77 @@ define([
 
         onSpatialBufferChange: function () {
             this.addBufferGraphic();
+        },
+
+        /*******************************
+        *  Advanced Search Functions
+        *******************************/
+
+        setAdvancedSearch: function (advanced) {
+            this.isAdvancedSearch = advanced;
+
+            domStyle.set(this.btnAdvancedSwitch.domNode, 'display', this.isAdvancedSearch ? 'none' : 'block');
+            domStyle.set(this.divBasicSearchBody, 'display', this.isAdvancedSearch ? 'none' : 'block');
+
+            domStyle.set(this.btnBasicSwitch.domNode, 'display', this.isAdvancedSearch ? 'block' : 'none');
+            domStyle.set(this.divAdvancedSearchBody, 'display', this.isAdvancedSearch ? 'block' : 'none');
+        },
+
+        toggleAdvancedSearch: function () {
+            this.setAdvancedSearch(!this.isAdvancedSearch);
+        },
+
+        checkAdvancedSearchEnabled: function (layer, search) {
+            var enabled = this.enableAdvancedSearch;
+            if (layer && layer.enableAdvancedSearch === false) {
+                enabled = false;
+            } else if (layer && layer.findOptions) {
+                enabled = false;
+            } else if (search && search.enableAdvancedSearch === false) {
+                enabled = false;
+            } else if (layer && search) {
+                var advancedSearchOptions = search.advancedSearchOptions || layer.advancedSearchOptions || {};
+                if (advancedSearchOptions.enabled === false) {
+                    enabled = false;
+                }
+            }
+            if (enabled) {
+                this.showAdvancedSearch();
+            } else {
+                this.hideAdvancedSearch();
+            }
+            return enabled;
+        },
+
+        showAdvancedSearch: function () {
+            if (this.enableAdvancedSearch) {
+                domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', 'block');
+            }
+        },
+
+        hideAdvancedSearch: function () {
+            domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', 'none');
+            this.setAdvancedSearch(false);
+        },
+
+        doExportSQL: function () {
+            domAttr.set(this.sqlImportExportDialogTitle, 'textContent', this.i18n.Labels.exportDialogTitle);
+            this.sqlImportExportTextbox.set('disabled', true);
+            this.sqlImportExportTextbox.set('value', this.queryBuilder.toSQL().sql);
+            this.sqlImportExportDialog.show();
+            domStyle.set(this.searchAdvancedImportDialogBtn, 'display', 'none');
+        },
+
+        doShowImportSQLDialog: function () {
+            domAttr.set(this.sqlImportExportDialogTitle, 'textContent', this.i18n.Labels.importDialogTitle);
+            this.sqlImportExportTextbox.set('disabled', false);
+            this.sqlImportExportTextbox.set('value', '');
+            this.sqlImportExportDialog.show();
+            domStyle.set(this.searchAdvancedImportDialogBtn, 'display', 'block');
+        },
+        doImportSQL: function () {
+            this.queryBuilder.fromSQL(this.sqlImportExportTextbox.get('value'));
+            this.sqlImportExportDialog.hide();
         },
 
         /*******************************

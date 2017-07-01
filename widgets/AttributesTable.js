@@ -313,7 +313,9 @@ define([
             // this gets the columns to resize properly
             if (child.grid) {
                 var sort = child.grid.get('sort');
-                child.grid.sort(sort);
+                if (sort.length) {
+                    child.grid.set('sort', sort);
+                }
             }
 
         }

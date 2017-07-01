@@ -41,11 +41,14 @@ define([
             valueParameter: 'NAME'
         },
 
+        enableAdvancedSearch: true,
+
         layers: [
             {
                 name: 'Damage Assessment',
                 expression: '', // additional where expression applied to all queries
                 idProperty: 'objectid',
+                labelWidth: 110,
                 queryParameters: {
                     type: 'spatial', // spatial, relationship, table or database
                     layerID: 'DamageAssessment', // from operational layers
@@ -73,15 +76,14 @@ define([
                                 name: 'Inspector Name',
                                 label: 'Inspector Name',
                                 expression: '(inspector LIKE \'[value]%\')',
-                                placeholder: 'Enter the name Fred',
-                                required: true,
-                                minChars: 3
+                                width: 'calc(100% - 130px)'
                             },
                             {
                                 name: 'Type of Damage',
                                 label: 'Type of Damage',
                                 expression: '(typdamage LIKE \'[value]%\')',
-                                values: ['*', 'Destroyed', 'Major', 'Minor']
+                                values: ['*', 'Destroyed', 'Major', 'Minor'],
+                                width: 125
                             }
                         ],
 
@@ -129,7 +131,7 @@ define([
                             ],
                             sort: [
                                 {
-                                    attribute: 'incidentnm',
+                                    property: 'incidentnm',
                                     descending: 'ASC'
                                 }
                             ]
@@ -138,38 +140,45 @@ define([
                 ]
             },
             {
-                name: 'Hospitals',
+                name: 'Public Safety',
                 expression: '', // additional where expression applied to all queries
                 idProperty: 'OBJECTID',
-                queryParameters: {
-                    type: 'table', // spatial, relationship, table or database
-                    layerID: 'louisvillePubSafety', // from operational layers
-                    sublayerID: 5,
-                    outFields: ['*']
-                },
                 attributeSearches: [
                     {
-                        name: 'Search For Hospital',
+                        name: 'Hospitals',
+                        queryParameters: {
+                            type: 'table', // spatial, relationship, table or database
+                            layerID: 'louisvillePubSafety', // from operational layers
+                            sublayerID: 5,
+                            outFields: ['*']
+                        },
                         searchFields: [
                             {
                                 name: 'Hospital Name',
                                 label: 'Name',
                                 expression: '(NAME LIKE \'%[value]%\')',
-                                placeholder: 'Enter the name of the hospital',
                                 required: true,
-                                minChars: 3
+                                minChars: 3,
+                                defaultValue: 'Bap',
+                                width: 'calc(100% - 65px)'
                             },
                             {
                                 name: 'Total Admissions',
-                                label: 'Total Admissions >=',
+                                label: 'Admissions >=',
+                                type: 'numberspinner',
+                                constraints: {min: 0, max: 100000, places: 0},
+                                defaultValue: 0,
                                 expression: '(TOTALADM >= [value])',
-                                placeholder: 'Total Admissions >='
+                                width: 120
                             },
                             {
                                 name: 'Total Admissions',
-                                label: 'Total Admissions <=',
+                                label: 'Admissions <=',
+                                type: 'numberspinner',
                                 expression: '(TOTALADM <= [value])',
-                                placeholder: 'Total Admissions <='
+                                constraints: {min: 1, max: 99999, places: 0},
+                                defaultValue: 4000,
+                                width: 120
                             }
                         ],
 
@@ -232,33 +241,45 @@ define([
                             ],
                             sort: [
                                 {
-                                    attribute: 'NAME',
+                                    property: 'NAME',
                                     descending: 'ASC'
                                 }
                             ]
                         }
-                    }
-                ]
-            },
-            {
-                name: 'Police Stations',
-                expression: '', // additional where expression applied to all queries
-                queryParameters: {
-                    type: 'table', // spatial, relationship, table or database
-                    layerID: 'louisvillePubSafety', // from operational layers
-                    sublayerID: 2,
-                    outFields: ['*']
-                },
-                idProperty: 'OBJECTID',
-                attributeSearches: [
+                    },
                     {
-                        name: 'Search For Police Station By Name',
+                        name: 'Police Stations',
+                        queryParameters: {
+                            type: 'table', // spatial, relationship, table or database
+                            url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer/2',
+                            outFields: ['*']
+                        },
+                        enableAdvancedSearch: false,
+
                         searchFields: [
                             {
                                 name: 'PDNAME',
-                                label: 'Station Name',
+                                label: 'Station',
                                 expression: '(PDNAME = \'[value]\')',
-                                unique: true
+                                unique: true,
+                                includeBlankValue: true,
+                                width: 'calc(100% - 85px)'
+                            },
+                            {
+                                name: 'LASTUPDATE',
+                                label: 'Updated After',
+                                expression: '(LASTUPDATE >= date \'[value]\')',
+                                type: 'date',
+                                labelWidth: 110,
+                                width: 130
+                            },
+                            {
+                                name: 'LASTUPDATE',
+                                label: 'Updated Before',
+                                expression: '(LASTUPDATE <= date \'[value]\')',
+                                type: 'date',
+                                labelWidth: 110,
+                                width: 130
                             }
                         ],
 
@@ -282,7 +303,7 @@ define([
                                     width: 100
                                 },
                                 {
-                                    field: 'FUNCTION',
+                                    field: 'PDFUNCTION',
                                     label: 'Function',
                                     width: 100
                                 },
@@ -298,7 +319,7 @@ define([
                             ],
                             sort: [
                                 {
-                                    attribute: 'PDNAME',
+                                    property: 'PDNAME',
                                     descending: 'ASC'
                                 }
                             ]
@@ -323,7 +344,9 @@ define([
                                 expression: '[value]%\')',
                                 placeholder: 'fdname, pdname, name or resname',
                                 required: true,
-                                minChars: 3
+                                minChars: 3,
+                                height: 120,
+                                width: 'calc(100% - 65px)'
                             }
                         ],
 
@@ -358,7 +381,7 @@ define([
                             ],
                             sort: [
                                 {
-                                    attribute: 'Name',
+                                    property: 'Name',
                                     descending: false
                                 }
                             ]

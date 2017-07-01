@@ -1,40 +1,60 @@
 .cmvSearchWidget {
-    height: 490px;
-    min-width: 225px;
+    height: 585px;
 }
 
 .cmvSearchWidget .tabContainer {
     height: 100%;
-    width: 98%;
+    width: 100%;
 }
 
 .cmvSearchWidget .searchTab {
+    max-height: 530px;
+    width: 100%;
+    overflow-y: hidden;
     padding: 10px;
 }
 
-.cmvSearchWidget label {
-	font-weight: bold;
-	margin-left: 3px;
+.cmvSearchWidget label,
+.cmvSearchWidget .searchFieldLabel {
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
 }
-.cmvSearchWidget .dijitTextBox {
-	margin-bottom: 10px;
+
+.cmvSearchWidget .searchFieldLabel {
+    display: inline-block;
+    margin-top: 5px;
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
 }
 
 .cmvSearchWidget .searchSelector {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .cmvSearchWidget .searchFields {
-    max-height: 220px;
+    border: 1px solid #BBB;
+    border-radius: 4px;
+    height: 235px;
     overflow-x: hidden;
     overflow-y: auto;
+    padding-top: 5px;
 }
 
-.cmvSearchWidget .searchFields .dijitTextBox{
-    width: 98% !important;
+.cmvSearchWidget .searchContains {
+    border-bottom: 1px solid #CCC;
 }
 
-.cmvSearchWidget .bottomButtons {
+.cmvSearchWidget .searchField {
+    margin: 0 5px 10px 5px;
+}
+
+.cmvSearchWidget .searchContains {
+    padding: 0 0 10px 20px;
+}
+
+.cmvSearchWidget .centeredButtons {
     text-align: center;
 }
 
@@ -55,3 +75,39 @@
 .cmvSearchWidget .searchFeaturesIcon:hover {
 	background-color: #C0C0C0;
 }
+
+.cmvSearchWidget .query-builder .rules-group-container {
+    background-color: #F9F9F9;
+    border: 1px solid #BBB;
+    padding: 5px;
+}
+
+.cmvSearchWidget .query-builder > .rules-group-container {
+    background-color: inherit;
+    border-width: 0;
+    margin-top: 0;
+}
+
+.cmvSearchWidget .query-builder .rule-placeholder {
+    background-color: inherit;
+    padding: 0;
+}
+
+/*
+.cmvSearchWidget .advancedSearchImportExport {
+    float: right;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog {
+    text-align: center;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog textarea {
+    min-width: 300px;
+    width: auto;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog div[data-dojo-attach-point="searchAdvancedImportDialogBtn"] {
+    margin-top: 5px;
+}
+*/
