@@ -205,6 +205,52 @@ define([
                     sublayerID: 0,
                     outFields: ['*']
                 },
+                advancedSearchOptions: {
+                    defaultToCaseInsensitive: true,
+                    fetchAllFields: true,
+                    fields: [
+                        {
+                            field: 'name',
+                            type: 'string'
+                        },
+                        {
+                            field: 'county',
+                            type: 'string',
+                            unique: true
+                        },
+                        {
+                            field: 'state',
+                            type: 'string',
+                            options: [
+                                {
+                                    id: 'CA',
+                                    name: 'California'
+                                },
+                                {
+                                    id: 'IL',
+                                    name: 'Illinois'
+                                }
+                            ],
+                            multiple: false
+                        },
+                        {
+                            field: 'rating',
+                            type: 'integer',
+                            range: {
+                                min: 0,
+                                max: 10
+                            }
+                        },
+                        {
+                            field: 'temperature',
+                            type: 'double'
+                        },
+                        {
+                            field: 'startdate',
+                            type: 'date'
+                        }
+                    ]
+                },
                 attributeSearches: [
                     {
                         name: 'Search For Assessments',
