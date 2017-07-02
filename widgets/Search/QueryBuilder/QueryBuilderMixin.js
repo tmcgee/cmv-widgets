@@ -131,6 +131,7 @@ define([
                     }
                     if (advancedSearchOptions.fields && advancedSearchOptions.fields.length) {
                         array.forEach(advancedSearchOptions.fields, function (field) {
+                            field.id = field.id || field.field;
                             if (field.id) {
                                 this._fields[field.id] = lang.clone(field);
                             }

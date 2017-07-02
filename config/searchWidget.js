@@ -73,69 +73,21 @@ define([
                         name: 'Search For Assessments',
                         searchFields: [
                             {
-                                name: 'Inspector Name',
+                                field: 'Inspector Name',
                                 label: 'Inspector Name',
                                 expression: '(inspector LIKE \'[value]%\')',
                                 width: 'calc(100% - 130px)'
                             },
                             {
-                                name: 'Type of Damage',
+                                field: 'Type of Damage',
                                 label: 'Type of Damage',
                                 expression: '(typdamage LIKE \'[value]%\')',
                                 values: ['*', 'Destroyed', 'Major', 'Minor'],
                                 width: 125
                             }
                         ],
-
                         title: 'Assessments',
-                        topicID: 'assessmentsQuery',
-                        gridOptions: {
-                            columns: [
-                                {
-                                    field: 'incidentnm',
-                                    label: 'Name'
-                                },
-                                {
-                                    field: 'inspdate',
-                                    label: 'Inspected',
-                                    width: 150,
-                                    get: function (object) { // allow export as a proper date
-                                        return getDateTime(object.inspdate);
-                                    },
-                                    formatter: formatDateTime
-                                },
-                                {
-                                    field: 'inspector',
-                                    label: 'Inspector'
-                                },
-                                {
-                                    field: 'fulladdr',
-                                    label: 'Address'
-                                },
-                                {
-                                    field: 'pstlcity',
-                                    label: 'City'
-                                },
-                                {
-                                    field: 'typdamage',
-                                    label: 'Damage'
-                                },
-                                {
-                                    field: 'lastupdate',
-                                    label: 'Updated',
-                                    get: function (object) { // allow export as a proper date
-                                        return getDateTime(object.lastupdate);
-                                    },
-                                    formatter: formatDateTime
-                                }
-                            ],
-                            sort: [
-                                {
-                                    property: 'incidentnm',
-                                    descending: 'ASC'
-                                }
-                            ]
-                        }
+                        topicID: 'assessmentsQuery'
                     }
                 ]
             },
@@ -154,7 +106,7 @@ define([
                         },
                         searchFields: [
                             {
-                                name: 'Hospital Name',
+                                field: 'Hospital Name',
                                 label: 'Name',
                                 expression: '(NAME LIKE \'%[value]%\')',
                                 required: true,
@@ -163,7 +115,7 @@ define([
                                 width: 'calc(100% - 65px)'
                             },
                             {
-                                name: 'Total Admissions',
+                                field: 'Total Admissions',
                                 label: 'Admissions >=',
                                 type: 'numberspinner',
                                 constraints: {min: 0, max: 100000, places: 0},
@@ -172,7 +124,7 @@ define([
                                 width: 120
                             },
                             {
-                                name: 'Total Admissions',
+                                field: 'Total Admissions',
                                 label: 'Admissions <=',
                                 type: 'numberspinner',
                                 expression: '(TOTALADM <= [value])',
@@ -258,7 +210,7 @@ define([
 
                         searchFields: [
                             {
-                                name: 'PDNAME',
+                                field: 'PDNAME',
                                 label: 'Station',
                                 expression: '(PDNAME = \'[value]\')',
                                 unique: true,
@@ -266,7 +218,7 @@ define([
                                 width: 'calc(100% - 85px)'
                             },
                             {
-                                name: 'LASTUPDATE',
+                                field: 'LASTUPDATE',
                                 label: 'Updated After',
                                 expression: '(LASTUPDATE >= date \'[value]\')',
                                 type: 'date',
@@ -274,7 +226,7 @@ define([
                                 width: 130
                             },
                             {
-                                name: 'LASTUPDATE',
+                                field: 'LASTUPDATE',
                                 label: 'Updated Before',
                                 expression: '(LASTUPDATE <= date \'[value]\')',
                                 type: 'date',
@@ -339,7 +291,7 @@ define([
                         name: 'Search for Public Safety Locations By Name',
                         searchFields: [
                             {
-                                name: 'Name',
+                                field: 'Name',
                                 label: 'Name',
                                 expression: '[value]%\')',
                                 placeholder: 'fdname, pdname, name or resname',

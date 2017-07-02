@@ -611,10 +611,11 @@ define([
         },
 
         getSearchTerm: function (input, field) {
+            var fieldName = field.label || field.field || field.name;
             if (input.isValid && !input.isValid()) {
                 topic.publish('growler/growl', {
                     title: 'Search',
-                    message: 'Invalid value for ' + field.name + '.',
+                    message: 'Invalid value for ' + fieldName + '.',
                     level: 'error',
                     timeout: 3000
                 });
@@ -652,7 +653,7 @@ define([
 
                 topic.publish('growler/growl', {
                     title: 'Search',
-                    message: 'You must provide a search term for ' + field.name + '.',
+                    message: 'You must provide a search term for ' + fieldName + '.',
                     level: 'error',
                     timeout: 3000
                 });
@@ -663,7 +664,7 @@ define([
                     input.domNode.focus();
                     topic.publish('growler/growl', {
                         title: 'Search',
-                        message: 'Search term for ' + field.name + ' must be at least ' + field.minChars + ' characters.',
+                        message: 'Search term for ' + fieldName + ' must be at least ' + field.minChars + ' characters.',
                         level: 'error',
                         timeout: 3000
                     });
@@ -917,7 +918,8 @@ define([
                 var queryParameters = lang.clone(layer.queryParameters);
                 queryParameters.url = field.url || layer.queryParameters.url;
                 var where = this.getDefaultWhereClause(layer, search, field);
-                this.getDistinctValues(inputId, queryParameters, field.name, field.includeBlankValue, where);
+                var fieldName = field.field || field.name;
+                this.getDistinctValues(inputId, queryParameters, fieldName, field.includeBlankValue, where);
             }
         },
 
@@ -1139,7 +1141,8 @@ define([
                         if (field.url) {
                             queryParameters.url = field.url;
                         }
-                        return this.getDistinctValues(search.inputIds[k], queryParameters, field.name, field.includeBlankValue, where);
+                        var fieldName = field.field || field.name;
+                        return this.getDistinctValues(search.inputIds[k], queryParameters, fieldName, field.includeBlankValue, where);
                     }
                     return when(null);
                 }
