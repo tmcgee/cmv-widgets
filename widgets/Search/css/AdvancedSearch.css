@@ -1,0 +1,69 @@
+
+.cmvSearchWidget .query-builder .rules-group-container {
+    background-color: #F9F9F9;
+    border: 1px solid rgb(158, 158, 158);
+    padding: 5px;
+}
+
+.cmvSearchWidget .query-builder > .rules-group-container {
+    background-color: inherit;
+    border-width: 0;
+    margin-top: 0;
+}
+
+.cmvSearchWidget .query-builder .rule-placeholder {
+    background-color: inherit;
+    padding: 0;
+}
+
+.cmvSearchWidget .query-builder .rule-container {
+    background-color: #F0F0F0;
+}
+
+.cmvSearchWidget .query-builder .rules-operator-container {
+    margin-left: 5px;
+}
+
+.cmvSearchWidget .query-builder input[type=number],
+.cmvSearchWidget .query-builder input[type=text],
+.cmvSearchWidget .query-builder select {
+    border-radius: 4px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    margin-top: 2px;
+    padding: 6px;
+}
+.cmvSearchWidget .query-builder select {
+    border-color: rgb(158, 158, 158);
+}
+
+.cmvSearchWidget .query-builder .selectize-control.single .selectize-input {
+    background-color: #FFF;
+    background-image: none;
+    border-color: rgb(158, 158, 158);
+    border-radius: 4px;
+    margin-top: 2px;
+    padding: 4px;
+}
+.cmvSearchWidget .query-builder .selectize-control.single .selectize-input:after {
+    border-width: 5px 3px 0;
+    right: 8px;
+}
+/*
+.cmvSearchWidget .advancedSearchImportExport {
+    float: right;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog {
+    text-align: center;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog textarea {
+    min-width: 300px;
+    width: auto;
+}
+
+.cmvSearchWidget #searchWidgetImportExportDialog div[data-dojo-attach-point="searchAdvancedImportDialogBtn"] {
+    margin-top: 5px;
+}
+*/

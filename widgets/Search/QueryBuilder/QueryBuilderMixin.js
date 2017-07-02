@@ -16,7 +16,9 @@ define([
 
     'xstyle/css!./lib/query-builder.default.min.css',
     'xstyle/css!./lib/querybuilder-bootstrap-shim.min.css',
-    'xstyle/css!./lib/selectize.default.min.css'
+    'xstyle/css!./lib/selectize.default.min.css',
+    'xstyle/css!./lib/selectize.bootstrap3.min.css',
+    'xstyle/css!../css/AdvancedSearch.css'
 ], function (
     declare,
     lang,
