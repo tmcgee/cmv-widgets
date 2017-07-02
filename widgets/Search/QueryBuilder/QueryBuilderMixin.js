@@ -38,6 +38,21 @@ define([
 
     return declare(null, {
         queryBuilder: null,
+
+        defaultQueryBuilderOptions: {
+            icons: {
+                'add_group': 'fa fa-plus-square',
+                'add_rule': 'fa fa-plus-circle',
+                'remove_group': 'fa fa-minus-square',
+                'remove_rule': 'fa fa-minus-circle',
+                'error': 'fa fa-exclamation-triangle'
+            },
+            'display_errors': true,
+            'allow_groups': false,
+
+            filters: []
+        },
+
         firstValidationError: null,
 
         postCreate: function () {
@@ -75,6 +90,8 @@ define([
         },
 
         loadQueryBuilder: function () {
+            var qbOptions = this.mixinDeep(this.defaultQueryBuilderOptions, this.queryBuilderOptions || {});
+
             this.queryBuilder = { // Namespace the configuration variables in this mixin
                 _queryBuilderDOM: null,
                 _queryBuilder: null,
@@ -86,18 +103,7 @@ define([
 
                 options: {
                     targetDOM: null,
-                    qbOptions: {
-                        icons: {
-                            'add_group': 'fa fa-plus-square',
-                            'add_rule': 'fa fa-plus-circle',
-                            'remove_group': 'fa fa-minus-square',
-                            'remove_rule': 'fa fa-minus-circle',
-                            'error': 'fa fa-exclamation-triangle'
-                        },
-                        'display_errors': true,
-
-                        filters: []
-                    }
+                    qbOptions: qbOptions
                 },
 
                 init: function (options) {
