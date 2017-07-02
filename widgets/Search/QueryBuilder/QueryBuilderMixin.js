@@ -130,6 +130,7 @@ define([
 
                     this._fields = {};
 
+                    var queries = [];
                     var defaultToCaseInsensitive = false;
                     var advancedSearchOptions = search.advancedSearchOptions;
                     if (advancedSearchOptions.defaultToCaseInsensitive) {
@@ -140,12 +141,15 @@ define([
                             field.id = field.id || field.field;
                             if (field.id) {
                                 this._fields[field.id] = lang.clone(field);
+                                if (field.unique) {
+                                    queries.push(this._fetchSelectOptions(this._fields[field.id]));
+                                }
                             }
                         }, this);
                     }
 
                     if (!advancedSearchOptions.fields || advancedSearchOptions.fetchAllFields) {
-                        return this._fetchAllFields().then(lang.hitch(this, function (esriFields) {
+                        queries.push(this._fetchAllFields().then(lang.hitch(this, function (esriFields) {
                             array.forEach(esriFields, function (f) {
                                 var parsed = this._parseESRIField(f);
                                 parsed = lang.mixin(parsed, {
@@ -153,21 +157,13 @@ define([
                                 });
                                 this._fields[parsed.id] = lang.mixin(parsed, this._fields[parsed.id]); // Local config takes precedence
                             }, this);
-
-                            var distinctQueries = [];
-                            array.forEach(Object.keys(this._fields), function (fname) {
-                                if (this._fields[fname].unique) {
-                                    distinctQueries.push(this._fetchSelectOptions(this._fields[fname]));
-                                }
-                            }, this);
-
-                            return allPromise(distinctQueries);
-                        })).then(lang.hitch(this, function () {
-                            this._createQueryBuilder();
-                        }));
+                        })));
                     }
 
-                    this._createQueryBuilder();
+                    allPromise(queries).then(lang.hitch(this, function () {
+                        this._createQueryBuilder();
+                    }));
+
                     return when(null);
                 },
 
