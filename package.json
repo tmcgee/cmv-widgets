@@ -24,5 +24,5 @@
         "grunt-open": "0.2.x",
         "grunt-contrib-compress": "~1.4.1"
 	},
-	"engine": "node >= 4"
+	"engine": "node >= 6"
 }
