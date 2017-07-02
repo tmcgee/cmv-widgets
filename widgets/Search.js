@@ -1,4 +1,3 @@
-/*eslint strict: 0, no-loop-func: 0  */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -363,7 +362,6 @@ define([
 
                 this.own(topic.subscribe('titlePane/event', lang.hitch(this, function (args) {
                     if (this.parentWidget && args.widgetID === this.parentWidget.id && (args.action === 'dock' || args.action === 'undock')) {
-                        var containerSize = domGeom.getContentBox(this.parentWidget.containerNode);
                         this.resize({
                             action: args.action
                         });
