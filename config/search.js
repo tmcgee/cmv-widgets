@@ -116,6 +116,16 @@ define([
                 title: 'Search',
                 open: true,
                 position: 1,
+                canFloat: true,
+                paneOptions: {
+                    resizable: true,
+                    resizeOptions: {
+                        minSize: {
+                            w: 650,
+                            h: 520
+                        }
+                    }
+                },
                 options: 'config/searchWidget'
             },
             attributesTable: {

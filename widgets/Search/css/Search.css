@@ -1,5 +1,5 @@
 .cmvSearchWidget {
-    height: 585px;
+    height: 520px;
 }
 
 .cmvSearchWidget .tabContainer {
@@ -8,10 +8,40 @@
 }
 
 .cmvSearchWidget .searchTab {
-    max-height: 530px;
-    width: 100%;
     overflow-y: hidden;
     padding: 10px;
+    width: 100%;
+}
+
+.cmvSearchWidget .searchByAttribute {
+    display: flex;
+    flex-direction: column;
+}
+
+.cmvSearchWidget .searchSelector {
+    margin-top: 10px;
+}
+
+.cmvSearchWidget .searchBody {
+    border: 1px solid #BBB;
+    border-radius: 4px;
+    flex: 1;
+    margin-bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-top: 5px;
+}
+
+.cmvSearchWidget .searchContains {
+    border-bottom: 1px solid #CCC;
+    padding: 0 0 10px 20px;
+}
+
+.cmvSearchWidget .searchBottomButtons {
+    bottom: 5px;
+    left: 0;
+    position: absolute;
+    right: 0;
 }
 
 .cmvSearchWidget label,
@@ -29,33 +59,9 @@
     white-space: nowrap;
 }
 
-.cmvSearchWidget .searchSelector {
-    margin-top: 10px;
-}
-
-.cmvSearchWidget .searchFields {
-    border: 1px solid #BBB;
-    border-radius: 4px;
-    height: 235px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding-top: 5px;
-}
-
-.cmvSearchWidget .searchContains {
-    border-bottom: 1px solid #CCC;
-}
-
 .cmvSearchWidget .searchField {
     margin: 0 5px 10px 5px;
-}
-
-.cmvSearchWidget .searchContains {
-    padding: 0 0 10px 20px;
-}
-
-.cmvSearchWidget .centeredButtons {
-    text-align: center;
+    max-width: 400px;
 }
 
 .cmvSearchWidget .dijitSelect {

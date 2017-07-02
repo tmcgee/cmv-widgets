@@ -1,37 +1,39 @@
-<div>
+<div data-dojo-attach-point="containerNode">
     <div class="tabContainer" data-dojo-attach-point="tabContainer" data-dojo-props="region:'center'" data-dojo-type="dijit/layout/TabContainer" tabstrip="true">
         <div class="searchTab searchByAttribute" data-dojo-attach-point="tabByAttribute" data-dojo-type="dijit/layout/ContentPane" selected="true" title="${i18n.Labels.tabTitleByAttribute}">
-            <div class="selectALayer">
-                <label>
-                    ${i18n.Labels.selectALayer}:
-                </label>
-                <br>
-                <select data-dojo-attach-event="onChange:onAttributeLayerChange" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" style="width:100%;">
-                </select>
-            </div>
-            <div class="searchSelector" data-dojo-attach-point="divAttributeQuerySelect">
-                <label>
-                    ${i18n.Labels.selectAQuery}:
-                </label>
-                <br>
-                    <select data-dojo-attach-event="onChange:onAttributeQueryChange" data-dojo-attach-point="selectAttributeQuery" data-dojo-props="disabled:true" data-dojo-type="dijit/form/Select" style="width:100%;">
+            <div class="searchTop" data-dojo-attach-point="divSearchAttributesTop">
+                <div class="selectALayer">
+                    <label>
+                        ${i18n.Labels.selectALayer}:
+                    </label>
+                    <br>
+                    <select data-dojo-attach-event="onChange:onAttributeLayerChange" data-dojo-attach-point="selectLayerByAttribute" data-dojo-type="dijit/form/Select" style="width:100%;">
                     </select>
-                </br>
-            </div>
-            <div data-dojo-attach-point="divLoadingSpinner" class="widgetLoader">
-                <i class="fa fa-spinner fa-pulse fa-fw"></i>
-            </div>
-            <div data-dojo-attach-point="divSearchBody">
-                <div class="searchSelector centeredButtons" data-dojo-attach-point="queryAdvancedSearchButtonsDom">
+                </div>
+                <div class="searchSelector" data-dojo-attach-point="divAttributeQuerySelect">
+                    <label>
+                        ${i18n.Labels.selectAQuery}:
+                    </label>
+                    <br>
+                        <select data-dojo-attach-event="onChange:onAttributeQueryChange" data-dojo-attach-point="selectAttributeQuery" data-dojo-props="disabled:true" data-dojo-type="dijit/form/Select" style="width:100%;">
+                        </select>
+                    </br>
+                </div>
+                <div data-dojo-attach-point="divLoadingSpinner" class="widgetLoader">
+                    <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                </div>
+                <div class="searchSelector searchAdvancedSearchButtons centered" data-dojo-attach-point="divAdvancedSearchButtons">
                     <button data-dojo-attach-point="btnAdvancedSwitch" data-dojo-attach-event="onClick:toggleAdvancedSearch" data-dojo-props="class:'btn-search-advanced-toggle',showLabel:${i18n.Buttons.switchToAdvanced.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.switchToAdvanced.label}">${i18n.Buttons.switchToAdvanced.label} <i class="fa fa-chevron-right"></i></button>
                     <button class="searchAdvancedToggle" data-dojo-attach-point="btnBasicSwitch" data-dojo-attach-event="onClick:toggleAdvancedSearch" data-dojo-props="class:'btn-search-advanced-toggle',style:'display:none;',showLabel:${i18n.Buttons.switchToBasic.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.switchToBasic.label}"><i class="fa fa-chevron-left"></i> ${i18n.Buttons.switchToBasic.label}</button>
                 </div>
-                <div data-dojo-attach-point="divBasicSearchBody">
+            </div>
+            <div class="searchSelector searchBody" data-dojo-attach-point="divSearchAttributesCenter">
+                <div class="searchBodyBasic" data-dojo-attach-point="divBasicSearchBody">
                     <div class="searchSelector searchFields" data-dojo-attach-point="divAttributeQueryFields">
                         <!-- Search dijits are injected here -->
                     </div>
                 </div>
-                <div class="searchSelector searchFields" data-dojo-attach-point="divAdvancedSearchBody">
+                <div class="searchBodyAdvanced" data-dojo-attach-point="divAdvancedSearchBody">
                     <div data-dojo-attach-point="divAdvancedQueryBuilder">
 
                     </div>
@@ -44,13 +46,15 @@
                         </button>
                     </div> -->
                 </div>
-                <div class="searchSelector searchContains" data-dojo-attach-point="queryContainsDom">
+            </div>
+            <div class="searchBottom" data-dojo-attach-point="divSearchAttributesBottom">
+                <div class="searchSelector searchContains" data-dojo-attach-point="divQueryContains">
                     <input data-dojo-attach-point="containsSearchText" data-dojo-props="'class':'optionsCheckBox'" data-dojo-type="dijit/form/CheckBox" type="checkbox"/>
                     <label>
                         ${i18n.Labels.exactMatches}
                     </label>
                 </div>
-                <div class="searchSelector" data-dojo-attach-point="divAttributeSpatialFilter">
+                <div class="searchSelector searchAttributesSpatialFilter" data-dojo-attach-point="divAttributeSpatialFilter">
                     <label>
                         ${i18n.Labels.spatialFilter}:
                     </label>
@@ -59,7 +63,7 @@
                         </select>
                     </br>
                 </div>
-                <div class="searchSelector" data-dojo-attach-point="divAttributeAddToExisting">
+                <div class="searchSelector searchAddToExisting" data-dojo-attach-point="divAttributeAddToExisting">
                     <table>
                         <tr valign="top">
                             <td>
@@ -73,7 +77,7 @@
                         </tr>
                     </table>
                 </div>
-                <div class="searchSelector centeredButtons">
+                <div class="searchSelector centered">
                     <button data-dojo-attach-event="click:doAttributeSearch" data-dojo-attach-point="btnAttributeSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-attribute-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">
                         ${i18n.Buttons.search.label}
                     </button>
@@ -149,7 +153,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="searchSelector centeredButtons">
+            <div class="searchSelector searchBottomButtons centered">
                 <button data-dojo-attach-event="click:doSpatialSearch" data-dojo-attach-point="btnSpatialSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-spatial-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">${i18n.Buttons.search.label}</button>
             </div>
         </div>

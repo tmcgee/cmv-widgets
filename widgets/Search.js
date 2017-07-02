@@ -17,6 +17,7 @@ define([
     'dojo/dom',
     'dojo/dom-construct',
     'dojo/dom-attr',
+    'dojo/dom-geometry',
     'dijit/registry',
     'dojo/io-query',
 
@@ -81,6 +82,7 @@ define([
     dom,
     domConstruct,
     domAttr,
+    domGeom,
     registry,
     ioQuery,
 
@@ -355,9 +357,19 @@ define([
             this.own(topic.subscribe(this.topicID + '/search', lang.hitch(this, 'executeSearch')));
             this.own(topic.subscribe(this.attributesContainerID + '/tableUpdated', lang.hitch(this, 'setSearchTable')));
 
-            // used with QueryBuilder widget
-            this.own(topic.subscribe(this.topicID + '/setSQLWhereClause', lang.hitch(this, 'setSQLWhereClause')));
-            this.own(topic.subscribe(this.topicID + '/clearSQLWhereClause', lang.hitch(this, 'clearSQLWhereClause')));
+            if (this.parentWidget) {
+                this.own(aspect.after(this.parentWidget, 'resize', lang.hitch(this, 'resize')));
+                this.own(topic.subscribe(this.parentWidget.id + '/resize/resize', lang.hitch(this, 'resize')));
+
+                this.own(topic.subscribe('titlePane/event', lang.hitch(this, function (args) {
+                    if (this.parentWidget && args.widgetID === this.parentWidget.id && (args.action === 'dock' || args.action === 'undock')) {
+                        var containerSize = domGeom.getContentBox(this.parentWidget.containerNode);
+                        this.resize({
+                            action: args.action
+                        });
+                    }
+                })));
+            }
         },
 
         /*******************************
@@ -1070,7 +1082,7 @@ define([
         showLoadingSpinnerWhile: function (fn) {
             this.loadingCount += 1;
             domStyle.set(this.divLoadingSpinner, 'display', 'block');
-            domStyle.set(this.divSearchBody, 'display', 'none');
+            domStyle.set(this.divSearchAttributesCenter, 'display', 'none');
 
             if (typeof(fn) === 'function') {
                 fn = fn();
@@ -1080,7 +1092,7 @@ define([
 
                 if (this.loadingCount === 0) {
                     domStyle.set(this.divLoadingSpinner, 'display', 'none');
-                    domStyle.set(this.divSearchBody, 'display', 'block');
+                    domStyle.set(this.divSearchAttributesCenter, 'display', 'block');
                 }
             }));
         },
@@ -1135,7 +1147,7 @@ define([
                 domStyle.set(search.divName, 'display', 'block');
 
                 // only show "Contains" checkbox for FindTasks
-                domStyle.set(this.queryContainsDom, 'display', ((layer.findOptions) ? 'block' : 'none'));
+                domStyle.set(this.divQueryContains, 'display', ((layer.findOptions) ? 'block' : 'none'));
 
                 this.checkAdvancedSearchEnabled(layer, search);
 
@@ -1342,12 +1354,12 @@ define([
 
         showAdvancedSearch: function () {
             if (this.enableAdvancedSearch) {
-                domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', 'block');
+                domStyle.set(this.divAdvancedSearchButtons, 'display', 'block');
             }
         },
 
         hideAdvancedSearch: function () {
-            domStyle.set(this.queryAdvancedSearchButtonsDom, 'display', 'none');
+            domStyle.set(this.divAdvancedSearchButtons, 'display', 'none');
             this.setAdvancedSearch(false);
         },
 
@@ -1582,16 +1594,6 @@ define([
             }
         },
 
-        /*
-        onDrawToolbarDrawEnd: function (graphic) {
-            this.map.enableMapNavigation();
-            this.drawToolbar.deactivate();
-            this.connectMapClick();
-
-            this.search(graphic.geometry, this.shapeLayer);
-        },
-        */
-
         /*******************************
         *  Using Identify Functions
         *******************************/
@@ -1658,30 +1660,35 @@ define([
         },
 
         /*******************************
-        *  Query Builder Functions
-        *******************************/
-
-        openQueryBuilder: function () {
-            var layer = this.layers[this.attributeLayer], search = layer.attributeSearches[this.searchIndex] || {};
-            topic.publish(this.queryBuilderTopicID + '/openDialog', {
-                layer: layer,
-                sqlText: search.sqlWhereClause
-            });
-        },
-
-        setSQLWhereClause: function (sqlText) {
-            var layer = this.layers[this.attributeLayer], search = layer.attributeSearches[this.searchIndex] || {};
-            search.sqlWhereClause = sqlText;
-        },
-
-        clearSQLWhereClause: function () {
-            var layer = this.layers[this.attributeLayer], search = layer.attributeSearches[this.searchIndex] || {};
-            search.sqlWhereClause = null;
-        },
-
-        /*******************************
         *  Miscellaneous Functions
         *******************************/
+
+        resize: function (options) {
+            if (options) {
+                if (options.h) {
+                    domGeom.setContentSize(this.containerNode, {
+                        h: (options.h - 2)
+                    });
+                }
+                if (this.parentWidget && options.action === 'undock') {
+                    var dim = domGeom.getContentBox(this.parentWidget.containerNode);
+                    var minSize = this.parentWidget.resizeOptions.minSize;
+                    if (minSize) {
+                        if (minSize.w && minSize.w > dim.w) {
+                            domGeom.setContentSize(this.parentWidget.domNode, {
+                                w: (minSize.w)
+                            });
+                        }
+                        if (minSize.h && minSize.h > dim.h) {
+                            domGeom.setContentSize(this.parentWidget.domNode, {
+                                h: (minSize.h + 25)
+                            });
+                        }
+                    }
+                }
+            }
+            this.tabContainer.resize();
+        },
 
         geometryToJson: function (geom) {
             if (geom && geom.type && geom.toJson) {
