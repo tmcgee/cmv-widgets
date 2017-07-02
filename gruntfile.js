@@ -41,7 +41,7 @@ module.exports = function (grunt) {
 
         csslint: {
             build: {
-                src: ['widgets/**/*.css'],
+                src: ['widgets/**/*.css', '!widgets/**/*{.,-}min.css'],
                 options: {
                     csslintrc: '.csslintrc'
                 }
