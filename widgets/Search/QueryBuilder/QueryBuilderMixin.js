@@ -279,11 +279,13 @@ define([
                         filterableFields = this.search.advancedSearchOptions.filterableFields;
                     }
 
-                    array.forEach(fieldNames, function (fname) {
-                        if (!this._fields[fname].hidden && (!filterableFields || array.indexOf(filterableFields, fname) !== -1)) {
-                            this._addFilter(this._fields[fname]);
+                    array.forEach(fieldNames, lang.hitch(this, function (fname) {
+                        if (!this._fields[fname].hidden) {
+                            if (!filterableFields || array.indexOf(filterableFields, fname) !== -1) {
+                                this._addFilter(this._fields[fname]);
+                            }
                         }
-                    }, this);
+                    }));
 
                     // Make sure we successfully created at least one filter
                     if (this.qbOptions.filters.length === 0) {
@@ -363,31 +365,6 @@ define([
                     }));
                 },
 
-                // fields: {
-                //     'name': {
-                //         type: 'string'
-                //     },
-                //     'utilityname': {
-                //         type: 'select',
-                //         fetchUniqueOptions: true
-                //     },
-                //     'state': {
-                //         type: 'select',
-                //         options: [
-                //             { id: 'CA', name: 'California' },
-                //             { id: 'IL', name: 'Illinois' }
-                //         ],
-                //         multiple: false
-                //     },
-                //     'mwac': {
-                //         type: 'double',
-                //         range: { min: 0, max: 10 }
-                //     },
-                //     'mwdc': {
-                //         type: 'double',
-                //     }
-                // }
-
                 _addFilter: function (field) {
                     var filter = this._buildFilterConfig(field);
 
@@ -416,6 +393,7 @@ define([
                     }
                     return this._queryBuilder.getSQL();
                 },
+
                 fromSQL: function (sql) {
                     if (!sql) {
                         return null;
@@ -501,20 +479,6 @@ define([
                     return filter;
                 },
 
-                // if (f.name === 'utilityname') //FOR TESTING ONLY
-                // {
-                //   f.domain = {
-                //     name: 'mydomain',
-                //     type: 'codedValue',
-                //     codedValues: [
-                //       { code: 0, name: 'alfred' },
-                //       { code: 1, name: 'beatrice' },
-                //       { code: 2, name: 'cedric' },
-                //       { code: 'asd', name: 'dianna (princess)'}
-                //     ]
-                //   }
-                // }
-
                 _parseESRIField: function (field) {
                     var parsed = {
                         id: field.name,
@@ -540,6 +504,7 @@ define([
 
                     return parsed;
                 },
+
                 _convertFieldTypeFromESRI: function (esriType) {
                     switch (esriType) {
                     case 'esriFieldTypeSmallInteger':
@@ -565,9 +530,11 @@ define([
                         return esriType;
                     }
                 },
+
                 _showLoadingSpinner: function () {
                     //future
                 },
+
                 _hideLoadingSpinner: function () {
                     //future
                 }
