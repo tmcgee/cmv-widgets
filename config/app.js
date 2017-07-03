@@ -24,7 +24,7 @@
             {
                 name: 'jquery',
                 location: '//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1',
-                main: 'jquery.slim.min'
+                main: 'jquery.min'
             }
             // end jquery
         ]
