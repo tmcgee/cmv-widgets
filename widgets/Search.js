@@ -1680,11 +1680,6 @@ define([
                                 w: (minSize.w)
                             });
                         }
-                        if (minSize.h && minSize.h > dim.h) {
-                            domGeom.setContentSize(this.parentWidget.domNode, {
-                                h: (minSize.h + 25)
-                            });
-                        }
                     }
                 }
             }
