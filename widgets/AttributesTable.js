@@ -156,8 +156,16 @@ define([
                     tabs.addChild(tab);
                     var self = this;
                     tab.onClose = lang.hitch(tab, function () {
-                        var close = this.confirmClose ? confirm('Do you really want to close this tab?') : true;
-                        if (close) {
+                        if (this.confirmClose && window.MessageBox) {
+                            var opts = lang.mixin(this.i18n.messages.confirmCloseTab, {
+                                closable: false
+                            });
+                            window.MessageBox.confirm(opts).then(function (result) {
+                                if (result === window.MessageBox.okMessage) {
+                                    self.removeTab(tab.id);
+                                }
+                            });
+                        } else {
                             self.removeTab(tab.id);
                         }
                         return false;

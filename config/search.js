@@ -92,6 +92,7 @@ define([
                     identifyTolerance: 10
                 }
             },
+
             layerControl: {
                 include: true,
                 id: 'layerControl',
@@ -107,6 +108,7 @@ define([
                     separated: true
                 }
             },
+
             search: {
                 include: true,
                 id: 'search',
@@ -128,6 +130,7 @@ define([
                 },
                 options: 'config/searchWidget'
             },
+
             attributesTable: {
                 include: true,
                 id: 'attributesContainer',
@@ -146,6 +149,14 @@ define([
                     sidebarID: 'sidebarBottom'
                 }
             },
+
+            messagebox: {
+                include: true,
+                type: 'invisible',
+                path: 'widgets/MessageBox',
+                options: {}
+            },
+
             exportDialog: {
                 include: true,
                 id: 'export',
