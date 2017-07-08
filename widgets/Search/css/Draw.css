@@ -1,16 +1,17 @@
 @charset "UTF-8";
-/*csslint order-alphabetical: false */
+
 @font-face {
     font-family: "draw-icons";
+    font-style: normal;
+    font-weight: normal;
     src:url("./fonts/draw-icons.eot");
     src:url("./fonts/draw-icons.eot?#iefix") format("embedded-opentype"),
     url("./fonts/draw-icons.woff") format("woff"),
     url("./fonts/draw-icons.ttf") format("truetype"),
     url("./fonts/draw-icons.svg#draw-icons") format("svg");
-    font-weight: normal;
-    font-style: normal;
 }
 
+/* csslint order-alphabetical: 0 */
 .cmvSearchWidget .draw-icon-rectangle:before,
 .cmvSearchWidget .draw-icon-circle:before,
 .cmvSearchWidget .draw-icon-freehand-polygon:before,
@@ -22,8 +23,8 @@
 .cmvSearchWidget .draw-icon-polygon:before {
     font-family: "draw-icons";
     font-style: normal;
-    font-weight: normal;
     font-variant: normal;
+    font-weight: normal;
     text-transform: none;
     speak: none;
     line-height: 1;
