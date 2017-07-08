@@ -1,4 +1,3 @@
-/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dojo/cookie',
@@ -48,7 +47,7 @@ define([
         cookieName: 'skipCMVDisclaimer',
         cookieValue: 'true',
         cookieProps: {
-            expires: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000))  // show disclaimer every 30 days
+            expires: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)) // show disclaimer every 30 days
         },
 
         postMixInProperties: function () {

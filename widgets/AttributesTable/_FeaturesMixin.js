@@ -128,7 +128,7 @@ define([
 
             this.showAllGraphics();
 
-            var zoomCenter,
+            var zoomCenter = null,
                 zoomExtent = this.getGraphicsExtent(this.selectedGraphics);
             if (zoomExtent) {
                 zoomCenter = zoomExtent.getCenter();

@@ -1,4 +1,3 @@
-/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -24,7 +23,35 @@ define([
     'dijit/form/Form',
     'dijit/form/FilteringSelect',
     'xstyle/css!./ZoomToFeature/css/ZoomToFeature.css'
-], function (declare, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, lang, array, on, ioQuery, keys, Memory, QueryTask, Query, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, graphicsUtils, template, i18n) {
+], function (
+    declare,
+    _WidgetBase,
+    _TemplatedMixin,
+    _WidgetsInTemplateMixin,
+
+    lang,
+    array,
+    on,
+    ioQuery,
+    keys,
+
+    Memory,
+    QueryTask,
+    Query,
+
+    GraphicsLayer,
+    Graphic,
+    SimpleRenderer,
+    SimpleMarkerSymbol,
+    SimpleLineSymbol,
+    SimpleFillSymbol,
+
+    graphicsUtils,
+
+    template,
+
+    i18n
+) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         widgetsInTemplate: true,
         templateString: template,
@@ -276,7 +303,7 @@ define([
         },
 
         highlightFeature: function (feature) {
-            var graphic;
+            var graphic = null;
             switch (feature.geometry.type) {
             case 'point':
                 // only add points to the map that have an X/Y
@@ -313,7 +340,7 @@ define([
             this.map.setExtent(extent.expand(1.5));
         },
         getGraphicsExtent: function (graphics) {
-            var extent;
+            var extent = null;
             if (graphics && graphics.length > 0) {
                 extent = graphicsUtils.graphicsExtent(graphics);
                 if (extent.xmin === extent.xmax || extent.ymin === extent.ymax) {

@@ -128,6 +128,33 @@ define([
                 return;
             }
 
+            var qp = this.getQueryParameters(options);
+
+            if (this.featureOptions.buffer && this.bufferParameters && this.bufferParameters.distance) {
+                this.executeBuffer();
+                return;
+            }
+            this.featureOptions.buffer = false;
+
+            var url = this.getQueryTaskURL();
+            if (!url) {
+                return;
+            }
+
+            this.executingQuery = true;
+            var qt = new QueryTask(url);
+            var q = this.buildQueryFromParameters(qp);
+
+            this.growlQueryIsExecuting();
+
+            if (qp.type === 'relationship') {
+                qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+            } else {
+                qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+            }
+        },
+
+        getQueryParameters: function (options) {
             // grab the query parameters
             if (options && options.queryOptions && options.queryOptions.queryParameters) {
                 this.queryParameters = options.queryOptions.queryParameters;
@@ -154,22 +181,10 @@ define([
             if (qp.geometry) {
                 qp.geometry = this.createGeometry(qp.geometry);
             }
+            return qp;
+        },
 
-            if (this.featureOptions.buffer && this.bufferParameters && this.bufferParameters.distance) {
-                this.executeBuffer();
-                return;
-            }
-            this.featureOptions.buffer = false;
-
-            var url = this.getQueryTaskURL();
-            if (!url) {
-                return;
-            }
-
-            this.executingQuery = true;
-            var qt = new QueryTask(url);
-            var q = this.buildQueryFromParameters(qp);
-
+        growlQueryIsExecuting: function () {
             if (this.growlOptions.loading && !this.isLinkedQuery) {
                 this.growlID = this.topicID + 'Growl-StartSearch';
                 var msg = lang.mixin(this.i18n.messages.searching, {
@@ -178,12 +193,6 @@ define([
                     showProgressBar: true
                 });
                 topic.publish('growler/growl', msg);
-            }
-
-            if (qp.type === 'relationship') {
-                qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
-            } else {
-                qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
             }
         },
 
@@ -310,7 +319,6 @@ define([
                 return;
             }
 
-            var originalRecs = this.getFeatureCount();
             this.results = results;
             this.getFeaturesFromResults();
 
@@ -318,7 +326,38 @@ define([
                 this.getIdProperty(results);
             }
 
+            var originalRecs = this.getFeatureCount();
             var recCount = this.getFeatureCount();
+            if (recCount > 0) {
+                if (this.featureOptions.source && this.queryParameters.geometry) {
+                    this.addSourceGraphic(this.queryParameters.geometry);
+                }
+                this.populateGrid(results);
+            }
+
+            if (this.growlOptions.results && !this.isLinkedQuery) {
+                this.growlQueryResults(recCount, originalRecs);
+            }
+
+            topic.publish(this.topicID + '/queryResults', this.results);
+            topic.publish(this.attributesContainerID + '/openPane');
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
+
+            if (this.linkedQuery && (this.linkedQuery.url || this.linkedQuery.layerID)) {
+                var lq = lang.clone(this.linkedQuery);
+                this.executeLinkedQuery(lq);
+            } else {
+                this.isLinkedQuery = false;
+            }
+
+            this.queryParametersType = 'spatial';
+            this.linkedQuery = {
+                url: null,
+                linkIDs: []
+            };
+        },
+
+        growlQueryResults: function (recCount, originalRecs) {
             var newRecs = (originalRecs === 0) ? 0 : recCount - originalRecs;
             var msgNls = this.i18n.messages.searchResults;
             var msg = msgNls.message;
@@ -339,39 +378,13 @@ define([
                 }
             }
 
-            if (recCount > 0) {
-                if (this.featureOptions.source && this.queryParameters.geometry) {
-                    this.addSourceGraphic(this.queryParameters.geometry);
-                }
-                this.populateGrid(results);
-            }
+            topic.publish('growler/growl', {
+                title: this.title + ' ' + msgNls.title,
+                message: msg,
+                level: 'default',
+                timeout: 5000
+            });
 
-            if (this.growlOptions.results && !this.isLinkedQuery) {
-
-                topic.publish('growler/growl', {
-                    title: this.title + ' ' + msgNls.title,
-                    message: msg,
-                    level: 'default',
-                    timeout: 5000
-                });
-            }
-
-            topic.publish(this.topicID + '/queryResults', this.results);
-            topic.publish(this.attributesContainerID + '/openPane');
-            topic.publish(this.attributesContainerID + '/tableUpdated', this);
-
-            if (this.linkedQuery && (this.linkedQuery.url || this.linkedQuery.layerID)) {
-                var lq = lang.clone(this.linkedQuery);
-                this.executeLinkedQuery(lq);
-            } else {
-                this.isLinkedQuery = false;
-            }
-
-            this.queryParametersType = 'spatial';
-            this.linkedQuery = {
-                url: null,
-                linkIDs: []
-            };
         },
 
         processBufferQueryResults: function (geometries) {
@@ -478,7 +491,7 @@ define([
             if (!url && qp.layerID) {
                 var layer = this.map.getLayer(qp.layerID);
                 if (layer) {
-                    var whereByLayerDef;
+                    var whereByLayerDef = null;
                     if (layer.declaredClass === 'esri.layers.FeatureLayer') { // Feature Layer
                         whereByLayerDef = layer.getDefinitionExpression();
 

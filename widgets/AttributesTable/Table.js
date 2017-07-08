@@ -1,4 +1,3 @@
-/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -170,6 +169,24 @@ define([
         },
 
         addTopics: function () {
+            this.addQueryAndFindTopics();
+            this.addGraphicTopics();
+            this.addClearTopics();
+
+            // populate the grid
+            this.own(topic.subscribe(this.topicID + '/populateGrid', lang.hitch(this, 'populateGrid')));
+
+            // get the features
+            this.own(topic.subscribe(this.topicID + '/getFeatures', lang.hitch(this, 'getFeatures')));
+
+            // get the selected features
+            this.own(topic.subscribe(this.topicID + '/getSelectedFeatures', lang.hitch(this, 'getSelectedFeatures')));
+
+            // monitor the map click mode
+            this.own(topic.subscribe('mapClickMode/currentSet', lang.hitch(this, 'setMapClickMode')));
+        },
+
+        addQueryAndFindTopics: function () {
             // execute a query task
             this.own(topic.subscribe(this.topicID + '/executeQuery', lang.hitch(this, 'executeQueryTask')));
 
@@ -178,9 +195,6 @@ define([
 
             // get the results of the query task
             this.own(topic.subscribe(this.topicID + '/getQueryResults', lang.hitch(this, 'getQueryResults')));
-
-            // clear the results of the query task
-            this.own(topic.subscribe(this.topicID + '/clearQueryResults', lang.hitch(this, 'clearQueryResults')));
 
             // execute a find task
             this.own(topic.subscribe(this.topicID + '/executeFind', lang.hitch(this, 'executeFindTask')));
@@ -191,24 +205,29 @@ define([
             // get the results of the find task
             this.own(topic.subscribe(this.topicID + '/getFindResults', lang.hitch(this, 'getFindResults')));
 
-            // clear the results of the find task
-            this.own(topic.subscribe(this.topicID + '/clearFindResults', lang.hitch(this, 'clearFindResults')));
+        },
 
-            // populate the grid
-            this.own(topic.subscribe(this.topicID + '/populateGrid', lang.hitch(this, 'populateGrid')));
-
+        addClearTopics: function () {
             // clear the grid
             this.own(topic.subscribe(this.topicID + '/clearGrid', lang.hitch(this, 'clearGrid')));
-
-            // get the features
-            this.own(topic.subscribe(this.topicID + '/getFeatures', lang.hitch(this, 'getFeatures')));
-
-            // get the selected features
-            this.own(topic.subscribe(this.topicID + '/getSelectedFeatures', lang.hitch(this, 'getSelectedFeatures')));
 
             // clear all
             this.own(topic.subscribe(this.topicID + '/clearAll', lang.hitch(this, 'clearAll')));
 
+            // clear the features
+            this.own(topic.subscribe(this.topicID + '/clearFeatures', lang.hitch(this, 'clearFeatures')));
+
+            // clear the selected features
+            this.own(topic.subscribe(this.topicID + '/clearSelectedFeatures', lang.hitch(this, 'clearSelectedFeatures')));
+
+            // clear the results of the query task
+            this.own(topic.subscribe(this.topicID + '/clearQueryResults', lang.hitch(this, 'clearQueryResults')));
+
+            // clear the results of the find task
+            this.own(topic.subscribe(this.topicID + '/clearFindResults', lang.hitch(this, 'clearFindResults')));
+        },
+
+        addGraphicTopics: function () {
             // show all the graphics
             this.own(topic.subscribe(this.topicID + '/showGraphics', lang.hitch(this, 'showAllGraphics')));
 
@@ -224,9 +243,6 @@ define([
             // zoom to the feature graphics
             this.own(topic.subscribe(this.topicID + '/zoomToFeatureGraphics', lang.hitch(this, 'zoomToFeatureGraphics')));
 
-            // clear the features
-            this.own(topic.subscribe(this.topicID + '/clearFeatures', lang.hitch(this, 'clearFeatures')));
-
             // show the selected graphics
             this.own(topic.subscribe(this.topicID + '/showSelectedGraphics', lang.hitch(this, 'showSelectedGraphics')));
 
@@ -235,9 +251,6 @@ define([
 
             // zoom to the selected graphics
             this.own(topic.subscribe(this.topicID + '/zoomToSelectedGraphics', lang.hitch(this, 'zoomToSelectedGraphics')));
-
-            // clear the selected features
-            this.own(topic.subscribe(this.topicID + '/clearSelectedFeatures', lang.hitch(this, 'clearSelectedFeatures')));
 
             // show the source graphic(s)
             this.own(topic.subscribe(this.topicID + '/showSourceGraphics', lang.hitch(this, 'showSourceGraphics')));
@@ -263,8 +276,6 @@ define([
             // clear the buffer graphic(s)
             this.own(topic.subscribe(this.topicID + '/clearBufferGraphics', lang.hitch(this, 'clearBufferGraphics')));
 
-            // monitor the map click mode
-            this.own(topic.subscribe('mapClickMode/currentSet', lang.hitch(this, 'setMapClickMode')));
         },
 
         setMapClickMode: function (mode) {
@@ -344,7 +355,8 @@ define([
             position the toolbar and grid components properly
         */
         checkSizing: function () {
-            var top = 0, cStyle;
+            var top = 0,
+                cStyle = null;
             var tbNode = this.attributesTableToolbarDijit.domNode;
             var gridNode = this.attributesTableGridDijit.domNode;
 

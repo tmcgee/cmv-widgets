@@ -1,4 +1,4 @@
-/*eslint strict: 0, max-statements: 0, no-console: 0 */
+/*eslint max-statements: 0, no-console: 0 */
 //http://resources.arcgis.com/en/help/main/10.2/index.html#//0154000004w8000000
 //https://developers.arcgis.com/javascript/jssamples/map_showloading.html
 define([
@@ -168,7 +168,7 @@ define([
             this.printTask = new PrintTask(this.printTaskURL);
             this.printparams = new PrintParameters();
             this.printparams.map = this.map;
-            this.printparams.outSpatialReference = (this.outWkid && typeof(this.outWkid) !== 'undefined') ? new SpatialReference(this.outWkid) : this.map.spatialReference;
+            this.printparams.outSpatialReference = (this.outWkid && typeof this.outWkid !== 'undefined') ? new SpatialReference(this.outWkid) : this.map.spatialReference;
             if (this.showLayout) {
                 this.mapUnitsToMeters = this.getUnitToMetersFactor(this.map._params.units); //Print Plus Enhancements (this may break in future API releases)
                 if (isNaN(this.mapUnitsToMeters.x) || isNaN(this.mapUnitsToMeters.y)) {
@@ -342,7 +342,7 @@ define([
             });
 
             // Replace the names with the aliases
-            var keys;
+            var keys = null;
             if (this.layoutParams) {
                 keys = Object.keys(this.layoutParams);
                 array.forEach(layoutItems, lang.hitch(this, function (item) {
@@ -433,7 +433,7 @@ define([
                 this.printGL.redraw();
                 this.oldLODs = null;
                 this.suspendExtentHandler = true; //Suspend the Extent change handler
-                var deferred;
+                var deferred = null;
                 if (this.map._params.tileInfo && this.map._params.tileInfo.lods) {
                     this.oldLODs = this.map._params.tileInfo.lods;
                     // Set one LOD for the printing scale and zoom to it.
@@ -712,7 +712,7 @@ define([
             var form = this.printSettingsFormDijit.get('value');
             var layout = form.layout;
             var titleBlock = form.titleBlock[0];
-            var state;
+            var state = null;
             if (!this.showLayout && layout === 'MAP_ONLY') {
                 //Don't show the page layout graphic options, but show the 'MAP_ONLY' options
                 state = 'A';
@@ -815,8 +815,8 @@ define([
             var titleBlock = this.titleBlockDijit.get('value');
             var pageSize = this.mapSheetParams.pageSize;
             var unitRatio = this.mapSheetParams.unitRatio;
-            var mapOffsets;
-            var mapDims;
+            var mapOffsets = null;
+            var mapDims = null;
 
             if (titleBlock) {
                 mapOffsets = this.mapSheetParams.pageMargins;
@@ -904,7 +904,7 @@ define([
             var paperAspectRatio = printWidth / printHeight;
             var browserAspectRatio = this.map.width / this.map.height;
             var paperMapDims = new Dims(printWidth, printHeight);
-            var browserMapDims;
+            var browserMapDims = null;
             if (preserveScale) {
                 var layoutUnitsToMeters = this.getUnitToMetersFactor(printUnits);
                 var unitRatio = {
@@ -948,7 +948,7 @@ define([
 
         adjustLayoutToMap: function (evt) {
             if (!this.suspendExtentHandler) {
-                var centerPt;
+                var centerPt = null;
                 if (evt.hasOwnProperty('level')) {
                     // This was a zoom, so reset the scales and redraw the map sheet
                     this.setScaleRanges();
@@ -1006,7 +1006,7 @@ define([
             var pageSize = this.mapSheetParams.pageSize;
             var mapSize = this.mapSheetParams.mapSize;
             var unitRatio = this.mapSheetParams.unitRatio;
-            var maxScale;
+            var maxScale = null;
             var mapExtent = this.map.extent;
 
             //get the maximum scale of the map
@@ -1051,8 +1051,9 @@ define([
                 var minScale = scales[scales.length - 1];
                 var factors = getPrimeFactors(minScale);
                 var failedFactors = [];
-                var tryFactor;
-                var i, j;
+                var tryFactor = null;
+                var i = null,
+                    j = null;
 
                 for (i = 0; i < factors.length; i++) {
                     // if a tryFactor has failed once, don't try it again
@@ -1093,7 +1094,7 @@ define([
             }
 
             function getSnapScale (scale, scales) {
-                var snapScale;
+                var snapScale = null;
                 if (scale === 0) {
                     // Scale is 0; the widget is just being opened.  Return the scale that will set
                     // the sheet graphic to the largest size that does not include the entire map extent.
@@ -1124,8 +1125,9 @@ define([
             }
 
             function getLabels (minScale, snapInterval, scaleIndices) {
-                var labelArray = [];
-                var scale;
+                var labelArray = [],
+                    scale = null;
+
                 for (var i = 0; i < scaleIndices.length; i++) {
                     scale = minScale + (snapInterval * scaleIndices[i]);
                     labelArray.push(number.format(scale, {

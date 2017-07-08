@@ -210,7 +210,9 @@ define([
 
         onPrintError: function (err) {
             this.hideLoadingMask();
-            topic.publish('viewer/handleError', err);
+            topic.publish('viewer/handleError', {
+                error: err
+            });
             topic.publish('growler/growl', {
                 title: 'Report Failed',
                 message: 'Could not create a map image for report.',
@@ -268,7 +270,8 @@ define([
         },
 
         outputReport: function () {
-            var output = this.reportLayout.output, result;
+            var output = this.reportLayout.output,
+                result = null;
             if (output) {
 
                 if (output.type === 'print') {
@@ -481,9 +484,6 @@ define([
         },
 
         addStackedAttributes: function (attr) {
-            var margins = this.reportLayout.margins;
-            var width = attr.width || this.doc.internal.pageSize.width - margins.right;
-            width -= attr.right || 0;
             var font = lang.mixin(lang.clone(this.defaultStyles.font), attr.font);
 
             if (attr.pageNumber) {
@@ -491,69 +491,86 @@ define([
             }
 
             if (attr.fields) {
-                var field, top = attr.top + 20;
-                var left = attr.left + 5, origLeft = left;
-                var label, value, labelWidth, len = attr.fields.length;
+                var field = null,
+                    left = attr.left + 5, origLeft = left,
+                    len = attr.fields.length;
+
                 for (var k = 0; k < len; k++) {
                     field = attr.fields[k];
-                    label = field.label;
-
-                    value = field.value;
-                    if (field.fieldName && this.feature && this.feature.attributes) {
-                        value = this.feature.attributes[field.fieldName];
-                    }
-                    if (!value) {
-                        value = '';
-                    }
-
-                    if (label && label.length > 0) {
-                        label += ':';
-                        font.style = 'bold';
-                        this.setFont(font);
-                        labelWidth = parseInt(this.doc.getStringUnitWidth(label) * this.doc.internal.getFontSize(), 10) + 5;
-                        this.addText({
-                            text: label,
-                            left: left,
-                            top: top,
-                            font: font,
-                            align: field.labelAlign,
-                            pageNumber: attr.pageNumber
-                        });
-                        left += labelWidth;
-                    }
-
-                    if (value && value.length > 0) {
-                        font.style = 'normal';
-                        this.addText({
-                            text: value,
-                            left: left,
-                            top: top,
-                            font: font,
-                            align: field.valueAlign,
-                            pageNumber: attr.pageNumber
-                        });
-                    }
-                    top += this.doc.internal.getLineHeight();
+                    left = this.addStackedAttributesLabel(field, font, left, attr.pageNumber);
+                    this.addStackedAttributesValue(field, font, left, attr.pageNumber);
                     left = origLeft;
                 }
 
                 if (attr.border) {
-                    this.addBorder({
-                        left: attr.left,
-                        top: attr.top,
-                        width: width,
-                        height: attr.height,
-                        border: attr.border,
-                        pageNumber: attr.pageNumber
-                    });
+                    this.addStackedAttributesBorder(attr);
                 }
-
             }
+        },
+
+        addStackedAttributesLabel: function (field, font, left, pageNumber) {
+            var label = field.label;
+            if (label && label.length > 0) {
+                label += ':';
+                font.style = 'bold';
+                this.setFont(font);
+                var labelWidth = parseInt(this.doc.getStringUnitWidth(label) * this.doc.internal.getFontSize(), 10) + 5;
+                this.addText({
+                    text: label,
+                    left: left,
+                    top: top,
+                    font: font,
+                    align: field.labelAlign,
+                    pageNumber: pageNumber
+                });
+                left += labelWidth;
+            }
+            return left;
+        },
+
+        addStackedAttributesValue: function (field, font, left, pageNumber) {
+            var value = field.value;
+            if (field.fieldName && this.feature && this.feature.attributes) {
+                value = this.feature.attributes[field.fieldName];
+            }
+            if (!value) {
+                value = '';
+            }
+
+            if (value && value.length > 0) {
+                font.style = 'normal';
+                this.addText({
+                    text: value,
+                    left: left,
+                    top: top,
+                    font: font,
+                    align: field.valueAlign,
+                    pageNumber: pageNumber
+                });
+            }
+
+        },
+
+        addStackedAttributesBorder: function (attr) {
+            var margins = this.reportLayout.margins;
+            var width = attr.width || this.doc.internal.pageSize.width - margins.right;
+            width -= attr.right || 0;
+            this.addBorder({
+                left: attr.left,
+                top: attr.top,
+                width: width,
+                height: attr.height,
+                border: attr.border,
+                pageNumber: attr.pageNumber
+            });
         },
 
         addColumnAttributes: function (attr) {
             if (attr.fields) {
-                var field, label, value, len = attr.fields.length;
+                var field = null,
+                    label = null,
+                    value = null,
+                    len = attr.fields.length;
 
                 attr.columns = [
                     {title: 'Label', dataKey: 'label'},
@@ -569,10 +586,10 @@ define([
                     if (field.fieldName && this.feature && this.feature.attributes) {
                         value = this.feature.attributes[field.fieldName];
                     }
-                    if (!value || (typeof(value) === 'string' && value.toLowerCase() === 'null')) {
+                    if (!value || (typeof value === 'string' && value.toLowerCase() === 'null')) {
                         value = '';
                     }
-                    if (typeof(value) === 'string') {
+                    if (typeof value === 'string') {
                         value = value.trim();
                     }
                     value = this.formatText({
@@ -654,7 +671,7 @@ define([
                 }, table.options);
 
                 if (table.options.addPageContent) {
-                    if (typeof(table.options.addPageContent) === 'string') {
+                    if (typeof table.options.addPageContent === 'string') {
                         table.options.addPageContent = lang.hitch(this, this[table.options.addPageContent]);
                     } else {
                         table.options.addPageContent = lang.hitch(this, table.options.addPageContent); // anonymous function
@@ -837,7 +854,7 @@ define([
 
         setFont: function (font) {
             if (font) {
-                if (typeof(font.font) === 'string') {
+                if (typeof font.font === 'string') {
                     this.doc.setFont(font.font);
                 }
                 this.setTextColor(font.fontColor || font.textColor || font.color);
@@ -848,7 +865,7 @@ define([
                 }
 
                 var style = font.fontStyle || font.style;
-                if (typeof(style) === 'string') {
+                if (typeof style === 'string') {
                     this.doc.setFontStyle(style);
                 }
             }
@@ -888,7 +905,7 @@ define([
         },
 
         setTextColor: function (color) {
-            if ((typeof(color) !== 'undefined') && (color !== null)) {
+            if ((typeof color !== 'undefined') && (color !== null)) {
                 if (color instanceof Array) {
                     if (color.length === 3) {
                         this.doc.setTextColor(color[0], color[1], color[2]);
@@ -902,7 +919,7 @@ define([
         },
 
         setDrawColor: function (color) {
-            if ((typeof(color) !== 'undefined') && (color !== null)) {
+            if ((typeof color !== 'undefined') && (color !== null)) {
                 if (color instanceof Array) {
                     if (color.length === 3) {
                         this.doc.setDrawColor(color[0], color[1], color[2]);
@@ -916,7 +933,7 @@ define([
         },
 
         setFillColor: function (color) {
-            if ((typeof(color) !== 'undefined') && (color !== null)) {
+            if ((typeof color !== 'undefined') && (color !== null)) {
                 if (color instanceof Array) {
                     if (color.length === 3) {
                         this.doc.setFillColor(color[0], color[1], color[2]);
@@ -982,14 +999,15 @@ define([
         },
 
         formatText: function (opts) {
-            var text = opts.text, date;
-            var format = opts.format || '';
+            var text = opts.text,
+                date = null,
+                format = opts.format || '';
 
             if (opts.formatter) { // custom formatter?
                 return opts.formatter(text, opts.attributes);
             }
 
-            if (typeof(text) === 'undefined' || text === null) {
+            if (typeof text === 'undefined' || text === null) {
                 switch (format.toLowerCase()) {
                 case 'date':
                     text = this.formatDate(new Date());

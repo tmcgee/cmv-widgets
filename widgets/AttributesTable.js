@@ -1,4 +1,3 @@
-/*eslint strict: 0, no-alert: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -137,23 +136,9 @@ define([
         // add a Tab
         addTab: function (options, select) {
             var tabs = this.tabContainer,
-                tab;
+                tab = null;
 
-            if (!this.useTabs) {
-                options.topicID = this.topicID;
-            }
-            if (!options.id) {
-                options.id = 'attrTab-' + options.topicID;
-            }
-            if (typeof options.closable === 'undefined') {
-                options.closable = true;
-            }
-            if (typeof options.confirmClose === 'undefined') {
-                options.confirmClose = true;
-            }
-            options.map = this.map;
-            options.sidebarID = this.sidebarID;
-            options.attributesContainerID = this.topicID;
+            options = this.checkTabOptions(options);
 
             if (this.useTabs) {
                 if (!tabs) {
@@ -192,6 +177,27 @@ define([
             this.resizeChildren();
             topic.publish(this.topicID + '/tableUpdated', tab);
             return tab;
+        },
+
+        checkTabOptions: function (options) {
+            if (!this.useTabs) {
+                options.topicID = this.topicID;
+            }
+            if (!options.id) {
+                options.id = 'attrTab-' + options.topicID;
+            }
+            if (typeof options.closable === 'undefined') {
+                options.closable = true;
+            }
+            if (typeof options.confirmClose === 'undefined') {
+                options.confirmClose = true;
+            }
+            options.map = this.map;
+            options.sidebarID = this.sidebarID;
+            options.attributesContainerID = this.topicID;
+
+            return options;
+
         },
 
         // remove an existing tab by ID

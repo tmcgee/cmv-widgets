@@ -319,7 +319,8 @@ define([
         *******************************/
 
         addFeatureGraphic: function (feature) {
-            var symbol, graphic;
+            var symbol = null,
+                graphic = null;
             switch (feature.geometry.type) {
             case 'point':
             case 'multipoint':
@@ -343,7 +344,8 @@ define([
         },
 
         addSourceGraphic: function (geometry) {
-            var symbol, graphic;
+            var symbol = null,
+                graphic = null;
             switch (geometry.type) {
             case 'point':
             case 'multipoint':
@@ -405,11 +407,16 @@ define([
         *******************************/
 
         selectFeatureFromMap: function (evt) {
+            var key = null,
+                graphic = evt.graphic,
+                row = null,
+                center = null,
+                extent = null;
+
             if (!this.featureOptions.selected) {
                 return;
             }
-            var key, graphic = evt.graphic,
-                row, feature;
+
             if (graphic) {
                 key = graphic.attributes[this.idProperty];
                 if (key) {
@@ -421,27 +428,7 @@ define([
                         var zm = mnu.selected;
                         mnu.selected = false;
 
-                        var selection = lang.clone(this.grid.get('selection'));
-                        selection[key] = (selection[key] !== true);
-
-                        this.selectedFeatures = [];
-                        this.selectedGraphics.clear();
-                        //this.grid.clearSelection();
-
-                        for (var sKey in selection) {
-                            if (selection.hasOwnProperty(sKey)) {
-                                if (this.grid.select) {
-                                    row = this.grid.row(sKey);
-                                    this.grid.select(row, null, selection[sKey]);
-                                }
-                                if (selection[sKey]) {
-                                    feature = this.getFeatureFromStore(sKey);
-                                    if (feature && feature.geometry) {
-                                        this.addSelectedGraphic(feature);
-                                    }
-                                }
-                            }
-                        }
+                        this.selectFeaturesWithKey(key);
                         this.doneSelectingFeatures(false);
 
                         // reset the original zooming
@@ -451,8 +438,7 @@ define([
                 }
                 if (!evt.ctrlKey && !evt.shiftKey && this.selectedFeatures.length === 1) {
                     if (graphic.infoTemplate && this.map.infoWindow) {
-                        var center,
-                            extent = this.getGraphicsExtent(this.selectedGraphics);
+                        extent = this.getGraphicsExtent(this.selectedGraphics);
                         if (extent) {
                             center = extent.getCenter();
                         }
@@ -468,6 +454,33 @@ define([
                     }
                 }
             }
+        },
+
+        selectFeaturesWithKey: function (key) {
+            var selection = lang.clone(this.grid.get('selection')),
+                row = null,
+                feature = null;
+            selection[key] = (selection[key] !== true);
+
+            this.selectedFeatures = [];
+            this.selectedGraphics.clear();
+            //this.grid.clearSelection();
+
+            for (var sKey in selection) {
+                if (selection.hasOwnProperty(sKey)) {
+                    if (this.grid.select) {
+                        row = this.grid.row(sKey);
+                        this.grid.select(row, null, selection[sKey]);
+                    }
+                    if (selection[sKey]) {
+                        feature = this.getFeatureFromStore(sKey);
+                        if (feature && feature.geometry) {
+                            this.addSelectedGraphic(feature);
+                        }
+                    }
+                }
+            }
+
         },
 
         /*******************************
@@ -534,7 +547,7 @@ define([
 
         highlightGraphic: function (evt, removehighlight) {
             var graphic = evt.graphic,
-                symbol;
+                symbol = null;
 
             // mapClickMode won't be set by default
             // so we must also look for null
@@ -583,7 +596,8 @@ define([
         *******************************/
 
         zoomToFeatureGraphics: function () {
-            var extent, featureExtent = this.getGraphicsExtent(this.featureGraphics);
+            var extent = null,
+                featureExtent = this.getGraphicsExtent(this.featureGraphics);
             if (featureExtent) {
                 if (this.sourceGraphics) {
                     extent = this.getGraphicsExtent(this.sourceGraphics);
@@ -632,7 +646,7 @@ define([
         },
 
         getGraphicsExtent: function (layer) {
-            var zoomExtent;
+            var zoomExtent = null;
             if (layer.graphics && layer.graphics.length) {
                 zoomExtent = graphicsUtils.graphicsExtent(layer.graphics);
                 if (zoomExtent.xmin === zoomExtent.xmax || zoomExtent.ymin === zoomExtent.ymax) {

@@ -1,5 +1,5 @@
 (function () {
-    var path = location.pathname.replace(/[^\/]+$/, '');
+    var path = location.pathname.replace(/[^/]+$/, '');
     window.dojoConfig = {
         async: true,
         packages: [

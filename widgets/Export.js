@@ -1,4 +1,3 @@
-/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -75,17 +74,17 @@ define([
         modulesPath: module.uri.substring(0, module.uri.lastIndexOf('.')) + '/lib',
 
         defaultOptions: {
-            excel: true,         // allow attributes to be exported to Excel
-            xlsExcel: false,     // allow attributes to be exported to Excel (XLS format)
-            csv: true,           // allow attributes to be exported to CSV
+            excel: true, // allow attributes to be exported to Excel
+            xlsExcel: false, // allow attributes to be exported to Excel (XLS format)
+            csv: true, // allow attributes to be exported to CSV
 
             // spatial exports
-            shapefile: false,    // allow the features to be exported to a Shape File
-            kml: false,          // allow features to be exported to KML
-            kmz: false,          // allow features to be exported to KMZ
-            geojson: false,      // allow features to be exported to GeoJSON
-            topojson: false,     // allow features to be exported to TopoJSON
-            wkt: false,          // allow features to be exported to WKT
+            shapefile: false, // allow the features to be exported to a Shape File
+            kml: false, // allow features to be exported to KML
+            kmz: false, // allow features to be exported to KMZ
+            geojson: false, // allow features to be exported to GeoJSON
+            topojson: false, // allow features to be exported to TopoJSON
+            wkt: false, // allow features to be exported to WKT
 
             filename: 'results', // name of file for export
 
@@ -113,9 +112,9 @@ define([
             },
 
             topojsonOptions: {
-                'verbose': false,             // if truthy, informational messages will be output to stderr.
-                'coordinate-system': null,    // either "cartesian", "spherical" or null to infer the coordinate system automatically.
-                'stitch-poles': false        // if truthy and using spherical coordinates, polar antimeridian cuts will be stitched.
+                'verbose': false, // if truthy, informational messages will be output to stderr.
+                'coordinate-system': null, // either "cartesian", "spherical" or null to infer the coordinate system automatically.
+                'stitch-poles': false // if truthy and using spherical coordinates, polar antimeridian cuts will be stitched.
                 //'quantization': null,         // quantization precision; the maximum number of differentiable points per dimension.
                 //'id': null                   // a function for computing the id of each input feature.
                 //'property-transform': null    // a function for remapping properties.
@@ -173,16 +172,52 @@ define([
 
             var options = [];
             var exportOptions = [
-                {'value': 'excel', 'label': i18n.exportToExcel, 'type': 'attributes'},
-                {'value': 'xlsExcel', 'label': i18n.exportToXlsExcel, 'type': 'attributes'},
-                {'value': 'csv', 'label': i18n.exportToCSV, 'type': 'attributes'},
+                {
+                    'value': 'excel',
+                    'label': i18n.exportToExcel,
+                    'type': 'attributes'
+                },
+                {
+                    'value': 'xlsExcel',
+                    'label': i18n.exportToXlsExcel,
+                    'type': 'attributes'
+                },
+                {
+                    'value': 'csv',
+                    'label': i18n.exportToCSV,
+                    'type': 'attributes'
+                },
 
-                {'value': 'shapefile', 'label': i18n.exportToShapeFile, 'type': 'features'},
-                {'value': 'kml', 'label': i18n.exportToKML, 'type': 'features'},
-                {'value': 'kmz', 'label': i18n.exportToKMZ, 'type': 'features'},
-                {'value': 'geojson', 'label': i18n.exportToGeoJSON, 'type': 'features'},
-                {'value': 'topojson', 'label': i18n.exportToTopoJSON, 'type': 'features'},
-                {'value': 'wkt', 'label': i18n.exportToWKT, 'type': 'features'}
+                {
+                    'value': 'shapefile',
+                    'label': i18n.exportToShapeFile,
+                    'type': 'features'
+                },
+                {
+                    'value': 'kml',
+                    'label': i18n.exportToKML,
+                    'type': 'features'
+                },
+                {
+                    'value': 'kmz',
+                    'label': i18n.exportToKMZ,
+                    'type': 'features'
+                },
+                {
+                    'value': 'geojson',
+                    'label': i18n.exportToGeoJSON,
+                    'type': 'features'
+                },
+                {
+                    'value': 'topojson',
+                    'label': i18n.exportToTopoJSON,
+                    'type': 'features'
+                },
+                {
+                    'value': 'wkt',
+                    'label': i18n.exportToWKT,
+                    'type': 'features'
+                }
             ];
 
             this.selectExportType.set('options', []);
@@ -295,33 +330,33 @@ define([
             this.results = options.results;
             this.grid = options.grid;
 
-            this.filename = (typeof(options.filename) !== 'undefined') ? options.filename : this.filename;
+            this.filename = (typeof options.filename !== 'undefined') ? options.filename : this.filename;
 
-            this.excel = (typeof(options.excel) !== 'undefined') ? options.excel : this.excel;
-            this.csv = (typeof(options.csv) !== 'undefined') ? options.csv : this.csv;
-            this.xlsExcel = (typeof(options.xlsExcel) !== 'undefined') ? options.xlsExcel : this.xslExcel;
+            this.excel = (typeof options.excel !== 'undefined') ? options.excel : this.excel;
+            this.csv = (typeof options.csv !== 'undefined') ? options.csv : this.csv;
+            this.xlsExcel = (typeof options.xlsExcel !== 'undefined') ? options.xlsExcel : this.xslExcel;
 
-            this.geojson = (typeof(options.geojson) !== 'undefined') ? options.geojson : this.geojson;
-            this.kml = (typeof(options.kml) !== 'undefined') ? options.kml : this.kml;
-            this.kmz = (typeof(options.kmz) !== 'undefined') ? options.kmz : this.kmz;
-            this.shapefile = (typeof(options.shapefile) !== 'undefined') ? options.shapefile : this.shapefile;
-            this.topojson = (typeof(options.topojson) !== 'undefined') ? options.topojson : this.topojson;
-            this.wkt = (typeof(options.wkt) !== 'undefined') ? options.wkt : this.wkt;
+            this.geojson = (typeof options.geojson !== 'undefined') ? options.geojson : this.geojson;
+            this.kml = (typeof options.kml !== 'undefined') ? options.kml : this.kml;
+            this.kmz = (typeof options.kmz !== 'undefined') ? options.kmz : this.kmz;
+            this.shapefile = (typeof options.shapefile !== 'undefined') ? options.shapefile : this.shapefile;
+            this.topojson = (typeof options.topojson !== 'undefined') ? options.topojson : this.topojson;
+            this.wkt = (typeof options.wkt !== 'undefined') ? options.wkt : this.wkt;
 
-            this.geojsonOptions = (typeof(options.geojsonOptions) !== 'undefined') ? options.geojsonOptions : this.geojsonOptions;
-            this.kmlOptions = (typeof(options.kmlOptions) !== 'undefined') ? options.kmlOptions : this.kmlOptions;
-            this.shapefileOptions = (typeof(options.shapefileOptions) !== 'undefined') ? options.shapefileOptions : this.shapefileOptions;
-            this.topojsonOptions = (typeof(options.topojsonOptions) !== 'undefined') ? options.topojsonOptions : this.topojsonOptions;
+            this.geojsonOptions = (typeof options.geojsonOptions !== 'undefined') ? options.geojsonOptions : this.geojsonOptions;
+            this.kmlOptions = (typeof options.kmlOptions !== 'undefined') ? options.kmlOptions : this.kmlOptions;
+            this.shapefileOptions = (typeof options.shapefileOptions !== 'undefined') ? options.shapefileOptions : this.shapefileOptions;
+            this.topojsonOptions = (typeof options.topojsonOptions !== 'undefined') ? options.topojsonOptions : this.topojsonOptions;
 
             this.initExportSelect();
             this.removeLink();
 
             if (options.show && this.parentWidget) {
                 //dojo modal dialog
-                if (typeof(this.parentWidget.show) === 'function') {
+                if (typeof this.parentWidget.show === 'function') {
                     this.parentWidget.show();
-                // dojo-boostrap modal dialog
-                } else if (typeof(this.parentWidget.containerNode) === 'string') {
+                    // dojo-boostrap modal dialog
+                } else if (typeof (this.parentWidget.containerNode) === 'string') {
                     domQuery('#' + this.parentWidget.containerNode).closest('.modal').modal('show');
                 }
             }
@@ -374,8 +409,8 @@ define([
         },
 
         /*******************************
-        *  Export Function
-        *******************************/
+         *  Export Function
+         *******************************/
 
         export: function (options) {
             if (options) {
@@ -461,7 +496,7 @@ define([
             }
 
             // To UTF-8
-            var uint8 = new Uint8Array(xlsContents.length);
+            var uint8 = new window.Uint8Array(xlsContents.length);
             for (var i = 0; i < uint8.length; i++) {
                 uint8[i] = xlsContents.charCodeAt(i);
             }
@@ -597,7 +632,7 @@ define([
             require([this.modulesPath + '/wellknown-0.4.2.min.js'], lang.hitch(this, function (wellknown) {
                 var wkt = geojson.features.map(wellknown.stringify).join('\n');
                 if (!wkt) {
-                    this.reportError (i18n.errorWKT);
+                    this.reportError(i18n.errorWKT);
                     return;
                 }
                 this.downloadFile(wkt, 'text/plain;charset=utf-8;', this.getFileName('.wkt'), true);
@@ -605,8 +640,8 @@ define([
         },
 
         /*******************************
-        *  Excel/CSV Functions
-        *******************************/
+         *  Excel/CSV Functions
+         *******************************/
 
         buildXLSContents: function () {
             var separator = '\t';
@@ -667,7 +702,9 @@ define([
                 return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
             }
 
-            var ws = {}, cell, cellRef;
+            var ws = {},
+                cell = null,
+                cellRef = null;
             var range = {
                 s: {
                     c: 0,
@@ -680,7 +717,8 @@ define([
             };
 
             var c = 0,
-                field, val;
+                field = null,
+                val = null;
             var aliases = (this.results && this.results.fieldAliases) ? this.results.fieldAliases : null;
             var rc = this.getRowsAndColumns();
             var rows = rc.rows;
@@ -772,9 +810,9 @@ define([
         },
 
         /******************************
-        *  GeoJson, KML, Shapefile,
-        * TopoJSON, WKT Functions
-        *******************************/
+         *  GeoJson, KML, Shapefile,
+         * TopoJSON, WKT Functions
+         *******************************/
 
         createGeoJSON: function () {
             var type = this.selectExportType.get('value');
@@ -806,7 +844,7 @@ define([
             var featureID = 1;
             array.forEach(features, lang.hitch(this, function (feature) {
                 var attr = feature.attributes;
-                if (typeof(attr.feature) === 'object') {
+                if (typeof attr.feature === 'object') {
                     delete attr.feature;
                 }
 
@@ -845,7 +883,7 @@ define([
                             geojson.features.push(feat);
                         }
 
-                    // not a multi-polygon, so just push it
+                        // not a multi-polygon, so just push it
                     } else {
                         geoFeature.id = featureID++;
                         geojson.features.push(geoFeature);
@@ -861,11 +899,12 @@ define([
         },
 
         /*******************************
-        *  Projection Functions
-        *******************************/
+         *  Projection Functions
+         *******************************/
 
         projectGeometry: function (geometry) {
-            var pt, newPt;
+            var pt = null,
+                newPt = null;
             switch (geometry.type) {
             case 'point':
                 newPt = this.projectPoint(geometry);
@@ -904,9 +943,9 @@ define([
 
         projectPoint: function (point) {
             return window.proj4(
-                    window.proj4.defs[this.proj4SrcKey],
-                    window.proj4.defs[this.proj4DestKey]
-                ).forward(point);
+                window.proj4.defs[this.proj4SrcKey],
+                window.proj4.defs[this.proj4DestKey]
+            ).forward(point);
         },
 
         allProperties: function (properties, key, value) {
@@ -915,8 +954,8 @@ define([
         },
 
         /*******************************
-        *  Symobology Functions
-        *******************************/
+         *  Symobology Functions
+         *******************************/
 
         // convert symbol to attributes
         // this allows for export as geojson and kml
@@ -926,7 +965,8 @@ define([
             var geometry = feature.geometry;
             var symbol = feature.symbol;
             var attributes = lang.clone(feature.attributes);
-            var outline, color;
+            var outline = null,
+                color = null;
 
             switch (geometry.type) {
             case 'point':
@@ -1009,8 +1049,8 @@ define([
         },
 
         /*******************************
-        *  load parsers
-        *******************************/
+         *  load parsers
+         *******************************/
 
         loadParsers: function () {
 
@@ -1081,13 +1121,13 @@ define([
         },
 
         /*******************************
-        *  Download Functions
-        *******************************/
+         *  Download Functions
+         *******************************/
 
         // works for chrome, firefox and IE10+
         downloadFile: function (content, mimeType, fileName, useBlob) {
             mimeType = mimeType || 'application/octet-stream';
-            var url;
+            var url = null;
             var dataURI = 'data:' + mimeType + ',' + content;
             this.removeLink();
             this.link = document.createElement('a');
@@ -1096,7 +1136,7 @@ define([
             });
 
             // feature detection
-            if (typeof(this.link.download) !== 'undefined') {
+            if (typeof this.link.download !== 'undefined') {
                 // Browsers that support HTML5 download attribute
                 if (useBlob) {
                     url = window.URL.createObjectURL(blob);
@@ -1111,7 +1151,7 @@ define([
 
                 return null;
 
-             //feature detection using IE10+ routine
+                //feature detection using IE10+ routine
             } else if (navigator.msSaveOrOpenBlob) {
                 return navigator.msSaveOrOpenBlob(blob, fileName);
             }
@@ -1132,8 +1172,8 @@ define([
         },
 
         /*******************************
-        *  Miscellaneous Functions
-        *******************************/
+         *  Miscellaneous Functions
+         *******************************/
 
         getRowsAndColumns: function () {
             var rows = [];
@@ -1168,8 +1208,8 @@ define([
         },
 
         s2ab: function (s) {
-            var buf = new ArrayBuffer(s.length);
-            var view = new Uint8Array(buf);
+            var buf = new window.ArrayBuffer(s.length);
+            var view = new window.Uint8Array(buf);
             /*jslint bitwise: true */
             for (var i = 0; i < s.length; ++i) {
                 view[i] = s.charCodeAt(i) & 0xFF;

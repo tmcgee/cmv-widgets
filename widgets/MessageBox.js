@@ -34,7 +34,7 @@ define([
         startup: function () {
 
             // create the namespace if it doesn't exist
-            if (this.nameSpace && (typeof(this.nameSpace) === 'string')) {
+            if (this.nameSpace && (typeof this.nameSpace === 'string')) {
                 this.nameSpace = this._createNamespace(this.nameSpace);
             }
             var ns = this.nameSpace || window;
@@ -63,7 +63,8 @@ define([
         },
 
         _createNamespace: function () {
-            var o, d;
+            var o = null,
+                d = null;
             array.forEach(arguments, function (v) {
                 d = v.split('.');
                 o = window[d[0]] = window[d[0]] || {};
@@ -76,7 +77,8 @@ define([
 
         _createDialog: function (opts) {
             var deferred = new Deferred(),
-                signal, signals = [];
+                signal = null,
+                signals = [];
 
             var dialog = new ConfirmDialog(opts);
             dialog.startup();

@@ -424,12 +424,16 @@ define([
         },
 
         buildQueryOptions: function (layer, search, geometry, advancedQuery) {
-            var where, distance, unit, showOnly = false, addToExisting = false;
-            var queryOptions = {
-                idProperty: search.idProperty || layer.idProperty || 'FID',
-                linkField: search.linkField || layer.linkField || null,
-                linkedQuery: lang.clone(search.linkedQuery || layer.linkedQuery || null)
-            };
+            var where = null,
+                distance = null,
+                unit = null,
+                showOnly = false,
+                addToExisting = false,
+                queryOptions = {
+                    idProperty: search.idProperty || layer.idProperty || 'FID',
+                    linkField: search.linkField || layer.linkField || null,
+                    linkedQuery: lang.clone(search.linkedQuery || layer.linkedQuery || null)
+                };
 
             if (geometry) {
                 distance = this.inputBufferDistance.get('value');
@@ -593,7 +597,8 @@ define([
         },
 
         getGeometryFromIdentifiedFeature: function () {
-            var popup = this.map.infoWindow, feature;
+            var popup = this.map.infoWindow,
+                feature = null;
             if (popup && popup.isShowing) {
                 feature = popup.getSelectedFeature();
             }
@@ -601,7 +606,7 @@ define([
         },
 
         getGeometryFromSelectedFeatures: function () {
-            var geom;
+            var geom = null;
             if (this.selectedTable) {
                 geom = this.getGeometryFromGraphicsLayer(this.selectedTable.selectedGraphics);
             }
@@ -686,8 +691,10 @@ define([
             //attribute search
             var doAttrSearch = false;
             if (options.searchTerm) {
-                var inputId, input;
-                var layer = this.layers[options.layerIndex];
+                var inputId = null,
+                    input = null,
+                    layer = this.layers[options.layerIndex];
+
                 if (layer) {
                     this.attributeLayer = options.layerIndex;
                     this.onAttributeLayerChange(this.attributeLayer);
@@ -731,7 +738,7 @@ define([
             var value = qsObj[options.valueParameter];
             var layerIndex = qsObj[options.layerParameter] || 0;
             var searchIndex = qsObj[options.searchParameter] || 0;
-            var widget;
+            var widget = null;
 
             // only continue if there is a term to search
             if (!value) {
@@ -845,7 +852,7 @@ define([
 
         buildSearchControlLabel: function (field, search, layer, fieldNode) {
             var labelWidth = field.labelWidth || layer.labelWidth || null;
-            if (typeof(labelWidth) === 'number') {
+            if (typeof labelWidth === 'number') {
                 labelWidth += 'px';
             }
 
@@ -868,22 +875,22 @@ define([
         },
 
         buildSearchControlSelect: function (field, search, layer, fieldNode, inputId, firstSearch) {
-            var input,
+            var input = null,
                 style = field.style || layer.style || null,
                 fieldWidth = field.width || layer.fieldWidth || '99%',
                 fieldHeight = field.height || layer.fieldHeight || 'inherit',
                 options = [];
 
-            if (typeof(fieldWidth) === 'number') {
+            if (typeof fieldWidth === 'number') {
                 fieldWidth += 'px';
             }
-            if (typeof(fieldHeight) === 'number') {
+            if (typeof fieldHeight === 'number') {
                 fieldHeight += 'px';
             }
 
             if (field.values) {
                 array.forEach(field.values, function (item) {
-                    if (typeof(item) === 'string') {
+                    if (typeof item === 'string') {
                         options.push({
                             label: item,
                             value: item,
@@ -922,15 +929,15 @@ define([
         },
 
         buildSearchControlInput: function (field, search, layer, fieldNode, inputId) {
-            var input,
+            var input = null,
                 style = field.style || layer.style || null,
                 fieldWidth = field.width || layer.fieldWidth || '99%',
                 fieldHeight = field.height || layer.fieldHeight || 'inherit';
 
-            if (typeof(fieldWidth) === 'number') {
+            if (typeof fieldWidth === 'number') {
                 fieldWidth += 'px';
             }
-            if (typeof(fieldHeight) === 'number') {
+            if (typeof fieldHeight === 'number') {
                 fieldHeight += 'px';
             }
 
@@ -980,7 +987,7 @@ define([
             var attrOptions = [],
                 shapeOptions = [];
             var len = this.layers.length,
-                option;
+                option = null;
             for (var i = 0; i < len; i++) {
                 option = {
                     value: i,
@@ -1084,7 +1091,7 @@ define([
             domStyle.set(this.divLoadingSpinner, 'display', 'block');
             domStyle.set(this.divSearchAttributesCenter, 'display', 'none');
 
-            if (typeof(fn) === 'function') {
+            if (typeof fn === 'function') {
                 fn = fn();
             }
             return when(fn).then(lang.hitch(this, function () {
@@ -1143,8 +1150,8 @@ define([
                         return this.getDistinctValues(search.inputIds[k], queryParameters, fieldName, field.includeBlankValue, where);
                     }
                     return when(null);
-                }
-            ))).then(lang.hitch(this, function () {
+                }))
+            ).then(lang.hitch(this, function () {
                 domStyle.set(search.divName, 'display', 'block');
 
                 // only show "Contains" checkbox for FindTasks
@@ -1190,8 +1197,7 @@ define([
             var url = this.getLayerURL(queryParameters);
 
             var q = new GetDistinctValues(url, fieldName, expression);
-            q.executeQuery()
-            .then(function (results) {
+            q.executeQuery().then(function (results) {
                 var options = [];
                 if (includeBlankValue) {
                     options.push({
@@ -1253,8 +1259,11 @@ define([
         },
 
         initSpatialFilters: function () {
-            var type = this.selectAttributeSpatialFilter.get('value');
-            var geomOptions = [], popup = this.map.infoWindow, includeOption;
+            var type = this.selectAttributeSpatialFilter.get('value'),
+                geomOptions = [],
+                popup = this.map.infoWindow,
+                includeOption = null;
+
             for (var key in this.spatialFilters) {
                 if (this.spatialFilters.hasOwnProperty(key)) {
                     if (this.spatialFilters[key]) {
@@ -1486,7 +1495,9 @@ define([
         },
 
         endDrawing: function (evt) {
-            var clickMode = this.mapClickMode, geometry;
+            var clickMode = this.mapClickMode,
+                geometry = null;
+
             if (clickMode === 'search' && evt) {
                 geometry = evt.geometry;
             }
@@ -1554,7 +1565,8 @@ define([
         },
 
         addDrawingGraphic: function (feature) {
-            var symbol, graphic;
+            var symbol = null,
+                graphic = null;
             switch (feature.geometry.type) {
             case 'point':
             case 'multipoint':
@@ -1576,7 +1588,7 @@ define([
         },
 
         addBufferGraphic: function () {
-            var geometry,
+            var geometry = null,
                 distance = this.inputBufferDistance.get('value'),
                 unit = this.selectBufferUnits.get('value');
 

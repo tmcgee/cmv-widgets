@@ -150,7 +150,8 @@ define([
         },
 
         populateGrid: function (options) {
-            var features, results = options;
+            var features = null,
+                results = options;
             if (options.results) {
                 results = options.results;
             } else {
@@ -295,7 +296,7 @@ define([
             // set the sort
             var sort = this.gridOptions.sort || [];
             // sort === 'inherit'? use query result order
-            if (typeof(sort) === 'string' && sort.toLowerCase() === 'inherit') {
+            if (typeof sort === 'string' && sort.toLowerCase() === 'inherit') {
                 return;
             }
             // no sort? use the first column
@@ -336,7 +337,10 @@ define([
             }
 
             var excludedFields = ['objectid', 'esri_oid', 'shape', 'shape.len', 'shape.area', 'shape.starea()', 'shape.stlength()', 'st_area(shape)', 'st_length(shape)'];
-            var columns = [], col, nameLC = null;
+            var columns = [],
+                col = null,
+                nameLC = null;
+
             if (results.fields) {
                 array.forEach(results.fields, function (field) {
                     nameLC = field.name.toLowerCase();

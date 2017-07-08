@@ -1,4 +1,3 @@
-/*eslint strict: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -84,7 +83,7 @@ define([
             gp.execute(params, lang.hitch(this, 'drawViewshed'));
         },
 
-       // process the results of GP
+        // process the results of GP
         drawViewshed: function (results) {
             // clear any query Results
             topic.publish(this.topicID + '/clearQueryResults');

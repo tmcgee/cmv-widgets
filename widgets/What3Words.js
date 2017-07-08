@@ -303,7 +303,7 @@ define([
         },
 
         getGraphicsExtent: function (graphics) {
-            var extent;
+            var extent = null;
             if (graphics && graphics.length > 0) {
                 extent = graphicsUtils.graphicsExtent(graphics);
                 if (extent.xmin === extent.xmax || extent.ymin === extent.ymax) {

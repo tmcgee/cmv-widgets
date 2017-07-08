@@ -52,7 +52,7 @@ define([
 
     Button
 ) {
-    var google;
+    var google = null;
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         widgetsInTemplate: true,
         templateString: template,
@@ -189,7 +189,11 @@ define([
         },
 
         addProviders: function () {
-            var btnContainer, btn, providerClass, buttonsClass, buttonClass;
+            var btnContainer = null,
+                btn = null,
+                providerClass = null,
+                buttonsClass = null,
+                buttonClass = null;
             if (!this.groupProviders) {
                 btnContainer = domConstruct.create('div', {
                     class: 'externalMapButtons'

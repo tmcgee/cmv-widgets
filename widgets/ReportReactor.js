@@ -23,7 +23,8 @@ define([
 
             this.map.infoWindow.on('selection-change', lang.hitch(this, function (evt) {
                 var infoWindow = evt.target;
-                var nodes = domQuery('#parcel-report', infoWindow.domNode), targetNode;
+                var nodes = domQuery('#parcel-report', infoWindow.domNode),
+                    targetNode = null;
                 if (nodes.length > 0) {
                     targetNode = nodes[0];
                     if (targetNode) {

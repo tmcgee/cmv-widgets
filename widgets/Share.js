@@ -1,4 +1,3 @@
-/*eslint strict: 0, no-console: 0 */
 define([
     'dojo/_base/declare',
     'dijit/_WidgetBase',
@@ -8,6 +7,7 @@ define([
 
     'dojo/_base/lang',
     'dojo/on',
+    'dojo/topic',
     'dojo/dom-attr',
     'dojo/dom-construct',
     'dojo/number',
@@ -37,6 +37,7 @@ define([
 
     lang,
     on,
+    topic,
     domAttr,
     domConstruct,
     number,
@@ -234,7 +235,7 @@ define([
             // vars
             var map = this.get('map'),
                 url = this.get('url'),
-                useSeparator;
+                useSeparator = null;
             // get url params
             var urlObject = urlUtils.urlToObject(window.location.href);
             urlObject.query = urlObject.query || {};
@@ -353,7 +354,9 @@ define([
                             }
                         }),
                         error: function (error) {
-                            console.log(error);
+                            topic.publish('viewer/handerError', {
+                                error: error
+                            });
                         }
                     });
                 }
@@ -376,7 +379,6 @@ define([
             } else if (isLink) {
                 window.open(fullLink);
             } else {
-                console.log(this.get('windowSpecs'));
                 window.open(fullLink, 'cmvShare', this.get('windowSpecs'));
             }
         }

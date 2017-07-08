@@ -1,4 +1,3 @@
-/*eslint dot-notation: 0 */
 define([
     'dojo/_base/declare',
     'dojo/_base/lang',
@@ -77,6 +76,7 @@ define([
                 this.showClearMenuItems();
             }
 
+            /*eslint dot-notation: 0 */
             options = this.toolbarOptions['export'] || {};
             display = (options.show) ? 'inline-block' : 'none';
             domStyle.set(this.attributesTableExportButton.domNode, 'display', display);
