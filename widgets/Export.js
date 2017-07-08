@@ -646,7 +646,7 @@ define([
         buildXLSContents: function () {
             var separator = '\t';
             var carriageReturn = '\r';
-            var rows = this.grid.get('store').data;
+            var rows = this.grid.get('collection').data;
             var columns = this.grid.get('columns');
 
             // Prepare formatted columns
@@ -1179,7 +1179,7 @@ define([
             var rows = [];
             var columns = [];
             if (this.grid) {
-                rows = this.grid.get('store').data;
+                rows = this.grid.get('collection').data;
                 columns = this.grid.get('columns');
             } else if (this.featureSet) {
                 if (this.featureSet.features && this.featureSet.features.length > 0) {
