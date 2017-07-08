@@ -75,6 +75,13 @@ define({
                 ]
             }
         },
+        messagebox: {
+            include: true,
+            type: 'invisible',
+            path: 'widgets/MessageBox',
+            options: {}
+        },
+
         exportDialog: {
             include: true,
             id: 'export',

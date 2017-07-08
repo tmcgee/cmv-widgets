@@ -12,6 +12,12 @@ define({
                 message: 'Sorry, an error occurred and your search could not be completed.'
             },
 
+            confirmCloseTab: {
+                title: 'Close Tab?',
+                content: 'Do you really want to close this tab?'
+            },
+
+
             searchResults: {
                 title: 'Search Results',
                 message: null,
