@@ -485,7 +485,7 @@ define([
 
         addStackedAttributes: function (attr) {
             var font = lang.mixin(lang.clone(this.defaultStyles.font), attr.font);
-
+            var top = attr.top + 20;
             if (attr.pageNumber) {
                 this.setPage(attr.pageNumber);
             }
@@ -497,8 +497,9 @@ define([
 
                 for (var k = 0; k < len; k++) {
                     field = attr.fields[k];
-                    left = this.addStackedAttributesLabel(field, font, left, attr.pageNumber);
-                    this.addStackedAttributesValue(field, font, left, attr.pageNumber);
+                    left = this.addStackedAttributesLabel(field, font, left, top, attr.pageNumber);
+                    this.addStackedAttributesValue(field, font, left, top, attr.pageNumber);
+                    top += this.doc.internal.getLineHeight();
                     left = origLeft;
                 }
 
@@ -508,7 +509,7 @@ define([
             }
         },
 
-        addStackedAttributesLabel: function (field, font, left, pageNumber) {
+        addStackedAttributesLabel: function (field, font, left, top, pageNumber) {
             var label = field.label;
             if (label && label.length > 0) {
                 label += ':';
@@ -528,7 +529,7 @@ define([
             return left;
         },
 
-        addStackedAttributesValue: function (field, font, left, pageNumber) {
+        addStackedAttributesValue: function (field, font, left, top, pageNumber) {
             var value = field.value;
             if (field.fieldName && this.feature && this.feature.attributes) {
                 value = this.feature.attributes[field.fieldName];
