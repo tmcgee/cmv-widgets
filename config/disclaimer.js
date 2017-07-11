@@ -30,7 +30,13 @@ define({
             id: 'disclaimer',
             type: 'floating',
             path: 'widgets/Disclaimer',
-            title: 'Beware!!!',
+            title: 'Attention!!!',
+            iconClass: 'fa-exclamation-circle',
+            preload: true,
+            paneOptions: {
+                className: 'floating-disclaimer',
+                style: 'height:320px;width:350px;'
+            },
             options: {
 
                 // you can customize the button text
@@ -38,9 +44,6 @@ define({
                     //    accept: 'Arghhhh!',
                     //    decline: 'Run Away!'
                 },
-
-                // pre-define the height so the dialog is centered properly
-                style: 'height:295px;width:375px;',
 
                 // you can put your content right in the config
                 //content: '<div align="center" style="background-color:black;color:white;font-size:18px;padding:20px;">Abandon all hope, ye who enter here...<br/><img src="http://fc06.deviantart.net/fs5/i/2004/313/2/5/Captain_Jolly_Roger_by_ramiusraven.jpg" style="width:160px;margin:25px;" /></div>'

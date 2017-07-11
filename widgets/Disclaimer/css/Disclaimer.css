@@ -1,14 +1,21 @@
 /*csslint ids: false, order-alphabetical: false */
+.cmvDisclaimerWidget {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
 .cmvDisclaimerWidget .disclaimerMessageContainer {
+    flex: 1;
 	padding: 0;
 }
 
 .cmvDisclaimerWidget .disclaimerButtonContainer {
-    position: absolute;
-    bottom: 0;
     left: 0;
     right: 0;
-    padding: 5px 30px;
+    padding: 8px 20px 0 20px;
+    text-align: center;
 }
 
 .cmvDisclaimerWidget .acceptDisclaimerIcon {
@@ -27,7 +34,7 @@
     float: right;
 }
 
-#disclaimer_parent .dijitDialogCloseIcon {
+.floating-disclaimer .dijitDialogCloseIcon {
     display: none;
 }
 
@@ -35,3 +42,18 @@
     display: block;
 }
 
+.floating-disclaimer {
+    display: flex;
+    flex-direction: column;
+}
+
+.floating-disclaimer .dijitDialogPaneContent {
+    flex: 1;
+}
+
+@media screen and (max-width: 400px) {
+    .floating-disclaimer {
+        min-height: 55%;
+        min-width: 90%;
+    }
+}

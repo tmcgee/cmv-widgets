@@ -1,1 +1,0 @@
-{"version":3,"sources":["resource.js"],"names":["define","labels","startEditing","stopEditing"],"mappings":";;;;;AAAAA,QACIC,QACIC,aAAc,oBACdC,YAAa","file":"resource.js","sourcesContent":["define ({\r\n    labels: {\r\n        startEditing: 'Comenzar a editar',\r\n        stopEditing: 'Detener la edición'\r\n    }\r\n});"]}

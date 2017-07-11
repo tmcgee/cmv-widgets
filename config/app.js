@@ -5,10 +5,10 @@
         packages: [
             {
                 name: 'viewer',
-                location: path + 'cmv/js/viewer'
+                location: 'https://cdn.rawgit.com/cmv/cmv-app/v2.0.0-beta.2/viewer/js/viewer'
             }, {
                 name: 'gis',
-                location: path + 'cmv/js/gis'
+                location: 'https://cdn.rawgit.com/cmv/cmv-app/v2.0.0-beta.2/viewer/js/gis'
             }, {
                 name: 'config',
                 location: path + 'config'
@@ -18,6 +18,9 @@
             }, {
                 name: 'proj4js',
                 location: '//cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.15'
+            }, {
+                name: 'flag-icon-css',
+                location: '//cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.8.0'
             },
 
             // jquery is only required for the Advanced Search in Search widget
@@ -42,9 +45,9 @@
         'viewer/_ConfigMixin', // manage the Configuration
         'viewer/_LayoutMixin', // build and manage the Page Layout and User Interface
         'viewer/_MapMixin', // build and manage the Map
-        'viewer/_WidgetsMixin' // build and manage the Widgets
-
-        //'viewer/_WebMapMixin' // for WebMaps
+        'viewer/_WidgetsMixin', // build and manage the Widgets
+        // 'viewer/_WebMapMixin' // for WebMaps
+        'viewer/_SidebarMixin' // for mobile sidebar
         //'config/_customMixin'
 
     ], function (
@@ -54,21 +57,23 @@
         _ConfigMixin,
         _LayoutMixin,
         _MapMixin,
-        _WidgetsMixin
-
-        //_WebMapMixin
+        _WidgetsMixin,
+        // _WebMapMixin
+        _SidebarMixin
         //_MyCustomMixin
 
     ) {
-        var controller = new (declare([
-            _ControllerBase,
-            _ConfigMixin,
+        var App = declare([
+            // Mixin for Mobile Sidebar
+            _SidebarMixin,
             _LayoutMixin,
+            _WidgetsMixin,
+            // _WebMapMixin,
             _MapMixin,
-            _WidgetsMixin
-
-            //_WebMapMixin
-        ]))();
-        controller.startup();
+            _ConfigMixin,
+            _ControllerBase
+        ]);
+        var app = new App();
+        app.startup();
     });
 })();

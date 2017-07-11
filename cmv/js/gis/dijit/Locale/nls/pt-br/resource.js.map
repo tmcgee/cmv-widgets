@@ -1,1 +1,0 @@
-{"version":3,"sources":["resource.js"],"names":["define","selectLocale"],"mappings":";;;;;AAAAA,QACIC,aAAc","file":"resource.js","sourcesContent":["define ({\r\n    selectLocale: 'Escolha a sua localidade:'\r\n});"]}

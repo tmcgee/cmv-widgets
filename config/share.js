@@ -32,8 +32,17 @@ define({
             type: 'floating',
             path: 'widgets/Share',
             title: 'Share This Map',
+            iconClass: 'fa-share-alt',
+            preload: true,
+            paneOptions: {
+                draggable: false,
+                html: '<a href="#"><i class="fa fa-fw fa-share-alt-square"></i>link</a>'.replace('link', 'Share'),
+                domTarget: 'helpDijit',
+                style: 'height:390px;width:285px;'
+            },
             options: {
-                map: true
+                map: true,
+                draggable: true
             }
         }
     }

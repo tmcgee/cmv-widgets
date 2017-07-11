@@ -62,9 +62,6 @@ define([
         // i18n
         i18n: i18n,
 
-        html: '<a href="#">Share</a>',
-        domTarget: 'helpDijit',
-
         url: window.location.href,
         mailURL: 'mailto:%20?subject={title}&body={summary}%20{url}',
         facebookURL: 'https://www.facebook.com/sharer/sharer.php?s=100&p[url]={url}&p[images][0]={image}&p[title]={title}&p[summary]={summary}',
@@ -116,8 +113,6 @@ define([
             this.inherited(arguments);
             if (!this.parentWidget.toggleable) {
                 this.parentWidget.draggable = this.draggable;
-                var share = domConstruct.place(this.html, this.domTarget);
-                on(share, 'click', lang.hitch(this.parentWidget, 'show'));
             }
 
             this.own(on(this.extentInput, 'click', lang.hitch(this, this.useExtentUpdate)));
