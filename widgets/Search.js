@@ -987,13 +987,20 @@ define([
             var attrOptions = [],
                 shapeOptions = [];
             var len = this.layers.length,
-                option = null;
+                option = null,
+                attributeLayerSet = false;
             for (var i = 0; i < len; i++) {
                 option = {
                     value: i,
                     label: this.layers[i].name
                 };
-                attrOptions.push(lang.clone(option));
+                if (this.layers[i].attributeSearches && this.layers[i].attributeSearches.length > 0) {
+                    attrOptions.push(lang.clone(option));
+                    if (!attributeLayerSet) {
+                        this.attributeLayer = i;
+                        attributeLayerSet = true;
+                    }
+                }
                 if (this.layers[i].queryParameters && this.layers[i].queryParameters.type === 'spatial') {
                     option.value = (shapeOptions.length);
                     shapeOptions.push(option);
