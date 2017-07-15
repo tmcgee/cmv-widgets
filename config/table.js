@@ -88,6 +88,7 @@ define({
             type: 'floating',
             path: 'widgets/Export',
             title: '<i class="fa fa-fw fa-download"></i> Export',
+            preload: true,
             options: {
                 excel: true,
                 xlsExcel: false,

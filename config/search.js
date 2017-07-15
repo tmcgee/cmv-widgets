@@ -163,6 +163,7 @@ define([
                 type: 'floating',
                 path: 'widgets/Export',
                 title: 'Export',
+                preload: true,
                 options: {}
             }
         }
