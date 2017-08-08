@@ -242,6 +242,11 @@ define([
             var qsObj = ioQuery.queryToObject(qs);
             var value = qsObj[field] || '';
 
+            // if there is only one feature, use that to zoom immediately
+            if (this.features.length === 1) {
+                idx = 0;
+            }
+
             array.forEach(this.features, function (feature) {
                 var name = feature.attributes[field];
                 if (name === value) {
