@@ -1,5 +1,7 @@
-#Search Widget for CMV
+# Search Widget for CMV
 Used in conjunction with the [Attributes Table](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget to provide a user interface for querying feature layers, dynamic layers, tables and related records using QueryTask and FindTask.
+
+**NOTE** The Advanced Search capabilities in the Search widget use a JQuery plug-in. For the widget to load properly, you will need to make modifications to your app.js file to include JQuery as a package. Please see the comment in the example [app.js](https://github.com/tmcgee/cmv-widgets/blob/master/config/app.js).
 
 ---
 ## Example Configuration:
