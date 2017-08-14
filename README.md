@@ -13,6 +13,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Export](https://github.com/tmcgee/cmv-widgets#export)
 - [Full Screen](https://github.com/tmcgee/cmv-widgets#fullscreen)
 - [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
+- [IdentifyPanel](https://github.com/tmcgee/cmv-widgets#identifypanel)
 - [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
 - [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
 - [Mapillary](https://github.com/tmcgee/cmv-widgets#mapillary)
@@ -69,6 +70,13 @@ A simple widget containing a button to toggle the CMV map to a maximized full sc
 An example widget demonstrating the display of results from a Geoprocessing Task in the [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables) widget.
 ##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=geoprocessor)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/geoprocessor1.jpg)
+
+---
+### IdentifyPanel
+A widget to replace the map's infoWindow including integration with the [Export](https://github.com/tmcgee/cmv-widgets#export) widget. You can include your own buttons as well. This widget is an updated and enhanced version of one originally created by [Doug Chamberlain](https://github.com/dougrchamberlain/IdentifyPanel).
+##### Documentation - in the works
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=infopanel)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/identifypanel1.jpg)
 
 ---
 ### Layer Labels

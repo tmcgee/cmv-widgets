@@ -1,0 +1,29 @@
+<div>
+    <div data-dojo-attach-point="instructionsNode" class="identifypanel-instructions-node">
+        <label>${i18n.Labels.instructions}</label>
+    </div>
+    <div data-dojo-attach-point="noInfoNode" class="identifypanel-noinfo-node" style="display:none;">
+        <i class="fa fa-minus-circle fa-fw"></i><span>${i18n.Labels.noInformation}</span>
+    </div>
+    <div data-dojo-attach-point="loadingNode" class="identifypanel-loading-node" style="display:none;">
+        <i class="fa fa-spinner fa-pulse fa-fw"></i><span>${i18n.Labels.identifying}</span>
+    </div>
+    <div data-dojo-attach-point="titleNode" class="identifypanel-title-node" style="display:none;">
+        <label data-dojo-attach-point="featureNode" class="identifypanel-feature-node"></label>
+    </div>
+    <div data-dojo-attach-point="popupNode" class="esriPopup" style="display:none;">
+        <div class="esrPopupWrapper">
+            <div class="sizer">
+                <div data-dojo-attach-point="actionsPaneNode" class="actionsPane identifypanel-actions-node">
+                    <div data-dojo-attach-point="navigationButtonsNode" class="float-right">
+                        <button data-dojo-attach-point="btnFirstFeature" data-dojo-attach-event="onClick:selectFirstFeature" data-dojo-props="class:'identifypanel-button',iconClass:'fa fa-fw fa-step-backward',showLabel:${i18n.Buttons.firstFeature.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.firstFeature.label}">${i18n.Buttons.firstFeature.label}</button><button data-dojo-attach-point="btnPreviousFeature" data-dojo-attach-event="onClick:selectPreviousFeature" data-dojo-props="class:'identifypanel-button',iconClass:'fa fa-fw fa-play fa-flip-horizontal',showLabel:${i18n.Buttons.previousFeature.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.previousFeature.label}">${i18n.Buttons.previousFeature.label}</button><button data-dojo-attach-point="btnNextFeature" data-dojo-attach-event="onClick:selectNextFeature" data-dojo-props="class:'identifypanel-button',iconClass:'fa fa-fw fa-play',showLabel:${i18n.Buttons.nextFeature.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.nextFeature.label}">${i18n.Buttons.nextFeature.label}></button><button data-dojo-attach-point="btnLastFeature" data-dojo-attach-event="onClick:selectLastFeature" data-dojo-props="class:'identifypanel-button',iconClass:'fa fa-fw fa-step-forward',showLabel:${i18n.Buttons.lastFeature.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.lastFeature.label}">${i18n.Buttons.lastFeature.label}</button><button data-dojo-attach-point="btnClearFeatures" data-dojo-attach-event="onClick:clearFeatures" data-dojo-props="class:'identifypanel-button',iconClass:'fa fa-fw fa-times-circle',style:'margin-left:10px;',showLabel:${i18n.Buttons.clearFeatures.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.clearFeatures.label}">${i18n.Buttons.clearFeatures.label}</button>
+                    </div>
+                    <div data-dojo-attach-point="actionButtonsNode" class='actionList'></div>
+                </div>
+            </div>
+            <div class="sizer content">
+                <div data-dojo-attach-point="popupContentNode" class="contentPane identifypanel-popup-content-node" data-dojo-type="dijit/layout/ContentPane"></div>
+            </div>
+        </div>
+    </div>
+</div>

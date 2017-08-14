@@ -1,0 +1,68 @@
+.cmvIdentifyPanelWidget .identifypanel-noinfo-node i,
+.cmvIdentifyPanelWidget .identifypanel-loading-node i {
+    margin-right: 6px;
+}
+
+.cmvIdentifyPanelWidget .identifypanel-noinfo-node {
+    color: #900;
+}
+
+.cmvIdentifyPanelWidget .esriPopup {
+    position: relative;
+}
+
+.cmvIdentifyPanelWidget .identifypanel-actions-node {
+    background-color: #F7F7F7;
+    border: 1px solid silver;
+    border-radius: 0;
+    margin-top: 6px;
+    min-height: 33px;
+    padding: 2px;
+}
+
+.cmvIdentifyPanelWidget .identifypanel-actions-node .float-right {
+    float: right;
+}
+
+.cmvIdentifyPanelWidget .identifypanel-actions-node .dijitButtonNode {
+    height: 22px;
+    overflow: hidden;
+    padding: 2px 6px;
+    width: 20px;
+}
+
+.cmvIdentifyPanelWidget .esriPopup .sizer {
+    width: 100%;
+}
+
+.cmvIdentifyPanelWidget .esriPopup .sizer .contentPane {
+    background-color: transparent;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.cmvIdentifyPanelWidget .esriPopup .contentPane .header {
+    margin-bottom: 6px;
+    margin-left: 6px;
+}
+
+.cmvIdentifyPanelWidget .esriPopup .contentPane .hzLine {
+    display: none;
+}
+
+.cmvIdentifyPanelWidget .esriPopup .contentPane table.attrTable {
+    border: 1px solid silver;
+    border-radius: 4px;
+}
+
+.cmvIdentifyPanelWidget .esriPopup .contentPane table.attrTable tr:nth-child(even) {
+    background-color: #f7f7f7;
+}
+.cmvIdentifyPanelWidget .esriPopup .contentPane table.attrTable td {
+    padding: 4px;
+}
+
+.esriPopup .pointer,
+.esriPopup .outerPointer {
+    display: none !important;
+}
