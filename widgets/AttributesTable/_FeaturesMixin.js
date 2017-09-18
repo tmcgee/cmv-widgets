@@ -111,6 +111,11 @@ define([
             topic.publish(this.attributesContainerID + '/tableUpdated', this);
         },
 
+        showOnlySelectedFeatures: function (specificFeatures) {
+            this.showOnlySelectedFeatureGraphics(specificFeatures);
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
+        },
+
         clearSelectedFeatures: function () {
             if (this.grid && this.grid.clearSelection) {
                 this.grid.clearSelection();
