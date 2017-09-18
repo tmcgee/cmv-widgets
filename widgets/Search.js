@@ -1177,28 +1177,21 @@ define([
         },
 
         clearAttributeFields: function () {
-            var searches, search, layer, divNode, input;
-
-            layer = this.layers[this.attributeLayer];
+            var layer = this.layers[this.attributeLayer];
             if (layer) {
-                searches = layer.attributeSearches;
+                var searches = layer.attributeSearches;
                 if (searches) {
                     for (var j = 0; j < searches.length; j++) {
                         var search = searches[j];
                         if (search) {
-                            divNode = dom.byId(search.divName);
+                            var divNode = dom.byId(search.divName);
                             if (!divNode) {
                                 return;
                             }
                             for (var k = 0; k < search.searchFields.length; k++) {
-                                input = registry.byId(search.inputIds[k]);
+                                var input = registry.byId(search.inputIds[k]);
                                 if (input) {
                                     input.setValue('');
-                                }
-                                if (search.searchFields[k].cdl) {
-                                    if (this.componenteCDL) {
-                                        this.componenteCDL.clearLocation();
-                                    }
                                 }
                             }
                         }
