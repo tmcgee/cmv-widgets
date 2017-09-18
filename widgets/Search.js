@@ -1402,7 +1402,6 @@ define([
         },
 
         checkClearButtonEnabled: function (layer, search) {
-            console.log('********************** checkClearButtonEnabled ************************');
             var enabled = this.enableClearButton;
             if (layer && layer.enableClearButton === false) {
                 enabled = false;
