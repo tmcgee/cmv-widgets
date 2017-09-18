@@ -1165,6 +1165,7 @@ define([
                 domStyle.set(this.divQueryContains, 'display', ((layer.findOptions) ? 'block' : 'none'));
 
                 this.checkAdvancedSearchEnabled(layer, search);
+                this.checkClearButtonEnabled(layer, search);
 
                 // put focus on the first input field
                 var input = registry.byId(search.inputIds[0]);
@@ -1173,6 +1174,37 @@ define([
                     this.btnAttributeSearch.set('disabled', false);
                 }
             }));
+        },
+
+        clearAttributeFields: function () {
+            var searches, search, layer, divNode, input;
+
+            layer = this.layers[this.attributeLayer];
+            if (layer) {
+                searches = layer.attributeSearches;
+                if (searches) {
+                    for (var j = 0; j < searches.length; j++) {
+                        var search = searches[j];
+                        if (search) {
+                            divNode = dom.byId(search.divName);
+                            if (!divNode) {
+                                return;
+                            }
+                            for (var k = 0; k < search.searchFields.length; k++) {
+                                input = registry.byId(search.inputIds[k]);
+                                if (input) {
+                                    input.setValue('');
+                                }
+                                if (search.searchFields[k].cdl) {
+                                    if (this.componenteCDL) {
+                                        this.componenteCDL.clearLocation();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         getDefaultWhereClause: function (layer, search, field) {
@@ -1369,6 +1401,23 @@ define([
             return enabled;
         },
 
+        checkClearButtonEnabled: function (layer, search) {
+            console.log('********************** checkClearButtonEnabled ************************');
+            var enabled = this.enableClearButton;
+            if (layer && layer.enableClearButton === false) {
+                enabled = false;
+            } else if (search && search.enableClearButton === false) {
+                enabled = false;
+            }
+            
+            if (enabled) {
+                this.showClearButton();
+            } else {
+                this.hideClearButton();
+            }
+            return enabled;
+        },
+
         showAdvancedSearch: function () {
             if (this.enableAdvancedSearch) {
                 domStyle.set(this.divAdvancedSearchButtons, 'display', 'block');
@@ -1378,6 +1427,16 @@ define([
         hideAdvancedSearch: function () {
             domStyle.set(this.divAdvancedSearchButtons, 'display', 'none');
             this.setAdvancedSearch(false);
+        },
+
+        showClearButton: function () {
+            if (this.enableClearButton) {
+                domStyle.set(this.divExtraActions, 'display', 'inline-block');
+            }
+        },
+
+        hideClearButton: function () {
+            domStyle.set(this.divExtraActions, 'display', 'none');
         },
 
         doExportSQL: function () {
