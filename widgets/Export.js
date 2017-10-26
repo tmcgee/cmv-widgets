@@ -100,7 +100,8 @@ define([
                 'documentName': 'CMV Export',
                 'documentDescription': 'KML Exported from CMV',
                 'simplestyle': true, // mapbox styles converted to KML Styles
-                'extendedData': true
+                'extendedData': true,
+                'styleAttributes': null
             },
 
             shapefileOptions: {
@@ -402,10 +403,10 @@ define([
             options.topjson = this.topojson || options.topojson;
             options.wkt = this.wkt || options.wkt;
 
-            options.geojsonOptions = this.mixinDeep(this.geojsonOptions || {}, options.geojsonOptions);
-            options.kmlOptions = this.mixinDeep(this.kmlOptions || {}, options.kmlOptions);
-            options.shapefileOptions = this.mixinDeep(this.shapefileOptions || {}, options.shapefileOptions);
-            options.topojsonOptions = this.mixinDeep(this.topojsonOptions || {}, options.topojsonOptions);
+            options.geojsonOptions = this.geojsonOptions || options.geojsonOptions;
+            options.kmlOptions = this.kmlOptions || options.kmlOptions;
+            options.shapefileOptions = this.shapefileOptions || options.shapefileOptions;
+            options.topojsonOptions = this.topojsonOptions || options.topojsonOptions;
         },
 
         /*******************************
@@ -855,6 +856,9 @@ define([
                     }
                 }
 
+                if (((type === 'kml') || (type === 'kmz')) && feature.geometry && this.kmlOptions && this.kmlOptions.styleAttributes) {
+                    feature.attributes = this.addKMLStyleAttributes(feature);
+                }
                 if (feature.symbol && includeStyle) {
                     feature.attributes = this.convertSymbolToAttributes(feature);
                 }
@@ -1234,6 +1238,27 @@ define([
                 widget: 'Export',
                 error: msg
             });
+        },
+
+        addKMLStyleAttributes: function (feature) {
+            if (!feature || !feature.geometry) {
+                return feature.attributes;
+            }
+            var type = feature.geometry.type,
+                attributes = feature.attributes,
+                types = this.kmlOptions.styleAttributes[type],
+                field = this.kmlOptions.styleAttributes.field,
+                value = attributes[field];
+
+            if (types) {
+                if (!types[value] && types.default) {
+                    value = 'default';
+                }
+                if (types[value]) {
+                    attributes = lang.mixin(attributes, types[value]);
+                }
+            }
+            return attributes;
         },
 
         mixinDeep: function (dest, source) {
