@@ -10,14 +10,13 @@ define([
     'dojo/aspect',
     'dojo/topic',
     'dojo/number',
-    'dojo/dom-construct',
     'dojo/dom-style',
-    'dojo/query',
 
     'dijit/registry',
 
     'esri/graphic',
     'esri/tasks/FeatureSet',
+    'esri/dijit/Popup',
 
     'dijit/form/Button',
 
@@ -44,14 +43,13 @@ define([
     aspect,
     topic,
     num,
-    domConstruct,
     domStyle,
-    domQuery,
 
     registry,
 
     Graphic,
     FeatureSet,
+    Popup,
 
     Button,
 
@@ -66,7 +64,6 @@ define([
         baseClass: 'cmvIdentifyPanelWidget',
 
         map: null,
-        mapClickMode: null,
 
         buttons: [],
         defaultButtons: [
@@ -91,6 +88,18 @@ define([
         showNavigationButtons: true,
 
         noInfoTimeout: 5000,
+
+        infoWindowOptions: {},
+        defaultInfoWindowOptions: {
+            highlight: true,
+            keepHighlightOnHide: true,
+            popupWindow: false,
+            hideDelay: 10,
+            visibleWhenEmpty: false,
+            anchor: 'right',
+            offsetX: -99999,
+            offsetY: -99999
+        },
 
         exportOptions: {},
         defaultExportOptions: {
@@ -137,7 +146,6 @@ define([
             }
         },
 
-        mapClicked: false,
         featureCount: 0,
         featureIndex: 0,
 
@@ -150,8 +158,9 @@ define([
 
             this.exportOptions = this.mixinDeep(this.defaultExportOptions, this.exportOptions);
 
-            this.own(topic.subscribe('mapClickMode/currentSet', lang.hitch(this, 'setMapClickMode')));
-            this.map.on('click', lang.hitch(this, 'onMapClick'));
+            this.own(topic.subscribe('identify/execute', lang.hitch(this, 'onIdentifyExecute')));
+            this.own(topic.subscribe('identify/results', lang.hitch(this, 'onIdentifyResults')));
+            this.own(topic.subscribe('identify/error', lang.hitch(this, 'onIdentifyError')));
         },
 
         initParentWidget: function () {
@@ -165,23 +174,12 @@ define([
         },
 
         initInfoWindow: function () {
-            this.infoWindow = this.map.infoWindow;
-
-            // setup infoWindow to popup off screen
-            this.infoWindow.popup = true;
-            this.infoWindow.anchor = 'right';
-            this.infoWindow.offsetX = -99999;
-            this.infoWindow.offsetY = -99999;
-
-            // force info window to hide quickly if no features found
-            this.infoWindow.hideDelay = 10;
-            this.infoWindow.visibleWhenEmpty = false;
-
-            // when the infoWindow is hidden.
-            this.infoWindow.on('hide', lang.hitch(this, 'onHide'));
-
-            // when the selection is cleared, hide the popup content in the panel.
-            this.infoWindow.on('clear-features', lang.hitch(this, 'onClearFeatures'));
+            this.defaultInfoWindowOptions.map = this.map;
+            var options = this.mixinDeep(this.defaultInfoWindowOptions, this.infoWindowOptions);
+            this.infoWindow = new Popup(options, document.createElement('div'));
+            if (options.highlight) {
+                this.infoWindow.enableHighlight(this.map);
+            }
 
             // when the selection changes update the side panel to display the popup info for the
             // currently selected feature.
@@ -189,6 +187,12 @@ define([
 
             // When features are associated with the  map's info window update the panel with the new content.
             this.infoWindow.on('set-features', lang.hitch(this, 'onSetFeatures'));
+
+            // make sure the map's info window is always out of the way.
+            this.map.infoWindow.set('highlight', false);
+            this.map.infoWindow.set('anchor', 'right');
+            this.map.infoWindow.set('offsetX', -99999);
+            this.map.infoWindow.set('offsetY', -99999);
 
         },
 
@@ -227,6 +231,7 @@ define([
                 this.popupContentNode.set('content', content);
                 domStyle.set(this.instructionsNode, 'display', 'none');
                 domStyle.set(this.popupNode, 'display', 'block');
+                domStyle.set(this.loadingNode, 'display', 'none');
                 this.featureIndex = this.infoWindow.selectedIndex;
                 this.checkNavigationButtons();
                 this.setTitle();
@@ -258,7 +263,6 @@ define([
         },
 
         selectFeature: function (idx) {
-            domStyle.set(this.loadingNode, 'display', 'none');
             this.featureIndex = idx || 0;
             if (this.featureIndex < 0) {
                 this.featureIndex = 0;
@@ -268,12 +272,21 @@ define([
             if (this.featureCount < 1) {
                 domStyle.set(this.noInfoNode, 'display', 'block');
             }
+            domStyle.set(this.loadingNode, 'display', 'none');
             this.infoWindow.select(this.featureIndex);
+            this.infoWindow.showHighlight();
+            this.map.infoWindow.hideHighlight();
             this.checkNavigationButtons();
         },
 
         clearFeatures: function () {
-            this.infoWindow.clearFeatures();
+            domStyle.set(this.instructionsNode, 'display', 'block');
+            domStyle.set(this.loadingNode, 'display', 'none');
+            domStyle.set(this.noInfoNode, 'display', 'none');
+            domStyle.set(this.titleNode, 'display', 'none');
+            domStyle.set(this.popupNode, 'display', 'none');
+            this.popupContentNode.set('content', null);
+            this.infoWindow.hideHighlight();
         },
 
         toggleFeatureHighlight: function () {
@@ -288,6 +301,33 @@ define([
             }
         },
 
+        onIdentifyExecute: function (args) {
+            this.clearFeatures();
+            window.clearTimeout(this.hideTimeout);
+            if (args.identifies && args.identifies.length > 0) {
+                domStyle.set(this.instructionsNode, 'display', 'none');
+                domStyle.set(this.loadingNode, 'display', 'block');
+            } else if (args.event && args.event.graphic) {
+                this.infoWindow.setFeatures([args.event.graphic]);
+            }
+            if (this.parentWidget && this.parentWidget.set) {
+                this.parentWidget.set('open', true);
+            }
+        },
+
+        onIdentifyResults: function (args) {
+            var features = args.features;
+            if (features && features.length > 0) {
+                this.infoWindow.setFeatures(features);
+            } else {
+                this.showNoResults();
+            }
+        },
+
+        onIdentifyError: function (/* args */) {
+            this.showNoResults();
+        },
+
         onSelectionChanged: function () {
             this.displayPopupContent(this.infoWindow.getSelectedFeature());
         },
@@ -297,67 +337,19 @@ define([
             this.selectFeature(0);
         },
 
-        onClearFeatures: function () {
-            if (this.mapClicked) {
-                domStyle.set(this.loadingNode, 'display', 'block');
-                domStyle.set(this.instructionsNode, 'display', 'none');
-            } else if (this.mapClickMode === 'identify') {
-                domStyle.set(this.loadingNode, 'display', 'none');
-                domStyle.set(this.instructionsNode, 'display', 'block');
-            }
-            domStyle.set(this.noInfoNode, 'display', 'none');
-            domStyle.set(this.titleNode, 'display', 'none');
-            domStyle.set(this.popupNode, 'display', 'none');
-            this.popupContentNode.set('content', null);
-            this.mapClicked = false;
-        },
-
-        onHide: function () {
-            if (!this.infoWindow.features || this.infoWindow.features.length < 1) {
-                this.clearFeatures();
-                domStyle.set(this.instructionsNode, 'display', 'none');
-                domStyle.set(this.loadingNode, 'display', 'none');
-                domStyle.set(this.noInfoNode, 'display', 'block');
-                window.clearTimeout(this.hideTimeout);
-                this.hideTimeout = window.setTimeout(lang.hitch(this, 'clearFeatures'), this.noInfoTimeout);
-            }
-        },
-
-        onMapClick: function () {
-            this.mapClicked = false;
-            if (this.mapClickMode === 'identify') {
-                this.mapClicked = true;
-                domStyle.set(this.instructionsNode, 'display', 'none');
-                domStyle.set(this.noInfoNode, 'display', 'none');
-                domStyle.set(this.loadingNode, 'display', 'block');
-                if (this.parentWidget && this.parentWidget.set) {
-                    this.parentWidget.set('open', true);
-                }
-                window.clearTimeout(this.hideTimeout);
-            }
-        },
-
-        setMapClickMode: function (mode) {
-            this.mapClickMode = mode;
-            if (this.mapClickMode === 'identify') {
-                if (this.featureCount === 0) {
-                    domStyle.set(this.instructionsNode, 'display', 'block');
-                }
-            } else {
-                domStyle.set(this.instructionsNode, 'display', 'none');
-                this.clearFeatures();
-            }
+        showNoResults: function () {
+            this.clearFeatures();
+            domStyle.set(this.instructionsNode, 'display', 'none');
+            domStyle.set(this.loadingNode, 'display', 'none');
+            domStyle.set(this.noInfoNode, 'display', 'block');
+            window.clearTimeout(this.hideTimeout);
+            this.hideTimeout = window.setTimeout(lang.hitch(this, 'clearFeatures'), this.noInfoTimeout);
         },
 
         setTitle: function () {
             var html = i18n.Labels.feature + ' ' + num.format(this.featureIndex + 1) + ' of ' + num.format(this.featureCount);
             this.featureNode.innerHTML = html;
             domStyle.set(this.titleNode, 'display', 'block');
-        },
-
-        hideNoInfo: function () {
-            domStyle.set(this.noInfoNode, 'display', 'none');
-            domStyle.set(this.instructionsNode, 'display', 'block');
         },
 
         checkNavigationButtons: function () {
