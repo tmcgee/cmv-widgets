@@ -190,6 +190,8 @@ define([
             symbols: {}
         },
 
+        useIdentifyPanel: true,
+
         defaultQueryStringOptions: {
             // what parameter is used to pass the layer index
             layerParameter: 'layer',
@@ -304,11 +306,25 @@ define([
                 this.stopDrawing();
             }));
 
-            if (this.map.infoWindow) {
+            if (this.useIdentifyPanel) {
+                this.own(topic.subscribe('identifyPanel/show', lang.hitch(this, 'enableIdentifyButton')));
+                this.own(topic.subscribe('identifyPanel/hide', lang.hitch(this, 'disableIdentifyButton')));
+                this.own(topic.subscribe('identifyPanel/update', lang.hitch(this, function (features) {
+                    if (features && features.length > 0) {
+                        this.enableIdentifyButton();
+                    } else {
+                        this.disableIdentifyButton();
+                    }
+                })));
+            } else if (this.map.infoWindow) {
                 on(this.map.infoWindow, 'show', lang.hitch(this, 'enableIdentifyButton'));
                 on(this.map.infoWindow, 'hide', lang.hitch(this, 'disableIdentifyButton'));
             }
             this.own(on(this.drawToolbar, 'draw-end', lang.hitch(this, 'endDrawing')));
+
+            if (this.map.infoWindow && this.map.infoWindow.count) {
+                this.enableIdentifyButton();
+            }
 
             this.addTopics();
         },
@@ -599,7 +615,7 @@ define([
         getGeometryFromIdentifiedFeature: function () {
             var popup = this.map.infoWindow,
                 feature = null;
-            if (popup && popup.isShowing) {
+            if (popup && (this.useIdentifyPanel || popup.isShowing)) {
                 feature = popup.getSelectedFeature();
             }
             return feature.geometry;

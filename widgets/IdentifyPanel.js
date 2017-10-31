@@ -89,6 +89,7 @@ define([
 
         noInfoTimeout: 5000,
 
+        standaloneInfoWindow: false,
         infoWindowOptions: {},
         defaultInfoWindowOptions: {
             highlight: true,
@@ -169,7 +170,7 @@ define([
             }
 
             if (this.parentWidget && this.parentWidget.toggleable) {
-                this.own(aspect.after(this.parentWidget, 'toggle', lang.hitch(this, 'toggleFeatureHighlight')));
+                this.own(aspect.after(this.parentWidget, 'toggle', lang.hitch(this, 'toggleIdentifyPanel')));
             }
         },
 
@@ -188,12 +189,15 @@ define([
             // When features are associated with the  map's info window update the panel with the new content.
             this.infoWindow.on('set-features', lang.hitch(this, 'onSetFeatures'));
 
-            // make sure the map's info window is always out of the way.
-            this.map.infoWindow.set('highlight', false);
-            this.map.infoWindow.set('anchor', 'right');
-            this.map.infoWindow.set('offsetX', -99999);
-            this.map.infoWindow.set('offsetY', -99999);
-
+            if (this.standaloneInfoWindow) {
+                // make sure the map's info window is always out of the way.
+                this.map.infoWindow.set('highlight', false);
+                this.map.infoWindow.set('anchor', 'right');
+                this.map.infoWindow.set('offsetX', -99999);
+                this.map.infoWindow.set('offsetY', -99999);
+            } else {
+                this.map.setInfoWindow(this.infoWindow);
+            }
         },
 
         initButtons: function () {
@@ -275,8 +279,19 @@ define([
             domStyle.set(this.loadingNode, 'display', 'none');
             this.infoWindow.select(this.featureIndex);
             this.infoWindow.showHighlight();
-            this.map.infoWindow.hideHighlight();
+            if (this.standaloneInfoWindow) {
+                this.map.infoWindow.hideHighlight();
+            }
             this.checkNavigationButtons();
+        },
+
+        setFeatures: function (features) {
+            if (features && features.length) {
+                this.infoWindow.setFeatures(features);
+            } else {
+                this.infoWindow.clearFeatures();
+            }
+            topic.publish('identifyPanel/update', features);
         },
 
         clearFeatures: function () {
@@ -285,18 +300,19 @@ define([
             domStyle.set(this.noInfoNode, 'display', 'none');
             domStyle.set(this.titleNode, 'display', 'none');
             domStyle.set(this.popupNode, 'display', 'none');
+            
+            this.setFeatures(null);
             this.popupContentNode.set('content', null);
-            this.infoWindow.hideHighlight();
         },
 
-        toggleFeatureHighlight: function () {
+        toggleIdentifyPanel: function () {
             if (this.parentWidget) {
-                if (!this.parentWidget.get('open')) {
-                    this.infoWindow.hideHighlight();
-                } else if (this.infoWindow.features && this.infoWindow.features.length > 0) {
+                if (this.parentWidget.get('open') && this.infoWindow.features && this.infoWindow.features.length > 0) {
                     this.infoWindow.showHighlight();
+                    topic.publish('identifyPanel/show');
                 } else {
                     this.infoWindow.hideHighlight();
+                    topic.publish('identifyPanel/hide');
                 }
             }
         },
@@ -308,7 +324,7 @@ define([
                 domStyle.set(this.instructionsNode, 'display', 'none');
                 domStyle.set(this.loadingNode, 'display', 'block');
             } else if (args.event && args.event.graphic) {
-                this.infoWindow.setFeatures([args.event.graphic]);
+                this.setFeatures([args.event.graphic]);
             }
             if (this.parentWidget && this.parentWidget.set) {
                 this.parentWidget.set('open', true);
@@ -318,7 +334,7 @@ define([
         onIdentifyResults: function (args) {
             var features = args.features;
             if (features && features.length > 0) {
-                this.infoWindow.setFeatures(features);
+                this.setFeatures(features);
             } else {
                 this.showNoResults();
             }
