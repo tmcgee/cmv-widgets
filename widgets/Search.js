@@ -190,7 +190,7 @@ define([
             symbols: {}
         },
 
-        useIdentifyPanel: true,
+        useIdentifyPanel: false,
 
         defaultQueryStringOptions: {
             // what parameter is used to pass the layer index
