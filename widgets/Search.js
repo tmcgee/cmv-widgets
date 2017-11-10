@@ -190,7 +190,7 @@ define([
             symbols: {}
         },
 
-        useIdentifyPanel: false,
+        useIdentifyPanel: true,
 
         defaultQueryStringOptions: {
             // what parameter is used to pass the layer index
@@ -316,7 +316,8 @@ define([
                         this.disableIdentifyButton();
                     }
                 })));
-            } else if (this.map.infoWindow) {
+            }
+            if (this.map.infoWindow) {
                 on(this.map.infoWindow, 'show', lang.hitch(this, 'enableIdentifyButton'));
                 on(this.map.infoWindow, 'hide', lang.hitch(this, 'disableIdentifyButton'));
             }
