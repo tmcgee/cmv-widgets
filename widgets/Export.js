@@ -1168,7 +1168,7 @@ define([
         },
 
         removeLink: function () {
-            if (this.link && this.divExportLink) {
+            if (this.link && this.divExportLink && this.divExportLink.children.length > 0) {
                 this.divExportLink.removeChild(this.link);
                 this.divExportLink.innerHTML = '&nbsp;';
             }
