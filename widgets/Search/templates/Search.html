@@ -81,6 +81,11 @@
                     <button data-dojo-attach-event="click:doAttributeSearch" data-dojo-attach-point="btnAttributeSearch" data-dojo-props="iconClass:'fa fa-search fa-fw',class:'btn-attribute-search',showLabel:${i18n.Buttons.search.showLabel},disabled:true" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.search.label}">
                         ${i18n.Buttons.search.label}
                     </button>
+                    <div data-dojo-attach-point="divExtraActions">
+                        <button data-dojo-attach-event="click:clearAttributeFields" data-dojo-attach-point="btnClearSearchFilters" data-dojo-props="iconClass:'fa fa-history fa-fw',class:'btn-attribute-search',showLabel:${i18n.Buttons.clearFields.showLabel}" data-dojo-type="dijit/form/Button">
+                            ${i18n.Buttons.clearFields.label}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

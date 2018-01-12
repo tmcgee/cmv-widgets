@@ -42,6 +42,7 @@ define([
         },
 
         enableAdvancedSearch: true,
+        enableClearButton: true,
 
         layers: [
             {
@@ -104,6 +105,7 @@ define([
                             sublayerID: 5,
                             outFields: ['*']
                         },
+                        enableClearButton: false,
                         searchFields: [
                             {
                                 field: 'Hospital Name',

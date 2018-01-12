@@ -88,6 +88,10 @@ define({
             exportSQL: {
                 label: 'Export',
                 showLabel: false
+            },
+            clearFields: {
+                label: 'Clear',
+                showLabel: true
             }
         }
     }
