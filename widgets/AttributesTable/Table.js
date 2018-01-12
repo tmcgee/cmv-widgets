@@ -325,6 +325,15 @@ define([
             this.clearFeatures(selection);
         },
 
+        showOnlySelected: function () {
+            var selection = this.showOnlySelectedGridRows();
+            if (!selection) {
+                return;
+            }
+
+            this.showOnlySelectedFeatures(selection);
+        },
+
         clearGrowl: function () {
             var growl = registry.byId(this.growlID);
             if (growl && growl.close) {

@@ -453,23 +453,49 @@ define([
                 return null;
             }
 
+            var collection = this.grid.get('collection');
             var selection = lang.clone(this.grid.get('selection'));
-            var store = this.grid.get('store');
 
-            if (!selection || !store) {
+            if (!selection || !collection || !collection.data) {
                 return null;
             }
 
             for (var key in selection) {
                 if (selection.hasOwnProperty(key) && selection[key] === true) {
-                    store.remove(key);
+                    collection.removeSync(key);
                 }
             }
 
             this.grid.refresh();
 
             return {selection: selection, idProperty: this.idProperty};
-        }
+        },
 
+        showOnlySelectedGridRows: function () {
+            if (!this.grid) {
+                return null;
+            }
+
+            var collection = this.grid.get('collection');
+            var selection = lang.clone(this.grid.get('selection'));
+
+            var toKeep = [];
+
+            if (!selection || !collection || !collection.data) {
+                return null;
+            }
+
+            for (var key in selection) {
+                if (selection.hasOwnProperty(key) && selection[key] === true) {
+                    toKeep.push(lang.clone(collection.getSync(key)));
+                }
+            }
+
+            collection.setData(toKeep);
+
+            this.grid.refresh();
+
+            return {selection: selection, idProperty: this.idProperty};
+        }
     });
 });

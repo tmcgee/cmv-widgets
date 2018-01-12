@@ -687,6 +687,14 @@ define([
             }
         },
 
+        showOnlySelectedFeatureGraphics: function (specificGraphics) {
+            this.keepSpecificGraphics(this.featureGraphics, specificGraphics);
+            
+            this.setToolbarButtons();
+            topic.publish(this.attributesContainerID + '/tableUpdated', this);
+            this.zoomToFeatureGraphics();
+        },
+
         clearSelectedGraphics: function () {
             this.clearGraphicsLayer(this.selectedGraphics);
         },
@@ -725,6 +733,29 @@ define([
                 var idProperty = graphic.attributes[specificGraphics.idProperty];
                 if (idProperty) {
                     return selectionFilter.indexOf(idProperty.toString()) >= 0;
+                }
+                return false;
+            });
+
+            if (specificGraphicsFound.length > 0) {
+                array.forEach(specificGraphicsFound, function (graphic) {
+                    layer.remove(graphic);
+                });
+            }
+        },
+
+        keepSpecificGraphics: function (layer, specificGraphics) {
+            var selectionFilter = [];
+            for (var key in specificGraphics.selection) {
+                if (key) {
+                    selectionFilter.push(key);
+                }
+            }
+
+            var specificGraphicsFound = layer.graphics.filter(function (graphic) {
+                var idProperty = graphic.attributes[specificGraphics.idProperty];
+                if (idProperty) {
+                    return selectionFilter.indexOf(idProperty.toString()) < 0;
                 }
                 return false;
             });
