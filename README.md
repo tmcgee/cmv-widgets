@@ -10,7 +10,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 ### Widgets Available in this Repo
 - [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables)
 - [Disclaimer](https://github.com/tmcgee/cmv-widgets#disclaimer)
-- [Elevation Profile](https://github.com/tmcgee/cmv-widgets#eelevation-profile)
+- [Elevation Profile](https://github.com/tmcgee/cmv-widgets#elevation-profile)
 - [Export](https://github.com/tmcgee/cmv-widgets#export)
 - [Full Screen](https://github.com/tmcgee/cmv-widgets#fullscreen)
 - [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
