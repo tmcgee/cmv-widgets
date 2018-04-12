@@ -41,6 +41,7 @@ plugins:
     csslint:
         enabled: true
 exclude_patterns:
+    - "**/gruntfile.js"
     - "cmv/**/*"
     - "**/**.min.css"
     - "**/**.min.js"

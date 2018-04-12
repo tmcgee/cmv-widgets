@@ -1,0 +1,34 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: "draw-icons";
+    font-style: normal;
+    font-weight: normal;
+    src:url("./fonts/draw-icons.eot");
+    src:url("./fonts/draw-icons.eot?#iefix") format("embedded-opentype"),
+    url("./fonts/draw-icons.woff") format("woff"),
+    url("./fonts/draw-icons.ttf") format("truetype"),
+    url("./fonts/draw-icons.svg#draw-icons") format("svg");
+}
+
+/* csslint order-alphabetical: 0 */
+.cmvElevationProfileWidget .draw-icon-polyline:before,
+.cmvElevationProfileWidget .draw-icon-freehand-polyline:before {
+    font-family: "draw-icons";
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-transform: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.cmvElevationProfileWidget .draw-icon-polyline:before {
+    content: "\e004";
+}
+
+.cmvElevationProfileWidget .draw-icon-freehand-polyline:before {
+    content: "\e007";
+}

@@ -1,0 +1,19 @@
+/*csslint box-model: false */
+.cmwLocatorControlWidget {
+    width: 100%;
+}
+
+.floatingWidget .cmwLocatorControlWidget {
+    margin: 10px;
+    width: 200px;
+}
+
+.floatingWidget .cmwLocatorControlWidget .locatorInputFields:first-child {
+    margin-bottom: 40px;
+}
+
+.cmwLocatorControlWidget label {
+    font-weight: bold;
+    margin-left: 5px;
+}
+
