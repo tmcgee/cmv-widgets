@@ -10,12 +10,14 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 ### Widgets Available in this Repo
 - [Attributes Tables](https://github.com/tmcgee/cmv-widgets#attributes-tables)
 - [Disclaimer](https://github.com/tmcgee/cmv-widgets#disclaimer)
+- [Elevation Profile](https://github.com/tmcgee/cmv-widgets#eelevation-profile)
 - [Export](https://github.com/tmcgee/cmv-widgets#export)
 - [Full Screen](https://github.com/tmcgee/cmv-widgets#fullscreen)
 - [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
 - [IdentifyPanel](https://github.com/tmcgee/cmv-widgets#identifypanel)
 - [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
 - [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
+- [Locator Control](https://github.com/tmcgee/cmv-widgets#locator-control)
 - [Mapillary](https://github.com/tmcgee/cmv-widgets#mapillary)
 - [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
 - [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
@@ -47,9 +49,11 @@ A simple yet configurable disclaimer widget.
 
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/disclaimer2.jpg)
 
+
 ---
-### Editor
-Coming Soon
+### Elevation Profile
+An updated Elevation Profile widget based on previously contributed widget by [goriliukasbuxton](https://github.com/goriliukasbuxton/ElevationProfile2) and [ERS-Long](https://github.com/ERS-Long/ElevationsProfile).
+##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/ElevationProfile.js)
 
 ---
 ### Export
@@ -89,6 +93,11 @@ A simple widget to add labels for one or more Feature Layers.
 A simple widget to toggle the visibility of a set of layers. Only a single layer in the set can be visible at any time. All others are turned off when the target layer's visibility is set.
 ##### Documentation - in the works
 ##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LayerToggle.js)
+
+---
+### Locator Control
+A widget to allow the user to change the properties of the CMV Locate Button widget in real-time.
+##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LocatorControl.js)
 
 ---
 ### Mapillary
