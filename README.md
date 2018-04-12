@@ -52,7 +52,8 @@ A simple yet configurable disclaimer widget.
 
 ---
 ### Elevation Profile
-An updated Elevation Profile widget based on previously contributed widget by [goriliukasbuxton](https://github.com/goriliukasbuxton/ElevationProfile2) and [ERS-Long](https://github.com/ERS-Long/ElevationsProfile).
+An updated Elevation Profile widget based on previously contributed widgets by [goriliukasbuxton](https://github.com/goriliukasbuxton/ElevationProfile2) and [ERS-Long](https://github.com/ERS-Long/ElevationsProfile).
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=elevationProfile)
 ##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/ElevationProfile.js)
 
 ---
@@ -97,6 +98,7 @@ A simple widget to toggle the visibility of a set of layers. Only a single layer
 ---
 ### Locator Control
 A widget to allow the user to change the properties of the CMV Locate Button widget in real-time.
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=locatorControl)
 ##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LocatorControl.js)
 
 ---

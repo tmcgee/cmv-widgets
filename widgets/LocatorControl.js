@@ -42,7 +42,7 @@ define([
         i18n: i18n,
         baseClass: 'cmwLocatorControlWidget',
 
-        html: '<i class="fa fa-compass fa-3x fa-fw" style="cursor:pointer;color:#FF0"></i>',
+        html: '<i class="fa fa-compass fa-2x fa-fw" style="cursor:pointer;color:#FF0"></i>',
         domTarget: 'helpDijit',
         draggable: true,
 
