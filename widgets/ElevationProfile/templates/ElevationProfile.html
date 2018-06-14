@@ -1,0 +1,20 @@
+<div>
+    <div class="elevationMeasurementUnits">
+        <label>Measurement Unit:</label><br/>
+        <select style="width:100%;" data-dojo-attach-point="unitsSelect" data-dojo-type="dijit/form/Select" id="unitsSelect" data-dojo-attach-event="onChange:onUnitChange">
+            <option value="esriMiles">Miles</option>
+            <option value="esriKilometers">Kilometers</option>
+            <option value="esriMeters">Meters</option>
+            <option value="esriNauticalMiles">Nautical Miles</option>
+            <option value="esriYards">Yards</option>
+            <option value="esriFeet">Feet</option>
+        </select>
+    </div>
+    <div>
+        <label>Digitize a route:</label><br>
+        <button data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'draw-icon-polyline fa fa-fw',showLabel:false,disabled:false" data-dojo-attach-point="btnPolyline" data-dojo-attach-event="click:onPolyline" title="Draw Polyline"></button>
+        <button data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'draw-icon-freehand-polyline fa fa-fw',showLabel:false,disabled:false" data-dojo-attach-point="btnFreehandPolyline" data-dojo-attach-event="click:onFreehandPolyline" title="Draw Freehand Polyline"></button>
+        <button style="margin-left:20px;" data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-times fa-fw',showLabel:false,disabled:true" data-dojo-attach-point="btnClear" data-dojo-attach-event="click:onClear" title="Clear Drawing"></button>
+    </div>
+
+</div>

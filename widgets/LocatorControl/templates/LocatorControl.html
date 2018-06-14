@@ -1,0 +1,13 @@
+<div>
+    <div data-dojo-type="dijit/form/Form" data-dojo-attach-point="locatorControlFormDijit">
+        <div class="locatorInputFields">
+            <input type="checkbox" data-dojo-attach-point="centerAtDijit" data-dojo-type="dijit/form/CheckBox" data-dojo-props="'class':'optionsCheckBox'" data-dojo-attach-event="onChange:onValueChange"/><label>${i18n.centerAt}</label><br/><br/>
+            <input type="checkbox" data-dojo-attach-point="useTrackingDijit" data-dojo-type="dijit/form/CheckBox" data-dojo-props="'class':'optionsCheckBox'" data-dojo-attach-event="onChange:onValueChange"/><label>${i18n.useTracking}</label>
+        </div>
+
+        <div class="locatorInputFields">
+            <input type="checkbox" data-dojo-attach-point="setScaleDijit" data-dojo-type="dijit/form/CheckBox" data-dojo-props="'class':'optionsCheckBox'" data-dojo-attach-event="onChange:onValueChange"/><label>${i18n.setScale}</label><br/><br/>
+            <input type="text" style="width:50px;" data-dojo-type="dijit/form/NumberTextBox" data-dojo-attach-point="scaleDijit" data-dojo-props="trim:true" data-dojo-attach-event="onChange:onValueChange" value="0"/><label>${i18n.scale}</label>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+.cmvElevationProfileWidget .elevationMeasurementUnits {
+    float: right;
+    height: 100px;
+    margin-left: 20px;
+    width: 150px;
+}
+
+.cmvElevationProfileWidget label {
+    margin-left: 5px;
+}
+
+.esriElevationProfile,
+.esriElevationProfileChartNode {
+    height: calc(100% - 20px) !important;
+    left: 0;
+    min-height: 150px !important;
+    position: absolute;
+    top: 0;
+    width: calc(100% - 10px) !important;
+}

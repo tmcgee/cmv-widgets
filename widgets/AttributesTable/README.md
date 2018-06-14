@@ -1,13 +1,13 @@
-#Attributes Table Widget
+# Attributes Table Widget
 A highly configurable widget to display the results of one or more Query, Find or Geoprocessor Tasks.
 
-##AttributesTable Class
+## AttributesTable Class
 Adding Attributes Table to CMV
 
 Add the widget configuration object to the widgets object in viewer.js.
 Additional options can be passed with each layer via the controlOptions object. See Attribute Table Options for the many options available.
 
-##Widget Configuration
+## Widget Configuration
 ``` javascript
 attributesTable: {
     include: true,
@@ -45,7 +45,7 @@ attributesTable: {
 },
 ```
 
-##Pane Configuration
+## Pane Configuration
 Because of the dimensions needed to show an attributes table, placing it in the bottom pane of your app is recommended. Here is the pane configuration to work with the above  widget configuration
 ``` javascript
 bottom: {
@@ -63,7 +63,7 @@ The `content` property is used to provide a source node reference in the widget 
 ## Screenshot:
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/attributesTables1.jpg)
 
-##Communicating with other widgets
+## Communicating with other widgets
 The Attributes Table can be stand-alone if you want to display the results of a query at the start of your application for example. It can also work well with other widgets. The [Search Widget](https://github.com/tmcgee/cmv-widgets#search) is intended to be used as a querying interface for an attributes table. The [Export Widget](https://github.com/tmcgee/cmv-widgets#export) is intended to be used to export the records from an attributes table. Two other widgets are planned that would communicate with an attributes table:
 
 1. Plug-in for layerControl widget
@@ -72,7 +72,7 @@ The Attributes Table can be stand-alone if you want to display the results of a 
 Communication to/from another widget to an attributes table is via dojo's topic publish/subscribe model. The available topics are listed below.
 
 ---
-##Widget Options
+## Widget Options
 The attributes table is extremely flexible and so there are many options you can configure. For many of them, you can just use the defaults. Here is a basic configuration example that could be defined in the `config/attributesTable` file or the widget options. Additional options are described below.
 
 ``` javascript
@@ -123,7 +123,7 @@ topicID: 'attributesTable',
 ```
 
 ---
-##Growler Options
+## Growler Options
 ``` javascript
 growl: {
     // should the "loading" growl be displayed?
@@ -135,7 +135,7 @@ growl: {
 
 
 ---
-##Query Options
+## Query Options
 ``` javascript
 queryOptions:
     // parameters for the query
@@ -225,7 +225,7 @@ queryOptions:
 
 
 ---
-##find Options
+## find Options
 ``` javascript
 findOptions:
     // parameters for the FindTask
@@ -297,7 +297,7 @@ findOptions:
 
 
 ---
-##Grid Options
+## Grid Options
 ``` javascript
 gridOptions: {
 
@@ -351,7 +351,7 @@ gridOptions: {
 
 
 ---
-##Feature Options
+## Feature Options
 ``` javascript
 featureOptions: {
     /*
@@ -477,7 +477,7 @@ toolbarOptions: {
 
 
 ---
-##Symbology
+## Symbology
 You can override the symbology for any graphics that are added to the map.
 Each child configuration within the symbols config is described below.
 ```
@@ -491,7 +491,7 @@ symbolOptions: {
 ```
 
 
-###Feature Symbology
+### Feature Symbology
 Symbology for features that are a result of the query
 ``` javascript
 features: {
@@ -531,7 +531,7 @@ features: {
 ```
 
 
-###Selected Features
+### Selected Features
 The symbology for selected features - those that have been selected on the map or from the grid
 ``` javascript
 selected: {
@@ -571,7 +571,7 @@ selected: {
 ```
 
 
-###Highlighted Features
+### Highlighted Features
 The symbology for a graphic while you are hovering your mouse over a queried feature on the map
 ``` javascript
 highlighted: {
@@ -611,7 +611,7 @@ highlighted: {
 ```
 
 
-###Source Symbols
+### Source Symbols
 Symbology for  the point, circle, extent or feature(s) that was used for a spatial query
 ``` javascript
 source: {
@@ -651,7 +651,7 @@ source: {
 ```
 
 
-###Buffer Symbology
+### Buffer Symbology
 Symbolology for the buffer if one is used around the source symbol(s)
 ``` javascript
 buffer: {
@@ -669,7 +669,7 @@ buffer: {
 
 
 ---
-##Attributes Table Topics
+## Attributes Table Topics
 
 ### Subscribed Topics
 The Attribute Table subscribes to the following topics. The topicID should be unique for each instance of the Attribute Table

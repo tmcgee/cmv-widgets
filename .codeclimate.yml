@@ -1,14 +1,47 @@
-engines:
+version: "2"
+checks:
+  argument-count:
+    enabled: true
+    config:
+      threshold: 10
+  complex-logic:
+    enabled: true
+    config:
+      threshold: 10
+  file-lines:
+    enabled: false
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 10
+  method-count:
+    enabled: true
+    config:
+      threshold: 50
+  method-lines:
+    enabled: true
+    config:
+      threshold: 100
+  nested-control-flow:
+    enabled: true
+    config:
+      threshold: 10
+  return-statements:
+    enabled: true
+    config:
+      threshold: 10
+  similar-code:
+    enabled: false
+  identical-code:
+    enabled: false
+plugins:
     eslint:
         enabled: true
         channel: "eslint-3"
     csslint:
         enabled: true
-ratings:
-    paths:
-        - "**.js"
-        - "**.css"
-exclude_paths:
+exclude_patterns:
+    - "**/gruntfile.js"
     - "cmv/**/*"
     - "**/**.min.css"
     - "**/**.min.js"
