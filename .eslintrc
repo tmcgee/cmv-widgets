@@ -53,7 +53,6 @@
             "getWithoutSet": true
         }],
         "block-scoped-var": "error",
-        "complexity": "error",
         "consistent-return": "error",
         "curly": "error",
         "default-case": "error",
@@ -107,6 +106,7 @@
         "yoda": "error",
 
         // best practices rules to keep an eye on and consider fixing
+        "complexity": "warn",
         "max-statements": ["warn", 30],
 
         // ignored best practices rules

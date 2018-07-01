@@ -334,6 +334,9 @@ define([
             this.showOnlySelectedFeatures(selection);
         },
 
+        // for future use
+        showAllRecords: function () {},
+
         clearGrowl: function () {
             var growl = registry.byId(this.growlID);
             if (growl && growl.close) {

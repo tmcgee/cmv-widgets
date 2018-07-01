@@ -39,6 +39,12 @@ define({
                 zoomToBuffer: 'Zoom To Buffer'
             },
 
+            view: {
+                title: 'Display',
+                showAllRecords: 'Display All Records',
+                showOnlySelectedRecords: 'Display Only Selected Record(s)'
+            },
+
             clear: {
                 title: 'Clear',
                 clearFeatures: 'Clear All Features',
@@ -48,7 +54,6 @@ define({
                 clearGrid: 'Clear Grid',
                 clearAll: 'Clear All',
                 clearSelectedRecords: 'Clear Selected Record(s)',
-                showOnlySelectedRecords: 'Show Only Selected Record(s)'
             },
 
             'export': {

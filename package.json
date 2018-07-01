@@ -1,6 +1,6 @@
 {
 	"name": "cmv-widgets",
-	"version": "v1.14.0",
+	"version": "v1.14.6",
 	"author": "Tim McGee, MoosePoint Technology",
 	"license": "MIT",
 	"year": "2018",
@@ -8,7 +8,7 @@
     "repository": "https://github.com/tmcgee/cmv-widgets",
 	"dependencies": {
         "csslint": "1.0.x",
-        "eslint": "~4.19.0",
+        "eslint": "~5.0.1",
         "grunt": "1.0.x",
         "grunt-postcss": "~0.9.0",
         "grunt-contrib-clean": "~1.1.0",
@@ -16,7 +16,7 @@
         "grunt-contrib-copy": "1.0.x",
         "grunt-contrib-csslint": "~2.0.0",
         "grunt-contrib-cssmin": "~2.2.0",
-        "grunt-eslint": "19.0.x",
+        "grunt-eslint": "21.0.0",
         "grunt-contrib-uglify": "~3.3.0",
         "grunt-contrib-watch": "~1.1.0",
         "grunt-newer": "~1.3.0",

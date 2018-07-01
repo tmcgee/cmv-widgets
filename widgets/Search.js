@@ -1310,49 +1310,15 @@ define([
         initSpatialFilters: function () {
             var type = this.selectAttributeSpatialFilter.get('value'),
                 geomOptions = [],
-                popup = this.map.infoWindow,
-                includeOption = null;
+                popup = this.map.infoWindow;
 
             for (var key in this.spatialFilters) {
                 if (this.spatialFilters.hasOwnProperty(key)) {
-                    if (this.spatialFilters[key]) {
-                        includeOption = false;
-                        switch (key) {
-                        case 'identifiedFeature':
-                            if (popup && popup.isShowing) {
-                                includeOption = true;
-                            }
-                            break;
-                        case 'searchSource':
-                            if (this.selectedTable && this.selectedTable.sourceGraphics.graphics.length > 0) {
-                                includeOption = true;
-                            }
-                            break;
-                        case 'searchFeatures':
-                            if (this.selectedTable && this.selectedTable.featureGraphics.graphics.length > 0) {
-                                includeOption = true;
-                            }
-                            break;
-                        case 'searchSelected':
-                            if (this.selectedTable && this.selectedTable.selectedGraphics.graphics.length > 0) {
-                                includeOption = true;
-                            }
-                            break;
-                        case 'searchBuffer':
-                            if (this.selectedTable && this.selectedTable.bufferGraphics.graphics.length > 0) {
-                                includeOption = true;
-                            }
-                            break;
-                        default:
-                            includeOption = true;
-                            break;
-                        }
-                        if (includeOption) {
-                            geomOptions.push({
-                                value: key,
-                                label: this.i18n.Labels.spatialFilters[key]
-                            });
-                        }
+                    if ((this.spatialFilters[key]) && (this.includeSpatialFilter(key, popup))) {
+                        geomOptions.push({
+                            value: key,
+                            label: this.i18n.Labels.spatialFilters[key]
+                        });
                     }
                 }
             }
@@ -1365,6 +1331,39 @@ define([
             } else {
                 this.selectAttributeSpatialFilter.set('disabled', true);
             }
+        },
+
+        includeSpatialFilter: function (key, popup) {
+            switch (key) {
+            case 'identifiedFeature':
+                if (popup && popup.isShowing) {
+                    return true;
+                }
+                break;
+            case 'searchSource':
+                if (this.selectedTable && this.selectedTable.sourceGraphics.graphics.length > 0) {
+                    return true;
+                }
+                break;
+            case 'searchFeatures':
+                if (this.selectedTable && this.selectedTable.featureGraphics.graphics.length > 0) {
+                    return true;
+                }
+                break;
+            case 'searchSelected':
+                if (this.selectedTable && this.selectedTable.selectedGraphics.graphics.length > 0) {
+                    return true;
+                }
+                break;
+            case 'searchBuffer':
+                if (this.selectedTable && this.selectedTable.bufferGraphics.graphics.length > 0) {
+                    return true;
+                }
+                break;
+            default:
+                return true;
+            }
+            return false;
         },
 
         onSpatialBufferChange: function () {
@@ -1418,7 +1417,7 @@ define([
             } else if (search && search.enableClearButton === false) {
                 enabled = false;
             }
-            
+
             if (enabled) {
                 this.showClearButton();
             } else {

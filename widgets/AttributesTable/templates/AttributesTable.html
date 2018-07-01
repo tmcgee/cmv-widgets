@@ -9,6 +9,13 @@
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableZoomToBuffer" data-dojo-attach-event="onClick:zoomToBufferGraphics">${i18n.menus.zoom.zoomToBuffer}</div>
 			</div>
 		</div>
+		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableViewDropDownButton" data-dojo-props="iconClass:'fa fa-eye fa-fw','class':'attributesTableViewMenu'">
+			<span>${i18n.menus.view.title}</span>
+			<div data-dojo-type="dijit/DropDownMenu" data-dojo-attach-point="attributesTableViewMenu">
+				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableViewOnlySelectedRecords" data-dojo-attach-event="onClick:showOnlySelected">${i18n.menus.view.showOnlySelectedRecords}</div>
+				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableViewAllRecords" data-dojo-attach-event="onClick:showAllRecords">${i18n.menus.view.showAllRecords}</div>
+			</div>
+		</div>
 		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableClearDropDownButton" data-dojo-props="iconClass:'fa fa-times-circle fa-fw','class':'attributesTableClearMenu'">
 			<span>${i18n.menus.clear.title}</span>
 			<div data-dojo-type="dijit/DropDownMenu" data-dojo-attach-point="attributesTableClearMenu">
@@ -19,7 +26,6 @@
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableClearGrid" data-dojo-attach-event="onClick:clearGrid">${i18n.menus.clear.clearGrid}</div>
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableClearAll" data-dojo-attach-event="onClick:clearAll">${i18n.menus.clear.clearAll}</div>
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableClearSelectedRecords" data-dojo-attach-event="onClick:clearSelected">${i18n.menus.clear.clearSelectedRecords}</div>
-				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableShowOnlySelectedRecords" data-dojo-attach-event="onClick:showOnlySelected">${i18n.menus.clear.showOnlySelectedRecords}</div>
 			</div>
 		</div>
         <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-download fa-fw','class':'attributesTableExportMenu'"data-dojo-attach-point="attributesTableExportButton" data-dojo-attach-event="onClick:openExport">${i18n.menus.export.title}</div>

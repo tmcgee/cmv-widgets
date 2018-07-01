@@ -175,7 +175,7 @@ define(null, function () {
                 left: 35,
                 height: 266,
                 width: 266,
-                dpi: 144,  //multiple of 72
+                dpi: 144, //multiple of 72
                 format: 'JPG',
                 preserveScale: false,
                 border: true
