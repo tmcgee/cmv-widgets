@@ -1,30 +1,9 @@
 /*eslint no-alert: 0*/
 define([
     'dojo/on',
-    'dojo/_base/lang',
-    'dojo/date/locale',
     'dojo/number',
     'esri/geometry/geometryEngine'
-], function (on, lang, locale, number, geometryEngine) {
-
-    function formatDateTime (value) {
-        if (value instanceof Date) {
-            return locale.format(value, {
-                formatLength: 'short'
-            });
-        }
-        return '';
-    }
-
-    function formatDate (value) {
-        if (value instanceof Date) {
-            return locale.format(value, {
-                selector: 'date',
-                formatLength: 'medium'
-            });
-        }
-        return '';
-    }
+], function (on, number, geometryEngine) {
 
     function getDateTime (value) {
         if (isNaN(value) || value === 0 || value === null) {
@@ -190,7 +169,7 @@ define([
                                     get: function (object) { // allow export as a proper date
                                         return getDateTime(object.LASTUPDATE);
                                     },
-                                    formatter: formatDateTime
+                                    formatter: 'dateTime'
                                 }
                             ],
                             sort: [
@@ -268,7 +247,13 @@ define([
                                     get: function (object) { // allow export as a proper date
                                         return new Date(object.LASTUPDATE);
                                     },
-                                    formatter: formatDateTime
+                                    formatter: 'dateTime'
+                                },
+                                {
+                                    field: 'layerName',
+                                    label: 'Layer',
+                                    width: 100,
+                                    get: 'layerName'
                                 }
                             ],
                             sort: [
@@ -305,7 +290,7 @@ define([
                         ],
 
                         title: 'Public Safety Locations',
-                        topicID: 'findPublicSafterQuery',
+                        topicID: 'findPublicSafetyQuery',
                         gridOptions: {
                             columns: [
                                 {
@@ -329,7 +314,7 @@ define([
                                     get: function (object) { // allow export as a proper date
                                         return new Date(object['Last Update Date']);
                                     },
-                                    formatter: formatDate
+                                    formatter: 'date'
 
                                 }
                             ],

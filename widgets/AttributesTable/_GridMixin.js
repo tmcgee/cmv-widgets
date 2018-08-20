@@ -84,11 +84,85 @@ define([
                 pagingTextBox: true,
                 pageSizeOptions: [10, 25, 50, 100, 250, 500, 1000],
                 showLoadingMessage: true
+            },
+
+            // optional user-defined column formatters
+            formatters: {},
+
+            // optional user-defined column getters
+            getters: {}
+        },
+
+        // column formatters
+        formatters: {},
+        defaultFormatters: {
+            date: function (value) {
+                var date = new Date(value);
+                return locale.format(date, {
+                    selector: 'date',
+                    formatLength: 'medium'
+                });
+            },
+
+            dateTime: function (value) {
+                var date = new Date(value);
+                return locale.format(date, {
+                    formatLength: 'short'
+                });
+            },
+
+            number: function (value) {
+                return number.format(value);
+            },
+
+            double: function (value) {
+                return number.format(value, {
+                    places: 3
+                });
+            },
+
+            /**
+             * converts a string to a nice sentence case format
+             * @url http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
+             * @param  {string} str The string to convert
+             * @return {string}     The converted string
+             */
+            makeSentenceCase: function (str) {
+                if (!str.length) {
+                    return '';
+                }
+                str = str.toLowerCase().replace(/_/g, ' ').split(' ');
+                for (var i = 0; i < str.length; i++) {
+                    str[i] = str[i].charAt(0).toUpperCase() + (str[i].substr(1).length ? str[i].substr(1) : '');
+                }
+                return (str.length ? str.join(' ') : str);
+            }
+
+        },
+
+        // column getters
+        getters: {},
+        defaultGetters: {
+            layerName: function () {
+                var layer = this.getQueryTaskLayerJSON();
+                if (layer) {
+                    return layer.name;
+                }
+                return '';
+            },
+
+            dateTime: function (value) {
+                if (isNaN(value) || value === 0 || value === null) {
+                    return null;
+                }
+                return new Date(value);
             }
         },
 
         getGridConfiguration: function (options) {
             this.gridOptions = this.mixinDeep(lang.clone(this.defaultGridOptions), options);
+            this.formatters = lang.mixin(lang.clone(this.defaultFormatters), this.gridOptions.formatters);
+            this.getters = lang.mixin(lang.clone(this.defaultGetters), this.gridOptions.getters);
         },
 
         createGrid: function () {
@@ -231,6 +305,9 @@ define([
                 if (this.gridOptions.useCodedDomainValues) {
                     row = this.getCodedDomainValues(row);
                 }
+                if (this.getColumn('layerName') && this.gridOptions.useLayerName) {
+                    row = this.getLayerName(row);
+                }
                 // add reference to the feature if there is geometry
                 if (showFeatures && feature.geometry) {
                     row.feature = lang.clone(feature);
@@ -331,6 +408,7 @@ define([
             }
 
             if (columns) {
+                columns = this.setFormattersAndGetters(columns);
                 this.setColumnStyles(columns);
                 this.grid.set('columns', columns);
             } else if (this.gridOptions.subRows) {
@@ -365,34 +443,23 @@ define([
         },
 
         buildColumns: function (results) {
-            function formatDateTime (value) {
-                var date = new Date(value);
-                return locale.format(date, {
-                    formatLength: 'short'
-                });
-            }
-            function formatNumber (value) {
-                return number.format(value);
-            }
-            function formatSingleDouble (value) {
-                return number.format(value, {
-                    places: 3
-                });
-            }
-
             var excludedFields = ['objectid', 'esri_oid', 'shape', 'shape.len', 'shape.area', 'shape.starea()', 'shape.stlength()', 'st_area(shape)', 'st_length(shape)'];
             var columns = [],
                 col = null,
                 nameLC = null;
 
             if (results.fields) {
-                array.forEach(results.fields, function (field) {
+                array.forEach(results.fields, lang.hitch(this, function (field) {
                     nameLC = field.name.toLowerCase();
                     if (array.indexOf(excludedFields, nameLC) < 0) {
+                        var alias = field.alias;
+                        if (alias === field.name) {
+                            alias = this.formatters.makeSentenceCase(alias);
+                        }
                         col = {
                             id: field.name,
                             field: field.name,
-                            label: field.alias,
+                            label: alias,
                             style: 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;',
                             width: 100
                         };
@@ -402,24 +469,24 @@ define([
                             break;
                         case 'esriFieldTypeSmallInteger':
                         case 'esriFieldTypeInteger':
-                            col.formatter = formatNumber;
+                            col.formatter = 'number';
                             col.style += 'text-align:right;';
                             break;
                         case 'esriFieldTypeSingle':
                         case 'esriFieldTypeDouble':
-                            col.formatter = formatSingleDouble;
+                            col.formatter = 'double';
                             col.style += 'text-align:right;';
                             break;
                         case 'esriFieldTypeDate':
                             col.width = 150;
-                            col.formatter = formatDateTime;
+                            col.formatter = 'dateTime';
                             break;
                         default:
                             break;
                         }
                         columns.push(col);
                     }
-                });
+                }));
             } else if (this.getFeatureCount() > 0) {
                 var feature = this.features[0];
                 if (feature) {
@@ -429,13 +496,33 @@ define([
                             columns.push({
                                 id: key,
                                 field: key,
-                                label: key,
+                                label: this.formatters.makeSentenceCase(key),
                                 width: 100
                             });
                         }
                     }
                 }
             }
+            return columns;
+        },
+
+        setFormattersAndGetters: function (columns) {
+            array.forEach(columns, lang.hitch(this, function (column) {
+                if (typeof column.formatter === 'string') {
+                    if (this.formatters && this.formatters[column.formatter]) {
+                        column.formatter = lang.hitch(this, this.formatters[column.formatter]);
+                    } else {
+                        delete column.formatter;
+                    }
+                }
+                if (typeof column.get === 'string') {
+                    if (this.getters && this.getters[column.get]) {
+                        column.get = lang.hitch(this, this.getters[column.get]);
+                    } else {
+                        delete column.get;
+                    }
+                }
+            }));
             return columns;
         },
 
@@ -477,6 +564,14 @@ define([
             }
             return feature;
 
+        },
+
+        getColumn: function (columnID) {
+            var columns = lang.clone(this.gridOptions.columns) || [];
+            var columnFound = array.filter(columns, function (column) {
+                return (column.field === columnID);
+            });
+            return (columnFound.length > 0) ? columnFound[0] : null;
         },
 
         clearGrid: function () {
