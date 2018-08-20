@@ -55,7 +55,10 @@ define([
             // no sort
             sort: [],
 
-            // Allow the user to use column sets in grid
+            // populate the grid with field Coded Domain instead of raw value code
+            useCodedDomainValues: true,
+
+            // Allow the user to enable the editor in the grid
             editor: true,
 
             // Allow the user to use column sets in grid
@@ -225,6 +228,9 @@ define([
             var showFeatures = this.featureOptions.features;
             if (!lq || lq.type !== 'table') {
                 var row = feature.attributes;
+                if (this.gridOptions.useCodedDomainValues) {
+                    row = this.getCodedDomainValues(row);
+                }
                 // add reference to the feature if there is geometry
                 if (showFeatures && feature.geometry) {
                     row.feature = lang.clone(feature);
@@ -264,6 +270,44 @@ define([
                 }
             }));
             return rows;
+        },
+
+        getCodedDomainValues: function (attributes) {
+            var k = null, len = null;
+            var layer = this.getQueryTaskLayerJSON();
+
+            if (layer && layer.fields) {
+                for (var fieldName in attributes) {
+                    if (attributes.hasOwnProperty(fieldName)) {
+
+                        var field = null, fields = layer.fields;
+                        len = fields.length;
+                        for (k = 0; k < len; k++) {
+                            if (fieldName === fields[k].name) {
+                                field = fields[k];
+                                if (field) {
+                                    var codedValueDomain = field.domain;
+                                    if (codedValueDomain && codedValueDomain.type === 'codedValue') {
+
+                                        var codedValues = codedValueDomain.codedValues;
+                                        len = codedValues.length;
+                                        for (k = 0; k < len; k++) {
+                                            var codedValue = codedValues[k];
+                                            if (attributes[fieldName] === codedValue.code) {
+                                                attributes[fieldName] = codedValue.name;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            return attributes;
+
         },
 
         getColumnsAndSort: function (results, options) {

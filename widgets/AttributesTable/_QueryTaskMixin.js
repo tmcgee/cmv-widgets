@@ -3,7 +3,9 @@ define([
     'dojo/_base/lang',
     'dojo/_base/array',
     'dojo/topic',
+    'dojo/Deferred',
 
+    'esri/request',
     'esri/config',
     'esri/units',
     'dojo/number',
@@ -23,7 +25,9 @@ define([
     lang,
     array,
     topic,
+    Deferred,
 
+    esriRequest,
     esriConfig,
     units,
     num,
@@ -110,6 +114,8 @@ define([
 
         isLinkedQuery: false,
 
+        layerJSON: {},
+
         getQueryConfiguration: function (options) {
             options = this.mixinDeep(lang.clone(this.defaultQueryOptions), options);
 
@@ -141,17 +147,24 @@ define([
                 return;
             }
 
-            this.executingQuery = true;
-            var qt = new QueryTask(url);
-            var q = this.buildQueryFromParameters(qp);
+            // get feature layer for retrieving coded domain values later
+            // method continues even if there is an error loading the layer
+            var deferred = this.getLayerJSON(url);
 
-            this.growlQueryIsExecuting();
+            deferred.then(lang.hitch(this, function () {
+                this.executingQuery = true;
+                var qt = new QueryTask(url);
+                var q = this.buildQueryFromParameters(qp);
 
-            if (qp.type === 'relationship') {
-                qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
-            } else {
-                qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
-            }
+                this.growlQueryIsExecuting();
+
+                if (qp.type === 'relationship') {
+                    qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+                } else {
+                    qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+                }
+            }));
+
         },
 
         getQueryParameters: function (options) {
@@ -485,6 +498,11 @@ define([
             }
         },
 
+        getQueryTaskLayerJSON: function () {
+            var url = this.getQueryTaskURL();
+            return this.layerJSON[url];
+        },
+
         getQueryTaskURL: function () {
             var qp = this.queryParameters;
             var url = qp.url;
@@ -517,6 +535,37 @@ define([
                 }
             }
             return url;
+        },
+
+        getLayerJSON: function (url) {
+            var deferred = new Deferred();
+
+            if (this.layerJSON[url]) {
+                deferred.resolve(this.layerJSON[url]);
+            } else {
+                esriRequest({
+                    url: url,
+                    parameters: {
+                        f: 'json'
+                    },
+                    content: {
+                        f: 'json'
+                    },
+                    handleAs: 'json',
+                    callbackParamName: 'callback',
+                    load: lang.hitch(this, function (data) {
+                        this.layerJSON[url] = data;
+                        deferred.resolve(this.layerJSON[url]);
+                    }),
+                    error: lang.hitch(this, function () {
+                        this.layerJSON[url] = {};
+                        deferred.resolve(this.layerJSON[url]);
+                    })
+                });
+            }
+
+            return deferred.promise;
         }
+
     });
 });

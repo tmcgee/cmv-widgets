@@ -22,6 +22,7 @@ define([
 
     'dojo/when',
     'dojo/promise/all',
+    'dojo/Deferred',
 
     'dijit/form/Select',
     'dijit/form/TextBox',
@@ -31,6 +32,8 @@ define([
     'dijit/form/NumberTextBox',
     'dijit/form/CurrencyTextBox',
     'dijit/form/NumberSpinner',
+
+    'esri/request',
 
     'esri/toolbars/draw',
     'esri/tasks/query',
@@ -87,6 +90,7 @@ define([
 
     when,
     allPromise,
+    Deferred,
 
     Select,
     TextBox,
@@ -97,10 +101,13 @@ define([
     CurrencyTextBox,
     NumberSpinner,
 
+    esriRequest,
+
     Draw,
     Query,
     GeometryService,
     geometryEngine,
+
     GraphicsLayer,
     Graphic,
     SimpleMarkerSymbol,
@@ -128,6 +135,8 @@ define([
         title: 'Search Results',
         topicID: 'searchResults',
         attributesContainerID: 'attributesContainer',
+
+        layerJSON: {},
 
         shapeLayer: 0,
         attributeLayer: 0,
@@ -925,6 +934,7 @@ define([
             input = new Select({
                 id: inputId,
                 options: options,
+                disabled: (!field.values),
                 style: style || {
                     height: fieldHeight,
                     width: fieldWidth
@@ -1245,31 +1255,108 @@ define([
         getDistinctValues: function (inputId, queryParameters, fieldName, includeBlankValue, expression) {
             var url = this.getLayerURL(queryParameters);
 
-            var q = new GetDistinctValues(url, fieldName, expression);
-            q.executeQuery().then(function (results) {
-                var options = [];
-                if (includeBlankValue) {
-                    options.push({
-                        label: '&nbsp;',
-                        value: null,
-                        selected: false
-                    });
+            // To support coded domains, load the feature layer before continuing
+            var deferred = this.getLayerJSON(url);
+            deferred.then(lang.hitch(this, function (layer) {
+                var doSort = false, codedValues = null;
+                if (layer) {
+                    codedValues = this.getFieldCodedValues(layer, fieldName);
                 }
-                options = options.concat(array.map(results, function (value) {
-                    return {
-                        label: value,
-                        value: value,
-                        selected: false
-                    };
+
+                var q = new GetDistinctValues(url, fieldName, expression);
+                q.executeQuery().then(lang.hitch(this, function (results) {
+                    var options = [];
+                    options = options.concat(array.map(results, lang.hitch(this, function (value) {
+                        var label = value;
+                        if (codedValues) {
+                            var k = null, len = codedValues.length;
+                            for (k = 0; k < len; k++) {
+                                var codedValue = codedValues[k];
+                                if (value === codedValue.code) {
+                                    label = codedValue.name;
+                                    doSort = true;
+                                }
+                            }
+
+                        }
+                        return {
+                            label: label,
+                            value: value,
+                            selected: false
+                        };
+                    })));
+
+                    if (doSort) {
+                        options.sort(function (a, b) {
+                            var lA = (a.label) ? a.label.toLowerCase() : a.label;
+                            var lB = (b.label) ? b.label.toLowerCase() : b.label;
+                            return (lA === lB) ? 0 : (lA > lB) ? 1 : -1;
+                        });
+                    }
+
+                    if (includeBlankValue) {
+                        options.unshift({
+                            label: '&nbsp;',
+                            value: null,
+                            selected: false
+                        });
+                    }
+
+                    var input = registry.byId(inputId);
+                    input.set('options', options);
+                    input.set('disabled', false);
+                    if (options.length > 0) {
+                        options[0].selected = true;
+                        input.set('value', 0);
+                    }
                 }));
-                var input = registry.byId(inputId);
-                input.set('options', options);
-                if (options.length > 0) {
-                    options[0].selected = true;
-                    input.set('value', 0);
+            }));
+        },
+
+        getFieldCodedValues: function (layer, fieldName) {
+            var codedValues = null;
+            array.forEach(layer.fields, function (field) {
+                if (field.name === fieldName) {
+                    var codedValueDomain = field.domain;
+                    if (codedValueDomain && codedValueDomain.type === 'codedValue') {
+                        codedValues = codedValueDomain.codedValues;
+                    }
                 }
             });
+
+            return codedValues;
         },
+
+        getLayerJSON: function (url) {
+            var deferred = new Deferred();
+
+            if (this.layerJSON[url]) {
+                deferred.resolve(this.layerJSON[url]);
+            } else {
+                esriRequest({
+                    url: url,
+                    parameters: {
+                        f: 'json'
+                    },
+                    content: {
+                        f: 'json'
+                    },
+                    handleAs: 'json',
+                    callbackParamName: 'callback',
+                    load: lang.hitch(this, function (data) {
+                        this.layerJSON[url] = data;
+                        deferred.resolve(this.layerJSON[url]);
+                    }),
+                    error: lang.hitch(this, function () {
+                        this.layerJSON[url] = {};
+                        deferred.resolve(this.layerJSON[url]);
+                    })
+                });
+            }
+
+            return deferred.promise;
+        },
+
         getLayerURL: function (qp) {
             var url = qp.url;
             if (!url && qp.layerID) {
