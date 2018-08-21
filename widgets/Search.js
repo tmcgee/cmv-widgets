@@ -411,6 +411,8 @@ define([
                 return;
             }
 
+            this.laterSearchesAdded = 0;
+            var isQuery = false;
             var layer = this.layers[layerIndex];
             var search = layer.attributeSearches[this.searchIndex] || {};
             var searchOptions = this.buildSearchOptions(layer, search, advancedQuery);
@@ -418,6 +420,7 @@ define([
                 searchOptions.findOptions = this.buildFindOptions(layer, search);
             } else {
                 searchOptions.queryOptions = this.buildQueryOptions(layer, search, geometry, advancedQuery);
+                isQuery = true;
             }
 
             this.hideInfoWindow();
@@ -425,6 +428,25 @@ define([
             // publish to an accompanying attributed table
             if (searchOptions.findOptions || searchOptions.queryOptions) {
                 topic.publish(this.attributesContainerID + '/addTable', searchOptions);
+
+                if (isQuery && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs
+                    && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length > 0) {
+
+                    var widget = this;
+                    var laterSearchesHandler = topic.subscribe(searchOptions.topicID + '/queryResults', function (data) {
+                        if (data) {
+                            if (widget.laterSearchesAdded < searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length) {
+                                var additionalSubLayerID = searchOptions.queryOptions.queryParameters.additionalSubLayerIDs[widget.laterSearchesAdded];
+                                searchOptions.queryOptions.queryParameters.addToExisting = true;
+                                searchOptions.queryOptions.queryParameters.sublayerID = additionalSubLayerID;
+                                widget.laterSearchesAdded = widget.laterSearchesAdded + 1;
+                                topic.publish(widget.attributesContainerID + '/addTable', searchOptions);
+                            } else {
+                                laterSearchesHandler.remove();
+                            }
+                        }
+                    });
+                }
             }
 
         },
