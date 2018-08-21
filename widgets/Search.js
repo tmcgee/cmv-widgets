@@ -429,26 +429,27 @@ define([
             if (searchOptions.findOptions || searchOptions.queryOptions) {
                 topic.publish(this.attributesContainerID + '/addTable', searchOptions);
 
-                if (isQuery && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs
-                    && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length > 0) {
-
-                    var widget = this;
-                    var laterSearchesHandler = topic.subscribe(searchOptions.topicID + '/queryResults', function (data) {
-                        if (data) {
-                            if (widget.laterSearchesAdded < searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length) {
-                                var additionalSubLayerID = searchOptions.queryOptions.queryParameters.additionalSubLayerIDs[widget.laterSearchesAdded];
-                                searchOptions.queryOptions.queryParameters.addToExisting = true;
-                                searchOptions.queryOptions.queryParameters.sublayerID = additionalSubLayerID;
-                                widget.laterSearchesAdded = widget.laterSearchesAdded + 1;
-                                topic.publish(widget.attributesContainerID + '/addTable', searchOptions);
-                            } else {
-                                laterSearchesHandler.remove();
-                            }
-                        }
-                    });
+                if (isQuery && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs && 
+                    searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length > 0) {
+                    this.laterSearchesHandler = topic.subscribe(searchOptions.topicID + '/queryResults', lang.hitch(this, function (results) {
+                        this.handleMultipleSearches(results, searchOptions);
+                    }));
                 }
             }
+        },
 
+        handleMultipleSearches: function (results, searchOptions) {
+            if (results) {
+                if (this.laterSearchesAdded < searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length) {
+                    var additionalSubLayerID = searchOptions.queryOptions.queryParameters.additionalSubLayerIDs[this.laterSearchesAdded];
+                    searchOptions.queryOptions.queryParameters.addToExisting = true;
+                    searchOptions.queryOptions.queryParameters.sublayerID = additionalSubLayerID;
+                    this.laterSearchesAdded += this.laterSearchesAdded + 1;
+                    topic.publish(this.attributesContainerID + '/addTable', searchOptions);
+                } else {
+                    this.laterSearchesHandler.remove();
+                }
+            }
         },
 
         buildSearchOptions: function (layer, search, advancedQuery) {
