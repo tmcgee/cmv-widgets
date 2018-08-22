@@ -203,6 +203,7 @@ define([
                 var msg = lang.mixin(this.i18n.messages.searching, {
                     id: this.growlID,
                     timeout: (esriConfig.defaults.io.timeout + 5000),
+                    level: 'info',
                     showProgressBar: true
                 });
                 topic.publish('growler/growl', msg);
@@ -394,7 +395,7 @@ define([
             topic.publish('growler/growl', {
                 title: this.title + ' ' + msgNls.title,
                 message: msg,
-                level: 'default',
+                level: 'info',
                 timeout: 5000
             });
 

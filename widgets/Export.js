@@ -1232,6 +1232,7 @@ define([
         reportError: function (msg) {
             topic.publish('growler/growl', {
                 title: 'Error During Export',
+                level: 'error',
                 error: msg
             });
             topic.publish('viewer/handleError', {

@@ -4,7 +4,8 @@ define({
         messages: {
             searching: {
                 title: 'Searching',
-                message: 'Please wait...'
+                message: 'Please wait...',
+                level: 'info'
             },
 
             searchError: {

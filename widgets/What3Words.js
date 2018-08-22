@@ -388,7 +388,7 @@ define([
                 opts = lang.mixin({
                     title: i18n.growlTitle,
                     id: this.growlID,
-                    level: 'default',
+                    level: 'info',
                     timeout: 5000
                 }, opts);
                 topic.publish('growler/growl', opts);

@@ -109,7 +109,7 @@ define([
             topic.publish('growler/growl', {
                 title: this.title + ' ' + msgNls.title,
                 message: msg,
-                level: 'default',
+                level: 'info',
                 timeout: 5000
             });
 
