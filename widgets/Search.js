@@ -429,7 +429,7 @@ define([
             if (searchOptions.findOptions || searchOptions.queryOptions) {
                 topic.publish(this.attributesContainerID + '/addTable', searchOptions);
 
-                if (isQuery && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs && 
+                if (isQuery && searchOptions.queryOptions.queryParameters.additionalSubLayerIDs &&
                     searchOptions.queryOptions.queryParameters.additionalSubLayerIDs.length > 0) {
                     this.laterSearchesHandler = topic.subscribe(searchOptions.topicID + '/queryResults', lang.hitch(this, function (results) {
                         this.handleMultipleSearches(results, searchOptions);
@@ -1382,6 +1382,15 @@ define([
 
         getLayerURL: function (qp) {
             var url = qp.url;
+
+            if (url && qp.sublayerID) {
+                var len = url.length;
+                if (url.substring(len - 1, len) === '/') {
+                    url = url.substring(0, len - 1);
+                }
+                url += '/' + qp.sublayerID;
+            }
+
             if (!url && qp.layerID) {
                 var layer = this.map.getLayer(qp.layerID);
                 if (layer) {

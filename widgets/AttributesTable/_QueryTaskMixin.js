@@ -506,6 +506,15 @@ define([
         getQueryTaskURL: function () {
             var qp = this.queryParameters;
             var url = qp.url;
+
+            if (url && qp.sublayerID) {
+                var len = url.length;
+                if (url.substring(len - 1, len) === '/') {
+                    url = url.substring(0, len - 1);
+                }
+                url += '/' + qp.sublayerID;
+            }
+
             if (!url && qp.layerID) {
                 var layer = this.map.getLayer(qp.layerID);
                 if (layer) {
