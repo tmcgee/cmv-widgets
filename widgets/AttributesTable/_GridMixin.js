@@ -144,11 +144,7 @@ define([
         getters: {},
         defaultGetters: {
             layerName: function () {
-                var layer = this.getQueryTaskLayerJSON();
-                if (layer) {
-                    return layer.name;
-                }
-                return '';
+                return this.getLayerName();
             },
 
             dateTime: function (value) {
@@ -305,8 +301,8 @@ define([
                 if (this.gridOptions.useCodedDomainValues) {
                     row = this.getCodedDomainValues(row);
                 }
-                if (this.getColumn('layerName') && this.gridOptions.useLayerName) {
-                    row = this.getLayerName(row);
+                if (this.getColumn('layerName') && !row.layerName) {
+                    row.layerName = this.getLayerName();
                 }
                 // add reference to the feature if there is geometry
                 if (showFeatures && feature.geometry) {
@@ -385,6 +381,14 @@ define([
 
             return attributes;
 
+        },
+
+        getLayerName: function () {
+            var layer = this.getQueryTaskLayerJSON();
+            if (layer) {
+                return layer.name;
+            }
+            return '';
         },
 
         getColumnsAndSort: function (results, options) {

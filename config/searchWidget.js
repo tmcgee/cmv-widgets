@@ -252,8 +252,7 @@ define([
                                 {
                                     field: 'layerName',
                                     label: 'Layer',
-                                    width: 100,
-                                    get: 'layerName'
+                                    width: 100
                                 }
                             ],
                             sort: [
