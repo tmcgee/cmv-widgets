@@ -1,6 +1,6 @@
 {
 	"name": "cmv-widgets",
-	"version": "v1.14.6",
+	"version": "v1.14.8",
 	"author": "Tim McGee, MoosePoint Technology",
 	"license": "MIT",
 	"year": "2018",
@@ -23,5 +23,5 @@
         "grunt-open": "0.2.x",
         "grunt-contrib-compress": "~1.4.1"
 	},
-	"engine": "node >= 6"
+    "engine": "node >= 8"
 }
