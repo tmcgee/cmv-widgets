@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+@font-face {
+    font-family: "draw-icons";
+    font-style: normal;
+    font-weight: normal;
+    src:url("./fonts/draw-icons.eot");
+    src:url("./fonts/draw-icons.eot?#iefix") format("embedded-opentype"),
+    url("./fonts/draw-icons.woff") format("woff"),
+    url("./fonts/draw-icons.ttf") format("truetype"),
+    url("./fonts/draw-icons.svg#draw-icons") format("svg");
+}
+
+/* csslint order-alphabetical: 0 */
+.cmvHeatmapWidget .draw-icon-rectangle:before,
+.cmvHeatmapWidget .draw-icon-circle:before,
+.cmvHeatmapWidget .draw-icon-freehand-polygon:before,
+.cmvHeatmapWidget .draw-icon-point:before,
+.cmvHeatmapWidget .draw-icon-polyline:before,
+.cmvHeatmapWidget .draw-icon-text:before,
+.cmvHeatmapWidget .draw-icon-freehand-polyline:before,
+.cmvHeatmapWidget .draw-icon-polygon:before,
+.cmvHeatmapWidget .draw-icon-polygon:before {
+    font-family: "draw-icons";
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    text-transform: none;
+    speak: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.cmvHeatmapWidget .draw-icon-rectangle:before {
+    content: "\e005";
+}
+
+.cmvHeatmapWidget .draw-icon-circle:before {
+    content: "\e001";
+}
+
+.cmvHeatmapWidget .draw-icon-freehand-polygon:before {
+    content: "\e002";
+}
+
+.cmvHeatmapWidget .draw-icon-polygon:before {
+    content: "\e008";
+}

@@ -14,7 +14,9 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Export](https://github.com/tmcgee/cmv-widgets#export)
 - [Full Screen](https://github.com/tmcgee/cmv-widgets#fullscreen)
 - [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
+- [Heatmap](https://github.com/tmcgee/cmv-widgets#heatmap)
 - [IdentifyPanel](https://github.com/tmcgee/cmv-widgets#identifypanel)
+- [Introduction](https://github.com/tmcgee/cmv-widgets#introduction)
 - [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
 - [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
 - [Locator Control](https://github.com/tmcgee/cmv-widgets#locator-control)
@@ -77,11 +79,26 @@ An example widget demonstrating the display of results from a Geoprocessing Task
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/geoprocessor1.jpg)
 
 ---
+### Heatmap
+The Heatmap widget uses a HeatmapRenderer to render feature layer data into a raster visualization that emphasizes areas of higher density or weighted values. The blur radius, maximum value and minimum value for the renderer can be adjusted. All features from the layer can be included or use draw tools to select a subset of features.
+##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Heatmap/README.md)
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=heatmap)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/heatmap1.jpg)
+
+---
 ### IdentifyPanel
 A widget to replace the map's infoWindow including integration with the [Export](https://github.com/tmcgee/cmv-widgets#export) widget. You can include your own buttons as well. This widget is an updated and enhanced version of one originally created by [Doug Chamberlain](https://github.com/dougrchamberlain/IdentifyPanel).
 ##### Documentation - in the works
 ##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=infopanel)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/identifypanel1.jpg)
+
+---
+### Introduction
+The Introduction Widget provides a product tour or tutorial for your application using [IntroJS](https://introjs.com/).
+##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Introduction/README.md)
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=introduction)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/introduction1.jpg)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/introduction2.jpg)
 
 ---
 ### Layer Labels

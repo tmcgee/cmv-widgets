@@ -1,0 +1,88 @@
+<div>
+    <label>${i18n.Labels.selectLayer}:</label>
+    <select style="width:100%;" data-dojo-attach-point="layerSelect" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="id:'layerSelect',disabled:true,class:'heatmapSizer'" data-dojo-attach-event="onChange:onChangeLayerSelect"></select>
+
+    <label>${i18n.Labels.selectField}:</label>
+    <select style="width:100%;" data-dojo-attach-point="fieldSelect" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="id:'fieldSelect',disabled:true,class:'heatmapSizer'"></select>
+
+    <div data-dojo-type="gis/dijit/FloatingTitlePane" data-dojo-props="title:'${i18n.Labels.featureSelection}',iconClass:'fas fa-draw-polygon',open:false,class:'heatmapSizer'">
+        <button data-dojo-attach-event="onClick:onDrawRectangle" data-dojo-attach-point="rectangleButtonDijit" data-dojo-props="iconClass:'draw-icon-rectangle',class:'btn-draw-rectangle',showLabel:${i18n.Buttons.selectByRectangle.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByRectangle.label}">${i18n.Buttons.selectByRectangle.label}</button>
+        <button data-dojo-attach-event="onClick:onDrawCircle" data-dojo-attach-point="circleButtonDijit" data-dojo-props="iconClass:'draw-icon-circle',class:'btn-draw-circle',showLabel:${i18n.Buttons.selectByCircle.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByCircle.label}">${i18n.Buttons.selectByCircle.label}</button>
+        </button>
+        <button data-dojo-attach-event="onClick:onDrawEllipse" data-dojo-attach-point="ellipseButtonDijit" data-dojo-props="iconClass:'draw-icon-ellipse',class:'btn-draw-circle',showLabel:${i18n.Buttons.selectByEllipse.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByEllipse.label}">${i18n.Buttons.selectByEllipse.label}</button>
+        </button>
+        <button data-dojo-attach-event="onClick:onDrawPolygon" data-dojo-attach-point="polygonButtonDijit" data-dojo-props="iconClass:'draw-icon-polygon',class:'btn-draw-polygon',showLabel:${i18n.Buttons.selectByPolygon.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByPolygon.label}">${i18n.Buttons.selectByPolygon.label}</button>
+        <button data-dojo-attach-event="onClick:onDrawFreehandPolygon" data-dojo-attach-point="freehandPolygonButtonDijit" data-dojo-props="iconClass:'draw-icon-freehand-polygon',class:'btn-draw-freehand-polygon',showLabel:${i18n.Buttons.selectByFreehandPolygon.showLabel}" data-dojo-type="dijit/form/ToggleButton" title="${i18n.Buttons.selectByFreehandPolygon.label}">${i18n.Buttons.selectByFreehandPolygon.label}</button>
+        <button data-dojo-attach-event="onClick:onStopDrawing" data-dojo-attach-point="stopDrawingButtonDijit" data-dojo-props="iconClass:'fa fa-stop',class:'btn-stop-drawing',showLabel:${i18n.Buttons.stopDrawing.showLabel}" data-dojo-type="dijit/form/Button" title="${i18n.Buttons.stopDrawing.label}">${i18n.Buttons.stopDrawing.label}</button>
+    </div>
+    <div data-dojo-type="gis/dijit/FloatingTitlePane" data-dojo-props="title:'${i18n.Labels.configureRenderer}',iconClass:'fas fa-fill-drip',open:false,class:'heatmapSizer'">
+        <label>${i18n.Labels.blurRadius}:</label>
+        <span data-dojo-attach-point="blurRadiusDom"></span>
+        <div data-dojo-type="dijit/form/HorizontalSlider"  data-dojo-attach-point="blurRadiusSliderDijit" data-dojo-props="id:'blurRadiusSlider',minimum:0,maximum:30,class:'heatmapSlider'" data-dojo-attach-event="onChange:onChangeBlurRadius"></div>
+
+        <label>${i18n.Labels.maxValue}:</label>
+        <span data-dojo-attach-point="maxValueDom"></span>
+        <div data-dojo-type="dijit/form/HorizontalSlider" data-dojo-attach-point="maxValueSliderDijit" data-dojo-props="id:'maxValueSlider',minimum:0,maximum:500,class:'heatmapSlider'" data-dojo-attach-event="onChange:onChangeMaxValue"></div>
+
+        <label>${i18n.Labels.minValue}:</label>
+        <span data-dojo-attach-point="minValueDom"></span>
+        <div data-dojo-type="dijit/form/HorizontalSlider" data-dojo-attach-point="minValueSliderDijit" data-dojo-props="id:'minValueSlider',minimum:0,maximum:500,class:'heatmapSlider'" data-dojo-attach-event="onChange:onChangeMinValue"></div>
+
+        <label>${i18n.Labels.heatmapSlider}:</label>
+        <div data-dojo-type="esri/dijit/HeatmapSlider" data-dojo-attach-point="heatmapSliderDijit" data-dojo-props="id:'heatmapSlider',minValue:0,maxValue:100,rampWidth:30,colorStops:[
+            {
+                'ratio': 0,
+                'color': {'r': 133, 'g': 193, 'b': 200, 'a': 0}
+            }, {
+                'ratio': 0.01,
+                'color': {'r': 133, 'g': 193, 'b': 200, 'a': 0}
+            }, {
+                'ratio': 0.01,
+                'color': {'r': 133, 'g': 193, 'b': 200, 'a': 0.7}
+            }, {
+                'ratio': 0.01,
+                'color': {'r': 133, 'g': 193, 'b': 200, 'a': 0.7}
+            }, {
+                'ratio': 0.0925,
+                'color': {'r': 144, 'g': 161, 'b': 190, 'a': 0.7}
+            }, {
+                'ratio': 0.175,
+                'color': {'r': 156, 'g': 129, 'b': 132, 'a': 0.7}
+            }, {
+                'ratio': 0.2575,
+                'color': {'r': 167, 'g': 97, 'b': 170, 'a': 0.7}
+            }, {
+                'ratio': 0.34,
+                'color': {'r': 175, 'g': 73, 'b': 128, 'a': 0.7}
+            }, {
+                'ratio': 0.4225,
+                'color': {'r': 184, 'g': 48, 'b': 85, 'a': 0.7}
+            }, {
+                'ratio': 0.505,
+                'color': {'r': 192, 'g': 24, 'b': 42, 'a': 0.7}
+            }, {
+                'ratio': 0.5875,
+                'color': {'r': 200, 'g': 0, 'b': 0, 'a': 0.7}
+            }, {
+                'ratio': 0.67,
+                'color': {'r': 211, 'g': 51, 'b': 0, 'a': 0.7}
+            }, {
+                'ratio': 0.7525,
+                'color': {'r': 222, 'g': 102, 'b': 0, 'a': 0.7}
+            }, {
+                'ratio': 0.835,
+                'color': {'r': 233, 'g': 153, 'b': 0, 'a': 0.7}
+            }, {
+                'ratio': 0.9175,
+                'color': {'r': 244, 'g': 204, 'b': 0, 'a': 0.7}
+            }, {
+                'ratio': 1,
+                'color': {'r': 255, 'g': 255, 'b': 0, 'a': 0.7}
+            }
+        ]"></div>
+    </div>
+    <div align="center">
+        <button data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-fire',showLabel:${i18n.Buttons.createHeatmap.showLabel},style:'margin-right:10px;'" data-dojo-attach-point="createHeatmapButtonDijit" data-dojo-attach-event="click:onCreateHeatmap">${i18n.Buttons.createHeatmap.label}</button>
+        <button data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-times',showLabel:${i18n.Buttons.clearAll.showLabel},disabled:true" data-dojo-attach-point="clearLayersButtonDijit" data-dojo-attach-event="click:onClearLayers">${i18n.Buttons.clearAll.label}</button>
+    </div>
+</div>

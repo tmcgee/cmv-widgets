@@ -1,0 +1,19 @@
+.introjs-tooltip {
+    max-width: 400px;
+}
+
+.introjs-tooltipbuttons {
+    border-top: 1px solid;
+    margin-top: 0.75em;
+}
+
+.introjs-helperNumberLayer {
+    left: -6px;
+}
+
+.introjs-tooltiptext h4 {
+    border-bottom: 1px solid;
+    margin-bottom: 0.75em;
+    margin-top: 0.25em;
+    padding: 0.5em;
+}
