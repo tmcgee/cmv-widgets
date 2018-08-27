@@ -81,7 +81,7 @@ An example widget demonstrating the display of results from a Geoprocessing Task
 ---
 ### Heatmap
 The Heatmap widget uses a HeatmapRenderer to render feature layer data into a raster visualization that emphasizes areas of higher density or weighted values. The blur radius, maximum value and minimum value for the renderer can be adjusted. All features from the layer can be included or use draw tools to select a subset of features.
-##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Heatmap/README.md)
+##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/HeatMap/README.md)
 ##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=heatmap)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/heatmap1.jpg)
 
