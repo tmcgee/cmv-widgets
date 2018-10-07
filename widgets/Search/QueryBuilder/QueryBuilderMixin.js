@@ -149,8 +149,8 @@ define([
                     }
 
                     if (!advancedSearchOptions.fields || advancedSearchOptions.fetchAllFields) {
-                        queries.push(this._fetchAllFields().then(lang.hitch(this, function (esriFields) {
-                            array.forEach(esriFields, function (f) {
+                        queries.push(this.getLayerJSON(this.url).then(lang.hitch(this, function (data) {
+                            array.forEach(data.fields, function (f) {
                                 var parsed = this._parseESRIField(f);
                                 parsed = lang.mixin(parsed, {
                                     caseInsensitive: defaultToCaseInsensitive
@@ -167,8 +167,57 @@ define([
                     return when(null);
                 },
 
+                getLayerJSON: function (url) {
+                    var deferred = new Deferred();
+                    var layerJSON = this.options.layerJSON;
+
+                    if (layerJSON[url]) {
+                        if (layerJSON[url].promise) {
+                            return layerJSON[url].promise;
+                        }
+                        deferred.resolve(layerJSON[url]);
+                    } else {
+                        layerJSON[url] = deferred;
+                        esriRequest({
+                            url: url,
+                            parameters: {
+                                f: 'json'
+                            },
+                            content: {
+                                f: 'json'
+                            },
+                            handleAs: 'json',
+                            callbackParamName: 'callback'
+                        }, {
+                            disableIdentityLookup: false,
+                            usePost: false,
+                            useProxy: false
+                        }).then(
+                            lang.hitch(this, function (data) {
+                                layerJSON[url] = data;
+                                deferred.resolve(layerJSON[url]);
+                            }),
+                            lang.hitch(this, function () {
+                                layerJSON[url] = {};
+                                deferred.resolve(layerJSON[url]);
+                            })
+                        );
+                    }
+
+                    return deferred.promise;
+                },
+
                 getLayerURL: function (qp) {
                     var url = qp.url;
+
+                    if (url && qp.sublayerID) {
+                        var len = url.length;
+                        if (url.substring(len - 1, len) === '/') {
+                            url = url.substring(0, len - 1);
+                        }
+                        url += '/' + qp.sublayerID;
+                    }
+
                     if (!url && qp.layerID) {
                         var layer = this.options.map.getLayer(qp.layerID);
                         if (layer) {
@@ -207,31 +256,6 @@ define([
                         }
                     };
                     this.qbOptions.filters = [];
-                },
-
-                _fetchAllFields: function () {
-                    var deferred = new Deferred();
-                    var content = {
-                            f: 'json'
-                        },
-                        options = {
-                            disableIdentityLookup: false,
-                            usePost: false,
-                            useProxy: false
-                        };
-                    esriRequest({
-                        url: this.url,
-                        callbackParamName: 'callback',
-                        content: content
-                    }, options).then(
-                        function (data) {
-                            deferred.resolve(data.fields);
-                        },
-                        function () {
-                            deferred.reject();
-                        }
-                    );
-                    return deferred;
                 },
 
                 _fetchSelectOptions: function (field) {
@@ -542,7 +566,8 @@ define([
 
             this.queryBuilder.init({
                 targetDOM: this.divAdvancedQueryBuilder,
-                map: this.map
+                map: this.map,
+                layerJSON: this.layerJSON
             });
             return this.getQueryBuilder();
         },

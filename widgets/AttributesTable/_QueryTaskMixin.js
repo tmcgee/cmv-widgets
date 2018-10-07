@@ -549,10 +549,15 @@ define([
 
         getLayerJSON: function (url) {
             var deferred = new Deferred();
+            var layerJSON = this.layerJSON;
 
-            if (this.layerJSON[url]) {
-                deferred.resolve(this.layerJSON[url]);
+            if (layerJSON[url]) {
+                if (layerJSON[url].promise) {
+                    return layerJSON[url].promise;
+                }
+                deferred.resolve(layerJSON[url]);
             } else {
+                layerJSON[url] = deferred;
                 esriRequest({
                     url: url,
                     parameters: {
@@ -562,16 +567,21 @@ define([
                         f: 'json'
                     },
                     handleAs: 'json',
-                    callbackParamName: 'callback',
-                    load: lang.hitch(this, function (data) {
-                        this.layerJSON[url] = data;
-                        deferred.resolve(this.layerJSON[url]);
+                    callbackParamName: 'callback'
+                }, {
+                    disableIdentityLookup: false,
+                    usePost: false,
+                    useProxy: false
+                }).then(
+                    lang.hitch(this, function (data) {
+                        layerJSON[url] = data;
+                        deferred.resolve(layerJSON[url]);
                     }),
-                    error: lang.hitch(this, function () {
-                        this.layerJSON[url] = {};
-                        deferred.resolve(this.layerJSON[url]);
+                    lang.hitch(this, function () {
+                        layerJSON[url] = {};
+                        deferred.resolve(layerJSON[url]);
                     })
-                });
+                );
             }
 
             return deferred.promise;
