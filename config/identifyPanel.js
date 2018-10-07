@@ -1,8 +1,6 @@
 define([
-    'esri/config',
-    'esri/tasks/GeometryService',
     'esri/layers/ImageParameters'
-], function (esriConfig, GeometryService, ImageParameters) {
+], function (ImageParameters) {
 
     var style = document.createElement('style');
     style.type = 'text/css';
