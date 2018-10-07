@@ -22,6 +22,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Locator Control](https://github.com/tmcgee/cmv-widgets#locator-control)
 - [Map Loading](https://github.com/tmcgee/cmv-widgets#map-loading)
 - [Mapillary](https://github.com/tmcgee/cmv-widgets#mapillary)
+- [Maptiks](https://github.com/tmcgee/cmv-widgets#maptiks)
 - [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
 - [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
 - [Print Plus](https://github.com/tmcgee/cmv-widgets#print-plus)
@@ -131,6 +132,11 @@ A replacement for the CMV Google StreetView widget that display street level ima
 ##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Mapillary/README.md)
 ##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=mapillary)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/mapillary1.jpg)
+
+---
+### Maptiks
+A widget to add detailed map analytics to any CMV application using [Maptiks](https://maptiks.com). Maptiks provides in-depth user insights by tracking how visitors click, pan and zoom on your maps.
+##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Maptiks.js)
 
 ---
 ### MessageBox
