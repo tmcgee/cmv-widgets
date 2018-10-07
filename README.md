@@ -20,7 +20,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
 - [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
 - [Locator Control](https://github.com/tmcgee/cmv-widgets#locator-control)
-- [Map Loading](https://github.com/tmcgee/cmv-widgets#maploading)
+- [Map Loading](https://github.com/tmcgee/cmv-widgets#map-loading)
 - [Mapillary](https://github.com/tmcgee/cmv-widgets#mapillary)
 - [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
 - [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
