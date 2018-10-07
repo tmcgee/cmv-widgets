@@ -109,6 +109,13 @@ define([
                         label: 'OpenStreetMap',
                         iconClass: 'fa fa-globe fa-fw',
                         url: 'http://www.openstreetmap.org/?lat={lat}&lon={lng}&zoom={zoom}'
+                    },
+                    {
+                        // https://mapchannels.com/DualMaps.aspx
+                        // Use your own Google API key: https://mapchannels.com/ApiKey.aspx
+                        label: 'Dual Maps',
+                        iconClass: 'fa fa-globe fa-fw',
+                        url: 'http://data.mapchannels.com/mm/dual2/map.htm?x={lng}&y={lat}&z={zoom}&gm=0&ve=3&gc=0&xb={lng}&yb={lat}zb=1&db=0&bar=0&mw=1&sv=1&svb=0&mi=0&mg=1&mv=1'
                     }
                 ]
             }
