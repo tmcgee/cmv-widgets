@@ -20,6 +20,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Layer Labels](https://github.com/tmcgee/cmv-widgets#layer-labels)
 - [Layer Toggle](https://github.com/tmcgee/cmv-widgets#layer-toggle)
 - [Locator Control](https://github.com/tmcgee/cmv-widgets#locator-control)
+- [Map Loading](https://github.com/tmcgee/cmv-widgets#maploading)
 - [Mapillary](https://github.com/tmcgee/cmv-widgets#mapillary)
 - [MessageBox](https://github.com/tmcgee/cmv-widgets#messagebox)
 - [Open External Map](https://github.com/tmcgee/cmv-widgets#open-external-map)
@@ -117,6 +118,12 @@ A simple widget to toggle the visibility of a set of layers. Only a single layer
 A widget to allow the user to change the properties of the CMV Locate Button widget in real-time.
 ##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=locatorControl)
 ##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/LocatorControl.js)
+
+---
+### Map Loading
+A widget to add a `Loading` indicator in the center of the map.
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=mapLoading)
+##### [Widget](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/MapLoading.js)
 
 ---
 ### Mapillary
