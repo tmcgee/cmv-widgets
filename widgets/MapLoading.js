@@ -5,6 +5,7 @@ define([
     'dojo/_base/lang',
     'dojo/on',
     'dojo/dom-style',
+    'dojo/topic',
 
     'put-selector/put'
 
@@ -15,9 +16,11 @@ define([
     lang,
     on,
     domStyle,
+    topic,
 
     put
 ) {
+
     return declare([_WidgetBase], {
 
         className: 'fa fa-spinner fa-spin',
@@ -33,6 +36,9 @@ define([
 
             on(this.map, 'update-start', lang.hitch(this, 'showLoading'));
             on(this.map, 'update-end', lang.hitch(this, 'hideLoading'));
+
+            topic.subscribe('showLoading/showLoading', lang.hitch(this, 'showLoading'));
+            topic.subscribe('showLoading/hideLoading', lang.hitch(this, 'hideLoading'));
         },
 
         showLoading: function () {
