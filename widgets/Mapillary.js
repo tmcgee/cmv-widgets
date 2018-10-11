@@ -8,22 +8,17 @@ define([
     'dojo/topic',
     'dojo/on',
     'dojo/aspect',
-    'dojo/dom',
-    'dojo/dom-class',
     'dojo/dom-style',
     'dojo/dom-geometry',
 
-    'esri/Color',
     'esri/geometry/Point',
-    'esri/geometry/webMercatorUtils',
     'esri/SpatialReference',
 
     'esri/graphic',
-    'esri/InfoTemplate',
 
     'esri/layers/GraphicsLayer',
     'esri/layers/VectorTileLayer',
-    'esri/symbols/PictureMarkerSymbol',
+    'esri/symbols/TextSymbol',
     'esri/renderers/SimpleRenderer',
 
     'dijit/MenuItem',
@@ -51,22 +46,17 @@ define([
     topic,
     on,
     aspect,
-    dom,
-    domClass,
     domStyle,
     domGeom,
 
-    Color,
     Point,
-    webMercatorUtils,
     SpatialReference,
 
     Graphic,
-    InfoTemplate,
 
     GraphicsLayer,
     VectorTileLayer,
-    PictureMarkerSymbol,
+    TextSymbol,
     SimpleRenderer,
 
     MenuItem,
@@ -114,6 +104,16 @@ define([
                 },
                 maxImageSize: Mapillary.ImageSize.Size1024,
                 renderMode: Mapillary.RenderMode.Letterbox
+            }
+        },
+
+        textSymbolOptions: {
+            angle: 322.5,
+            color: [0, 128, 200],
+            text: '\uf124',
+            font: {
+                size: 16,
+                family: 'FontAwesome'
             }
         },
 
@@ -196,7 +196,9 @@ define([
                 id: 'mapillary_graphics',
                 title: 'Mapillary'
             });
-            this.pointSymbol = new PictureMarkerSymbol(require.toUrl('widgets/Mapillary/images/blueArrow.png'), 24, 24);
+
+            this.pointSymbol = new TextSymbol(this.textSymbolOptions);
+            this.originalAngle = this.pointSymbol.angle;
             this.pointRenderer = new SimpleRenderer(this.pointSymbol);
             this.pointRenderer.label = 'Mapillary';
             this.pointRenderer.description = 'Mapillary';
@@ -297,7 +299,11 @@ define([
 
         onBearingChanged: function (bearing) {
             if (this.placeMarker) {
-                this.pointSymbol.setAngle(bearing);
+                var newBearing = bearing - this.originalAngle;
+                if (newBearing < 0) {
+                    newBearing = 360 + newBearing;
+                }
+                this.pointSymbol.setAngle(newBearing);
                 this.pointGraphics.refresh();
             }
         },
