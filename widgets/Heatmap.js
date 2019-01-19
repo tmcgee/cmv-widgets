@@ -301,7 +301,7 @@ define([
                     'esriFieldTypeSmallInteger'
                 ];
 
-                // is it a pre-defined layer?
+            // is it a pre-defined layer?
             var layers = array.filter(this.layers, function (layer) {
                 return (layer.id === layerID);
             });

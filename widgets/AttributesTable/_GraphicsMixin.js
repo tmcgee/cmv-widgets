@@ -286,7 +286,7 @@ define([
                 /** HACK **
                     The 'mouse-out' event for a GraphicsLayer is not triggered for Microsoft IE or Microsoft Edge. This appears to be due to a bug with the ESRI JavaScript API. As a result, we can't highlight a feature when the mouse is over that feature in those browser.
                 */
-                if (!has('ie') && !has('trident') && !(/Edge\/12./i.test(navigator.userAgent))) {
+                if (!has('ie') && !has('trident') && !((/Edge\/12./i).test(navigator.userAgent))) {
                     this.featureGraphics.on('mouse-over', lang.hitch(this, function (evt) {
                         this.highlightGraphic(evt, false);
                     }));
@@ -689,7 +689,7 @@ define([
 
         showOnlySelectedFeatureGraphics: function (specificGraphics) {
             this.keepSpecificGraphics(this.featureGraphics, specificGraphics);
-            
+
             this.setToolbarButtons();
             topic.publish(this.attributesContainerID + '/tableUpdated', this);
             this.zoomToFeatureGraphics();
