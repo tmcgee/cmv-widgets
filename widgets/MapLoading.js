@@ -23,9 +23,7 @@ define([
 
     return declare([_WidgetBase], {
 
-        //className: 'fa fa-spinner fa-spin',
-        className: 'fa fa-sun fa-spin',  //Long's local version
-       // className: 'fa fa-wrench faa-wrench animated',
+        className: 'fa fa-spinner fa-spin',
         style: 'color:#333;text-shadow:2px 2px #eee;font-size:32px;display:none;position:absolute;top:calc(50% - 16px);left:calc(50% - 16px);z-index:999',
         textStyle: 'color:#333;text-shadow:2px 2px #eee;font-size:32px;display:none;position:absolute;top:calc(50% - 16px);left:calc(50% + 20px);z-index:999',
         theText: '',
