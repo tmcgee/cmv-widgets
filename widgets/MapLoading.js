@@ -39,8 +39,7 @@ define([
             });
 
             this.theText = this.msgText || {};
-            if (this.theText.length > 0)
-            {
+            if (this.theText.length > 0) {
                 this.loadingText = put(this.map.root, 'i', {
                     className: '',
                     style: this.textStyle,
@@ -56,8 +55,7 @@ define([
 
         showLoading: function () {
             domStyle.set(this.loading, 'display', 'block');
-            if (this.theText.length > 0)
-            {
+            if (this.theText.length > 0) {
                 domStyle.set(this.loadingText, 'display', 'block');
             }
             this.map.disableMapNavigation();
@@ -66,8 +64,7 @@ define([
 
         hideLoading: function () {
             domStyle.set(this.loading, 'display', 'none');
-            if (this.theText.length > 0)
-            {
+            if (this.theText.length > 0) {
                 domStyle.set(this.loadingText, 'display', 'none');
             }
             this.map.enableMapNavigation();
