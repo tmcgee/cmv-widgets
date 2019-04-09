@@ -12,6 +12,7 @@ Widgets for [CMV](http://cmv.io/), the Configurable Map Viewer created by [Tim M
 - [Disclaimer](https://github.com/tmcgee/cmv-widgets#disclaimer)
 - [Elevation Profile](https://github.com/tmcgee/cmv-widgets#elevation-profile)
 - [Export](https://github.com/tmcgee/cmv-widgets#export)
+- [Export Graphics](https://github.com/tmcgee/cmv-widgets#export-graphics)
 - [Full Screen](https://github.com/tmcgee/cmv-widgets#fullscreen)
 - [Geoprocessor](https://github.com/tmcgee/cmv-widgets#geoprocessor)
 - [Heatmap](https://github.com/tmcgee/cmv-widgets#heatmap)
@@ -66,6 +67,13 @@ Export features from the [Attributes Tables](https://github.com/tmcgee/cmv-widge
 ##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/Export/README.md)
 ##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=table)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/export1.jpg)
+
+---
+### Export Graphics
+The Export Graphics widget works with the [Export](https://github.com/tmcgee/cmv-widgets#export) widget to allow the user to export graphic features from one or more Graphic or Feature layers.
+##### [Documentation](https://github.com/tmcgee/cmv-widgets/tree/master/widgets/ExportGraphics/README.md)
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=exportGraphics)
+![Screenshot](https://tmcgee.github.io/cmv-widgets/images/exportgraphics1.jpg)
 
 ---
 ### FullScreen
