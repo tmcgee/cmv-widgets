@@ -21,7 +21,7 @@
         "grunt-contrib-watch": "~1.1.0",
         "grunt-newer": "~1.3.0",
         "grunt-open": "0.2.x",
-        "grunt-contrib-compress": "~1.4.1"
+        "grunt-contrib-compress": "~1.5.0"
 	},
     "engine": "node >= 8"
 }
