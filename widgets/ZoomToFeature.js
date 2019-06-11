@@ -68,6 +68,9 @@ define([
         // where clause to filter the results
         where: '1=1',
 
+        // maximum allowable offset to be used for generalizing geometries returned by the query operation
+        maxAllowableOffset: null,
+
         // Spatial Reference. uses the map's spatial reference if none provided
         spatialReference: null,
 
@@ -220,6 +223,9 @@ define([
             query.orderByFields = [this.field];
             query.where = this.where;
             query.returnGeometry = true;
+            if (this.maxAllowableOffset) {
+                query.maxAllowableOffset = this.maxAllowableOffset;
+            }
             //query.returnDistinctValues = true;
             query.outSpatialReference = {
                 wkid: this.spatialReference
