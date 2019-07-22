@@ -8,7 +8,7 @@
     "repository": "https://github.com/tmcgee/cmv-widgets",
 	"dependencies": {
         "csslint": "1.0.x",
-        "eslint": "~6.0.0",
+        "eslint": "~6.1.0",
         "grunt": "1.0.x",
         "grunt-postcss": "~0.9.0",
         "grunt-contrib-clean": "~2.0.0",
