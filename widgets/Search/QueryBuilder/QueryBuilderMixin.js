@@ -92,7 +92,8 @@ define([
         loadQueryBuilder: function () {
             var qbOptions = this.mixinDeep(this.defaultQueryBuilderOptions, this.queryBuilderOptions || {});
 
-            this.queryBuilder = { // Namespace the configuration variables in this mixin
+            // Namespace the configuration variables in this mixin
+            this.queryBuilder = {
                 _queryBuilderDOM: null,
                 _queryBuilder: null,
 
