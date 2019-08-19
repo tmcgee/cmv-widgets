@@ -335,7 +335,7 @@ define([
 
             this.excel = (typeof options.excel !== 'undefined') ? options.excel : this.excel;
             this.csv = (typeof options.csv !== 'undefined') ? options.csv : this.csv;
-            this.xlsExcel = (typeof options.xlsExcel !== 'undefined') ? options.xlsExcel : this.xslExcel;
+            this.xlsExcel = (typeof options.xlsExcel !== 'undefined') ? options.xlsExcel : this.xlsExcel;
 
             this.geojson = (typeof options.geojson !== 'undefined') ? options.geojson : this.geojson;
             this.kml = (typeof options.kml !== 'undefined') ? options.kml : this.kml;
@@ -394,7 +394,7 @@ define([
 
             options.excel = this.excel || options.excel;
             options.csv = this.csv || options.csv;
-            options.xslExcel = this.xlsExcel || options.xlsExcel;
+            options.xlsExcel = this.xlsExcel || options.xlsExcel;
 
             options.geojson = this.geojson || options.geojson;
             options.kml = this.kml || options.kml;
