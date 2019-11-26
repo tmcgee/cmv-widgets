@@ -113,7 +113,7 @@ define([
             text: '\uf124',
             font: {
                 size: 16,
-                family: 'Font Awesome\ 5 Free'
+                family: 'Font Awesome 5 Free'
             }
         },
 
