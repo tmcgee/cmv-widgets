@@ -46,7 +46,7 @@ define({
             path: 'widgets/ElevationProfile',
             canFloat: true,
             title: 'Elevation Profile',
-            iconClass: 'fa fa-fw fa-area-chart',
+            iconClass: 'fas fa-fw fa-chart-area',
             open: true,
             position: 0,
             options: {

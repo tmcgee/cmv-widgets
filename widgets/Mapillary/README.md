@@ -9,7 +9,7 @@ To use MapillaryJS you must [create an account](https://www.mapillary.com/signup
 | Parameter | Type | Description |
 | :----: | :--: | ----------- |
 | `mapillaryOptions` | Object | Options supported by the [Mapillary Viewer](https://github.com/mapillary/mapillary-js) |
-| `layerOptions` | Object | Options for the VectorTiles layer displaying the Mapillary coverage | 
+| `layerOptions` | Object | Options for the VectorTiles layer displaying the Mapillary coverage |
 
 ---
 ## Example Configuration:
@@ -18,7 +18,7 @@ mapillary: {
     include: true,
     type: 'titlePane',
     title: 'Mapillary',
-    iconClass: 'fa-location-arrow fa-rotate-90',
+    iconClass: 'fas fa-location-arrow fa-rotate-90',
     open: true,
     position: 0,
     path: 'widgets/Mapillary',

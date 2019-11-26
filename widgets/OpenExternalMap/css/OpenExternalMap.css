@@ -40,3 +40,6 @@
 .cmwOpenExternalMapWidget .buttonContainer .dijitButtonDisabled .fa {
     opacity: 0.65;
 }
+.cmwOpenExternalMapWidget .fab:before {
+    font-family: "Font Awesome 5 Brands";
+}

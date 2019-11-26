@@ -10,7 +10,7 @@ identifyPanel: {
     path: 'widgets/IdentifyPanel',
     position: 0,
     title: 'Identify Features',
-    iconClass: 'fa-info-circle',
+    iconClass: 'fas fa-info-circle',
     open: true,
     options: {
         map: true,
@@ -19,7 +19,7 @@ identifyPanel: {
             {
                 id: 'identifypanel-button-example',
                 label: 'This is an example button',
-                iconClass: 'fa fa-fw fa-comment',
+                iconClass: 'fas fa-fw fa-comment',
                 showLabel: false,
                 style: 'float:left;margin-right:10px;display:none;',
                 onClick: function () {

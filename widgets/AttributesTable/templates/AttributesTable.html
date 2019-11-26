@@ -1,6 +1,6 @@
 <div data-dojo-attach-point="containerNode">
 	<div data-dojo-type="dijit/Toolbar" data-dojo-attach-point="attributesTableToolbarDijit" data-dojo-props="class:'attributesTableToolbar'">
-		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableZoomDropDownButton" data-dojo-props="iconClass:'fa fa-search-plus fa-fw','class':'attributesTableZoomMenu'" style="display:none;">
+		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableZoomDropDownButton" data-dojo-props="iconClass:'fas fa-search-plus fa-fw','class':'attributesTableZoomMenu'" style="display:none;">
 			<span>${i18n.menus.zoom.title}</span>
 			<div data-dojo-type="dijit/DropDownMenu" data-dojo-attach-point="attributesTableZoomMenu">
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableZoomToFeatures" data-dojo-attach-event="onClick:zoomToFeatureGraphics">${i18n.menus.zoom.zoomToFeatures}</div>
@@ -9,14 +9,14 @@
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableZoomToBuffer" data-dojo-attach-event="onClick:zoomToBufferGraphics">${i18n.menus.zoom.zoomToBuffer}</div>
 			</div>
 		</div>
-		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableViewDropDownButton" data-dojo-props="iconClass:'fa fa-eye fa-fw','class':'attributesTableViewMenu'">
+		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableViewDropDownButton" data-dojo-props="iconClass:'fas fa-eye fa-fw','class':'attributesTableViewMenu'">
 			<span>${i18n.menus.view.title}</span>
 			<div data-dojo-type="dijit/DropDownMenu" data-dojo-attach-point="attributesTableViewMenu">
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableViewOnlySelectedRecords" data-dojo-attach-event="onClick:showOnlySelected">${i18n.menus.view.showOnlySelectedRecords}</div>
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableViewAllRecords" data-dojo-attach-event="onClick:showAllRecords">${i18n.menus.view.showAllRecords}</div>
 			</div>
 		</div>
-		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableClearDropDownButton" data-dojo-props="iconClass:'fa fa-times-circle fa-fw','class':'attributesTableClearMenu'">
+		<div data-dojo-type="dijit/form/DropDownButton" data-dojo-attach-point="attributesTableClearDropDownButton" data-dojo-props="iconClass:'fas fa-times-circle fa-fw','class':'attributesTableClearMenu'">
 			<span>${i18n.menus.clear.title}</span>
 			<div data-dojo-type="dijit/DropDownMenu" data-dojo-attach-point="attributesTableClearMenu">
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableClearFeatures" data-dojo-attach-event="onClick:clearFeatures">${i18n.menus.clear.clearFeatures}</div>
@@ -28,7 +28,7 @@
 				<div data-dojo-type="dijit/MenuItem" data-dojo-attach-point="attributesTableClearSelectedRecords" data-dojo-attach-event="onClick:clearSelected">${i18n.menus.clear.clearSelectedRecords}</div>
 			</div>
 		</div>
-        <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fa fa-download fa-fw','class':'attributesTableExportMenu'"data-dojo-attach-point="attributesTableExportButton" data-dojo-attach-event="onClick:openExport">${i18n.menus.export.title}</div>
+        <div data-dojo-type="dijit/form/Button" data-dojo-props="iconClass:'fas fa-download fa-fw','class':'attributesTableExportMenu'"data-dojo-attach-point="attributesTableExportButton" data-dojo-attach-event="onClick:openExport">${i18n.menus.export.title}</div>
 	</div>
 	<div data-dojo-type="dijit/layout/ContentPane" data-dojo-attach-point="attributesTableGridDijit" data-dojo-props="class:'attributesTableGrid'"></div>
 </div>

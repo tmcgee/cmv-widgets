@@ -66,7 +66,7 @@ define([
                 type: 'titlePane',
                 path: 'gis/dijit/LayerControl',
                 title: 'Layers',
-                iconClass: 'fa-th-list',
+                iconClass: 'fas fa-th-list',
                 open: true,
                 position: 0,
                 options: {

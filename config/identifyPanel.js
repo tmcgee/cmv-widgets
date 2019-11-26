@@ -74,7 +74,7 @@ define([
                 path: 'widgets/IdentifyPanel',
                 position: 0,
                 title: 'Identify Features',
-                iconClass: 'fa-info-circle',
+                iconClass: 'fas fa-info-circle',
                 open: true,
                 options: {
                     map: true,
@@ -83,7 +83,7 @@ define([
                         {
                             id: 'identifypanel-button-example',
                             label: 'This is an example button',
-                            iconClass: 'fa fa-fw fa-comment',
+                            iconClass: 'fas fa-fw fa-comment',
                             showLabel: false,
                             style: 'float:left;margin-right:10px;display:none;',
                             onClick: function () {
@@ -114,7 +114,7 @@ define([
                 type: 'floating',
                 path: 'widgets/Export',
                 title: 'Export',
-                iconClass: 'fa-download',
+                iconClass: 'fas fa-download',
                 preload: true,
                 options: {
                     excel: false,

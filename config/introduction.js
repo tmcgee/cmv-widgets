@@ -57,7 +57,7 @@ define({
             type: 'titlePane',
             path: 'gis/dijit/LayerControl',
             title: 'Layers',
-            iconClass: 'fa fa-th-list',
+            iconClass: 'fas fa-th-list',
             open: true,
             position: 0,
             options: {
@@ -73,7 +73,7 @@ define({
             canFloat: true,
             path: 'gis/dijit/Measurement',
             title: 'Measure',
-            iconClass: 'fa fa-fw fa-expand',
+            iconClass: 'fas fa-fw fa-expand',
             open: false,
             position: 1,
             options: {
@@ -89,7 +89,7 @@ define({
             canFloat: true,
             path: 'gis/dijit/Print',
             title: 'Print',
-            iconClass: 'fa fa-fw fa-print',
+            iconClass: 'fas fa-fw fa-print',
             open: false,
             position: 2,
             options: {

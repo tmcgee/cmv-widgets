@@ -110,7 +110,7 @@ define([
                                                 }
                                             });
                                         });
-                                        node.innerHTML = '<i class=\'fa fa-search\' style=\'margin-left:8px;\'></i>';
+                                        node.innerHTML = '<i class=\'fas fa-search\' style=\'margin-left:8px;\'></i>';
                                     }
                                 }
                             ],

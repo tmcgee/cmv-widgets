@@ -5,10 +5,10 @@
         packages: [
             {
                 name: 'viewer',
-                location: 'https://cdn.rawgit.com/cmv/cmv-app/v2.0.0-beta.2/viewer/js/viewer'
+                location: 'https://cdn.jsdelivr.net/gh/cmv/cmv-app@develop/viewer/js/viewer'
             }, {
                 name: 'gis',
-                location: 'https://cdn.rawgit.com/cmv/cmv-app/v2.0.0-beta.2/viewer/js/gis'
+                location: 'https://cdn.jsdelivr.net/gh/cmv/cmv-app@develop/viewer/js/gis'
             }, {
                 name: 'config',
                 location: path + 'config'

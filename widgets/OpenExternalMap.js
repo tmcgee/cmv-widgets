@@ -62,18 +62,23 @@ define([
         // the map providers and buttons  to include
         mapProviders: [
             {
-                name: 'Google Maps',
+                name: 'Google',
                 buttons: [
                     {
                         label: 'Hybrid Map',
-                        iconClass: 'fa fa-google fa-fw',
+                        iconClass: 'fab fa-google fa-fw',
                         url: 'https://www.google.com/maps/place/@{lat},{lng},{zoom}z/data=!3m1!1e3' //https://www.google.com/maps/@{lat},{lng},1000a,20y,0t/data=!3m1!1e3'
                     },
                     {
                         label: 'StreetView',
-                        iconClass: 'fa fa-street-view fa-fw',
+                        iconClass: 'fas fa-street-view fa-fw',
                         isStreetView: true,
                         url: 'https://maps.google.com/maps?q=&layer=c&cbll={lat},{lng}'
+                    },
+                    {
+                        label: 'Google Earth',
+                        iconClass: 'fas fa-globe fa-fw',
+                        url: 'https://earth.google.com/web/@{lat},{lng},146.726a,666.616d,35y,0h,45t,0r'
                     }
                 ]
             },
@@ -82,17 +87,17 @@ define([
                 buttons: [
                     {
                         label: 'Hybrid Map',
-                        iconClass: 'fa fa-windows fa-fw',
+                        iconClass: 'fab fa-windows fa-fw',
                         url: 'https://www.bing.com/maps?cp={lat}~{lng}&lvl={zoom}&sstyle=h'
                     },
                     {
                         label: 'Bird\'s Eye',
-                        iconClass: 'fa fa-building fa-fw',
+                        iconClass: 'fas fa-building fa-fw',
                         url: 'https://bing.com/maps/?cp={lat}~{lng}&style=o'
                     },
                     {
                         label: 'Streetside',
-                        iconClass: 'fa fa-street-view fa-fw',
+                        iconClass: 'fas fa-street-view fa-fw',
                         url: 'https://bing.com/maps/?cp={lat}~{lng}&lvl=19&dir=113.8911&pi=-0.284&style=x&v=2&sV=1'
                     }
                 ]
@@ -102,19 +107,19 @@ define([
                 buttons: [
                     {
                         label: 'MapQuest',
-                        iconClass: 'fa fa-globe fa-fw',
+                        iconClass: 'fas fa-globe fa-fw',
                         url: 'https://www.mapquest.com/map?q={lat},{lng}&zoom={zoom}&maptype=hybrid'
                     },
                     {
                         label: 'OpenStreetMap',
-                        iconClass: 'fa fa-globe fa-fw',
+                        iconClass: 'fas fa-globe fa-fw',
                         url: 'http://www.openstreetmap.org/?lat={lat}&lon={lng}&zoom={zoom}'
                     },
                     {
                         // https://mapchannels.com/DualMaps.aspx
                         // Use your own Google API key: https://mapchannels.com/ApiKey.aspx
                         label: 'Dual Maps',
-                        iconClass: 'fa fa-globe fa-fw',
+                        iconClass: 'fas fa-globe fa-fw',
                         url: 'http://data.mapchannels.com/mm/dual2/map.htm?x={lng}&y={lat}&z={zoom}&gm=0&ve=3&gc=0&xb={lng}&yb={lat}zb=1&db=0&bar=0&mw=1&sv=1&svb=0&mi=0&mg=1&mv=1'
                     }
                 ]

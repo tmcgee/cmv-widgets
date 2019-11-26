@@ -32,7 +32,7 @@ define({
             type: 'floating',
             path: 'widgets/Share',
             title: 'Share This Map',
-            iconClass: 'fa-share-alt',
+            iconClass: 'fas fa-share-alt',
             preload: true,
             paneOptions: {
                 draggable: false,

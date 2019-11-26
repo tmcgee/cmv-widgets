@@ -24,6 +24,7 @@ define({
             id: 'zoomToFeature',
             type: 'titlePane',
             title: 'Zoom to A California County',
+            iconClass: 'fas fa-search-location',
             position: 0,
             open: true,
             path: 'widgets/ZoomToFeature',

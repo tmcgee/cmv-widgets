@@ -70,7 +70,7 @@ define([
             {
                 id: 'identifypanel-button-zoom',
                 label: i18n.Buttons.zoomToFeature.label,
-                iconClass: 'fa fa-fw fa-search',
+                iconClass: 'fas fa-fw fa-search',
                 className: 'identifypanel-button-zoom',
                 showLabel: false,
                 onClick: 'zoomToFeature'
@@ -78,7 +78,7 @@ define([
             {
                 id: 'identifypanel-button-export',
                 label: i18n.Buttons.exportFeature.label,
-                iconClass: 'fa fa-fw fa-download',
+                iconClass: 'fas fa-fw fa-download',
                 className: 'identifypanel-button-export',
                 showLabel: false,
                 onClick: 'exportFeature'
@@ -300,7 +300,7 @@ define([
             domStyle.set(this.noInfoNode, 'display', 'none');
             domStyle.set(this.titleNode, 'display', 'none');
             domStyle.set(this.popupNode, 'display', 'none');
-            
+
             this.setFeatures(null);
             this.popupContentNode.set('content', null);
         },

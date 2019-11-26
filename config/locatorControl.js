@@ -58,7 +58,7 @@ define({
             type: 'floating',
             path: 'widgets/LocatorControl',
             title: 'Locator Settings',
-            iconClass: 'fa-compass',
+            iconClass: 'fas fa-compass',
             preload: true,
             options: {
                 html: '<i class="fa fa-compass fa-3x" style="cursor:pointer;"></i>',

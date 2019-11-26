@@ -41,6 +41,7 @@ define([
                 path: 'widgets/PrintPlus',
                 canFloat: false,
                 title: 'Print Plus',
+                iconClass: 'fas fa-print',
                 open: true,
                 position: 0,
                 options: 'config/printplusWidget'

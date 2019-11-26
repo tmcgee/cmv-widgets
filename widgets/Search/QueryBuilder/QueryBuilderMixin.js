@@ -41,11 +41,11 @@ define([
 
         defaultQueryBuilderOptions: {
             icons: {
-                'add_group': 'fa fa-plus-square',
-                'add_rule': 'fa fa-plus-circle',
-                'remove_group': 'fa fa-minus-square',
-                'remove_rule': 'fa fa-minus-circle',
-                'error': 'fa fa-exclamation-triangle'
+                'add_group': 'fas fa-plus-square',
+                'add_rule': 'fas fa-plus-circle',
+                'remove_group': 'fas fa-minus-square',
+                'remove_rule': 'fas fa-minus-circle',
+                'error': 'fas fa-exclamation-triangle'
             },
             'display_errors': true,
             'allow_groups': false,

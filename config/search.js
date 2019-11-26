@@ -99,7 +99,7 @@ define([
                 type: 'titlePane',
                 path: 'gis/dijit/LayerControl',
                 title: 'Layers',
-                iconClass: 'fa-th-list',
+                iconClass: 'fas fa-th-list',
                 open: false,
                 position: 0,
                 options: {
@@ -113,7 +113,7 @@ define([
                 include: true,
                 id: 'search',
                 type: 'titlePane',
-                iconClass: 'fa-search',
+                iconClass: 'fas fa-search',
                 path: 'widgets/Search',
                 title: 'Search',
                 open: true,

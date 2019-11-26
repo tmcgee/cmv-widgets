@@ -31,7 +31,7 @@ define({
             type: 'floating',
             path: 'widgets/Disclaimer',
             title: 'Attention!!!',
-            iconClass: 'fa-exclamation-circle',
+            iconClass: 'fas fa-exclamation-circle',
             preload: true,
             paneOptions: {
                 className: 'floating-disclaimer',

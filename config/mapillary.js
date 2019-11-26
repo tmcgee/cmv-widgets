@@ -23,7 +23,7 @@ define({
             include: true,
             type: 'titlePane',
             title: 'Mapillary',
-            iconClass: 'fa-location-arrow fa-rotate-90',
+            iconClass: 'fas fa-location-arrow fa-rotate-90',
             open: true,
             position: 0,
             path: 'widgets/Mapillary',

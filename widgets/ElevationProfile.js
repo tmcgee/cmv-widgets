@@ -5,9 +5,6 @@ define([
     'dijit/_WidgetsInTemplateMixin',
 
     'dojo/dom',
-    'dojo/on',
-    'dojo/query',
-    'dojo/domReady!',
     'dojo/topic',
     'dojo/aspect',
     'dojo/_base/lang',
@@ -16,7 +13,6 @@ define([
 
     'esri/dijit/ElevationProfile',
     'esri/toolbars/draw',
-    'esri/symbols/SimpleLineSymbol',
     'esri/symbols/CartographicLineSymbol',
     'esri/graphic',
     'esri/units',
@@ -37,9 +33,6 @@ define([
     _WidgetsInTemplateMixin,
 
     dom,
-    on,
-    query,
-    domReady,
     topic,
     aspect,
     lang,
@@ -48,7 +41,6 @@ define([
 
     ElevationsProfileWidget,
     Draw,
-    SimpleLineSymbol,
     CartographicLineSymbol,
     Graphic,
     Units,
@@ -65,8 +57,9 @@ define([
         toolbar: null,
         epWidget: null,
         lineSymbol: null,
-        measureUnit: null,
         pane: null,
+
+        measureUnit: Units.MILES,
 
         title: 'Elevation Profile',
         nodeID: 'profileChartNode',
@@ -106,7 +99,7 @@ define([
                     })));
                 }
             }
-            this.measureUnit = registry.byId('unitsSelect').value;
+            this.unitsSelect.set('value', this.measureUnit);
 
             this.lineSymbol = new CartographicLineSymbol(
                 CartographicLineSymbol.STYLE_SOLID,
@@ -152,7 +145,16 @@ define([
                 profileOptions.chartOptions.title = profileOptions.chartOptions.title || this.title;
 
                 this.epWidget = new ElevationsProfileWidget(profileOptions, dom.byId(this.nodeID));
+                this.epWidget.on('error', function (event) {
+                    topic.publish('elevationProfile/error', {
+                        event: event
+                    });
+                });
                 this.epWidget.startup();
+
+                topic.publish('elevationProfile/init', {
+                    widget: this
+                });
             } else {
                 this.epWidget.clearProfile(); //Clear profile
             }
@@ -197,23 +199,33 @@ define([
             this.toolbar.activate('freehandpolyline');
         },
 
+        onLayoutChange: function () {
+            topic.publish('elevationProfile/layoutChange', {
+                open: open
+            });
+        },
+
         onClear: function () {
+            this.clearProfile();
+        },
+
+        clearProfile: function () {
             if (this.toolbar) {
                 this.toolbar.deactivate();
             }
             if (this.epWidget) {
                 this.epWidget.clearProfile();
             }
+            this.map.setMapCursor('default');
             this.map.graphics.clear();
             this.btnClear.set('disabled', true);
-        },
 
-        onLayoutChange: function (open) {
-            if (!open) {
-                this.connectMapClick();
-                this.map.graphics.clear();
-                this.map.setMapCursor('default');
-            }
+            this.connectMapClick();
+            this.map.enableMapNavigation();
+
+            topic.publish('elevationProfile/clear', {
+                widget: this
+            });
         },
 
         disconnectMapClick: function () {

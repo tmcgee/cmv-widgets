@@ -17,7 +17,7 @@
 
 .cmvMessageBox .dijitDialogPaneActionBar .dijitIcon:before {
     display:  block;
-    font-family: 'FontAwesome';
+    font-family: 'Font Awesome\ 5 Free';
 }
 
 .cmvMessageBox .dijitDialogPaneActionBar .cmvOKButton .dijitIcon:before {
@@ -36,7 +36,7 @@
 
 .cmvMessageBox .dijitDialogTitle:before {
     color: #00B;
-    font-family: 'FontAwesome';
+    font-family: 'Font Awesome\ 5 Free';
     margin-left: -5px;
     margin-right: 10px;
 }

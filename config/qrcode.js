@@ -25,6 +25,7 @@ define({
             position: 0,
             path: 'widgets/QRCode',
             title: 'QR Code',
+            iconClass: 'fas fa-qrcode',
             open: true,
             options: {
                 map: true

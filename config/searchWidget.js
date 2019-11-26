@@ -130,7 +130,7 @@ define([
                                         on(node, 'click', function () {
                                             alert('Do something exciting here like search for related records or edit the selected record.');
                                         });
-                                        node.innerHTML = '<i class=\'fa fa-pencil\' style=\'margin-left:8px;\'></i>';
+                                        node.innerHTML = '<i class=\'fas fa-pencil\' style=\'margin-left:8px;\'></i>';
                                     }
                                 },
                                 {
