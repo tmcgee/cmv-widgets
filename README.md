@@ -99,7 +99,7 @@ The Heatmap widget uses a HeatmapRenderer to render feature layer data into a ra
 ### IdentifyPanel
 A widget to replace the map's infoWindow including integration with the [Export](https://github.com/tmcgee/cmv-widgets#export) widget. You can include your own buttons as well. This widget is an updated and enhanced version of one originally created by [Doug Chamberlain](https://github.com/dougrchamberlain/IdentifyPanel).
 ##### Documentation - in the works
-##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=identifypanel)
+##### [Demo](http://tmcgee.github.io/cmv-widgets/demo.html?config=identifyPanel)
 ![Screenshot](https://tmcgee.github.io/cmv-widgets/images/identifypanel1.jpg)
 
 ---
