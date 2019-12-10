@@ -71,7 +71,8 @@ define([], function () {
                                         visible: true,
                                         formatter: function () {
                                             return '<a id="parcel-report" title="Run Parcel Report" style="cursor:pointer">Parcel Report</a>';
-                                        }
+                                        },
+                                        useExpression: false
                                     }
                                 ]
                             }
