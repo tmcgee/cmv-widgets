@@ -114,6 +114,8 @@ define([
 
         isLinkedQuery: false,
 
+        relatedTableURL: null,
+
         layerJSON: {},
 
         getQueryConfiguration: function (options) {
@@ -126,6 +128,7 @@ define([
             this.linkField = options.linkField;
             this.linkedQuery = options.linkedQuery;
             this.isLinkedQuery = false;
+            this.relatedTableURL = null;
         },
 
         executeQueryTask: function (options) {
@@ -152,15 +155,20 @@ define([
             var deferred = this.getLayerJSON(url);
 
             deferred.then(lang.hitch(this, function () {
-                this.executingQuery = true;
                 var qt = new QueryTask(url);
                 var q = this.buildQueryFromParameters(qp);
 
-                this.growlQueryIsExecuting();
-
                 if (qp.type === 'relationship') {
-                    qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+                    var relatedDeferred = this.getRelationshipLayerJSON(url, qp);
+                    relatedDeferred.then(lang.hitch(this, function () {
+                        this.executingQuery = true;
+                        this.growlQueryIsExecuting();
+                        qt.executeRelationshipQuery(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
+                    }));
+
                 } else {
+                    this.executingQuery = true;
+                    this.growlQueryIsExecuting();
                     qt.execute(q, lang.hitch(this, 'processQueryResults'), lang.hitch(this, 'processQueryError'));
                 }
             }));
@@ -500,6 +508,9 @@ define([
         },
 
         getQueryTaskLayerJSON: function () {
+            if (this.queryParameters.type === 'relationship' && this.relatedTableURL) {
+                return this.layerJSON[this.relatedTableURL];
+            }
             var url = this.getQueryTaskURL();
             return this.layerJSON[url];
         },
@@ -585,7 +596,29 @@ define([
             }
 
             return deferred.promise;
-        }
+        },
 
+        getRelationshipLayerJSON: function (url, qp) {
+            var deferred = new Deferred(),
+                relatedDeferred = null,
+                layer = this.getQueryTaskLayerJSON();
+
+            if (layer && layer.relationships) {
+                var related = layer.relationships[qp.relationshipID];
+                if (related) {
+                    var lastSlash = url.lastIndexOf('/');
+                    this.relatedTableURL = url.substring(0, lastSlash + 1) + related.relatedTableId;
+                    relatedDeferred = this.getLayerJSON(this.relatedTableURL);
+                    relatedDeferred.then(lang.hitch(this, function () {
+                        deferred.resolve();
+                    }));
+
+                }
+            }
+            if (!relatedDeferred) {
+                deferred.resolve();
+            }
+            return deferred.promise;
+        }
     });
 });
