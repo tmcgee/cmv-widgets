@@ -9,7 +9,7 @@
   "dependencies": {
     "csslint": "1.0.x",
     "eslint": "~7.32.0",
-    "grunt": "~1.4.0",
+    "grunt": "~1.5.3",
     "grunt-postcss": "~0.9.0",
     "grunt-contrib-clean": "~2.0.0",
     "grunt-contrib-connect": "~2.1.0",
